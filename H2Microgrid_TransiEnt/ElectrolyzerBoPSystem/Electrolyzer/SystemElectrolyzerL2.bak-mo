@@ -1,0 +1,50 @@
+within H2Microgrid_TransiEnt.ElectrolyzerBoPSystem.Electrolyzer;
+model SystemElectrolyzerL2
+  PEMElectrolyzer_L2 electrolyzer(useHeatPort=true) annotation (Placement(transformation(extent={{-52,-18},{-16,18}})));
+  replaceable TransiEnt.Basics.Interfaces.Electrical.ActivePowerPort epp if usePowerPort constrainedby TransiEnt.Basics.Interfaces.Electrical.PartialPowerPort "Choice of power port" annotation (choicesAllMatching=true, Dialog(tab="General", group="General"), Placement(transformation(extent={{-108,-10},{-88,10}})));
+  TransiEnt.Basics.Interfaces.Gas.RealGasPortOut gasPortOut(Medium=medium)              annotation (Placement(transformation(extent={{91,-10},{111,10}}),   iconTransformation(extent={{85,-12},{115,18}})));
+  TransiEnt.Basics.Interfaces.Electrical.ElectricPowerIn P_el_set "Electric power input" annotation (Placement(transformation(
+        extent={{-20,-20},{20,20}},
+        rotation=270,
+        origin={-40,106}),
+                         iconTransformation(
+        extent={{-12,-12},{12,12}},
+        rotation=270,
+        origin={-40,104})));
+  TransiEnt.Basics.Interfaces.General.MassFlowRateOut H2massFlowRateOutElectrolyzer annotation (Placement(transformation(
+        extent={{-10,-10},{10,10}},
+        rotation=90,
+        origin={24,108}), iconTransformation(
+        extent={{-10,-10},{10,10}},
+        rotation=0,
+        origin={104,74})));
+protected
+  TransiEnt.Components.Sensors.RealGas.MassFlowSensor massflowSensor_ely(final medium=medium, xiNumber=0)         annotation (Placement(transformation(
+        extent={{7,6},{-7,-6}},
+        rotation=180,
+        origin={8,6})));
+equation
+  connect(electrolyzer.epp, epp) annotation (Line(
+      points={{-52,0},{-98,0}},
+      color={0,135,135},
+      thickness=0.5));
+  connect(epp, epp) annotation (Line(
+      points={{-98,0},{-98,0}},
+      color={0,135,135},
+      thickness=0.5));
+  connect(electrolyzer.gasPortOut, massflowSensor_ely.gasPortIn) annotation (Line(
+      points={{-16,0},{1,0}},
+      color={255,255,0},
+      thickness=1.5));
+  connect(massflowSensor_ely.gasPortOut, gasPortOut) annotation (Line(
+      points={{15,0},{101,0}},
+      color={255,255,0},
+      thickness=1.5));
+  connect(P_el_set, electrolyzer.P_el_set) annotation (Line(points={{-40,106},{-40,30},{-40.84,30},{-40.84,21.6}}, color={0,127,127}));
+  connect(massflowSensor_ely.m_flow, H2massFlowRateOutElectrolyzer) annotation (Line(points={{15.7,6},{24,6},{24,108}}, color={0,0,127}));
+  annotation (Icon(coordinateSystem(preserveAspectRatio=false), graphics={Rectangle(
+          extent={{-100,100},{100,-100}},
+          lineColor={0,0,0},
+          fillColor={0,0,0},
+          fillPattern=FillPattern.Solid)}), Diagram(coordinateSystem(preserveAspectRatio=false)));
+end SystemElectrolyzerL2;

@@ -1,0 +1,4 @@
+within H2Microgrid_TransiEnt;
+package ElectrolyzerSystem "Contains electrolyzer stack, H2 drying system and cooling system"
+
+end ElectrolyzerSystem;

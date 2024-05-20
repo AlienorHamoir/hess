@@ -1,0 +1,127 @@
+Log-file of program ./dymosim
+(generated: Tue May 14 08:06:16 2024)
+
+dymosim started
+... "H2Microgrid_TransiEnt.ElectrolyzerBoPSystem.Tests.TestPEMElectrolyzerL2_Simple" simulating
+... "dsin.txt" loading (dymosim input file)
+>> Looking for file: C:\Program Files\Dymola 2024x\Modelica/TransiEnt 2.0.3/Tables//ambient/UndergroundTemperature_Duesseldorf_1m_2017.txt
+>> Calling File: C:/Program Files/Dymola 2024x/Modelica/TransiEnt 2.0.3/Tables/ambient/UndergroundTemperature_Duesseldorf_1m_2017.txt
+>> Looking for file: C:\Program Files\Dymola 2024x\Modelica/TransiEnt 2.0.3/Tables//ambient/UndergroundTemperature_Duesseldorf_1m_2017.txt
+>> Calling File: C:/Program Files/Dymola 2024x/Modelica/TransiEnt 2.0.3/Tables/ambient/UndergroundTemperature_Duesseldorf_1m_2017.txt
+>> Looking for file: C:\Program Files\Dymola 2024x\Modelica/TransiEnt 2.0.3/Tables//ambient/UndergroundTemperature_Duesseldorf_1m_2017.txt
+>> Calling File: C:/Program Files/Dymola 2024x/Modelica/TransiEnt 2.0.3/Tables/ambient/UndergroundTemperature_Duesseldorf_1m_2017.txt
+>> Looking for file: C:\Program Files\Dymola 2024x\Modelica/TransiEnt 2.0.3/Tables//ambient/UndergroundTemperature_Duesseldorf_1m_2017.txt
+>> Calling File: C:/Program Files/Dymola 2024x/Modelica/TransiEnt 2.0.3/Tables/ambient/UndergroundTemperature_Duesseldorf_1m_2017.txt
+>> Looking for file: C:\Program Files\Dymola 2024x\Modelica/TransiEnt 2.0.3/Tables//ambient/UndergroundTemperature_Duesseldorf_1m_2017.txt
+>> Calling File: C:/Program Files/Dymola 2024x/Modelica/TransiEnt 2.0.3/Tables/ambient/UndergroundTemperature_Duesseldorf_1m_2017.txt
+>> Looking for file: C:\Program Files\Dymola 2024x\Modelica/TransiEnt 2.0.3/Tables//ambient/UndergroundTemperature_Duesseldorf_1m_2017.txt
+>> Calling File: C:/Program Files/Dymola 2024x/Modelica/TransiEnt 2.0.3/Tables/ambient/UndergroundTemperature_Duesseldorf_1m_2017.txt
+... loading "default" from "C:/Program Files/Dymola 2024x/Modelica/TransiEnt 2.0.3/Tables/ambient/UndergroundTemperature_Duesseldorf_1m_2017.txt"
+>> Looking for file: C:\Program Files\Dymola 2024x\Modelica/TransiEnt 2.0.3/Tables/electricity/ElectricityPrices_DayAhead_EPEX_Spot_2011.txt
+>> Calling File: C:/Program Files/Dymola 2024x/Modelica/TransiEnt 2.0.3/Tables/electricity/ElectricityPrices_DayAhead_EPEX_Spot_2011.txt
+>> Looking for file: C:\Program Files\Dymola 2024x\Modelica/TransiEnt 2.0.3/Tables/electricity/ElectricityPrices_DayAhead_EPEX_Spot_2011.txt
+>> Calling File: C:/Program Files/Dymola 2024x/Modelica/TransiEnt 2.0.3/Tables/electricity/ElectricityPrices_DayAhead_EPEX_Spot_2011.txt
+>> Looking for file: C:\Program Files\Dymola 2024x\Modelica/TransiEnt 2.0.3/Tables/electricity/ElectricityPrices_DayAhead_EPEX_Spot_2011.txt
+>> Calling File: C:/Program Files/Dymola 2024x/Modelica/TransiEnt 2.0.3/Tables/electricity/ElectricityPrices_DayAhead_EPEX_Spot_2011.txt
+>> Looking for file: C:\Program Files\Dymola 2024x\Modelica/TransiEnt 2.0.3/Tables/electricity/ElectricityPrices_DayAhead_EPEX_Spot_2011.txt
+>> Calling File: C:/Program Files/Dymola 2024x/Modelica/TransiEnt 2.0.3/Tables/electricity/ElectricityPrices_DayAhead_EPEX_Spot_2011.txt
+>> Looking for file: C:\Program Files\Dymola 2024x\Modelica/TransiEnt 2.0.3/Tables/electricity/ElectricityPrices_DayAhead_EPEX_Spot_2011.txt
+>> Calling File: C:/Program Files/Dymola 2024x/Modelica/TransiEnt 2.0.3/Tables/electricity/ElectricityPrices_DayAhead_EPEX_Spot_2011.txt
+>> Looking for file: C:\Program Files\Dymola 2024x\Modelica/TransiEnt 2.0.3/Tables/electricity/ElectricityPrices_DayAhead_EPEX_Spot_2011.txt
+>> Calling File: C:/Program Files/Dymola 2024x/Modelica/TransiEnt 2.0.3/Tables/electricity/ElectricityPrices_DayAhead_EPEX_Spot_2011.txt
+... loading "default" from "C:/Program Files/Dymola 2024x/Modelica/TransiEnt 2.0.3/Tables/electricity/ElectricityPrices_DayAhead_EPEX_Spot_2011.txt"
+>> Looking for file: C:\Program Files\Dymola 2024x\Modelica/TransiEnt 2.0.3/Tables//ambient/UndergroundTemperature_Duesseldorf_1m_2017.txt
+>> Calling File: C:/Program Files/Dymola 2024x/Modelica/TransiEnt 2.0.3/Tables/ambient/UndergroundTemperature_Duesseldorf_1m_2017.txt
+>> Looking for file: C:\Program Files\Dymola 2024x\Modelica/TransiEnt 2.0.3/Tables//ambient/UndergroundTemperature_Duesseldorf_1m_2017.txt
+>> Calling File: C:/Program Files/Dymola 2024x/Modelica/TransiEnt 2.0.3/Tables/ambient/UndergroundTemperature_Duesseldorf_1m_2017.txt
+>> Looking for file: C:\Program Files\Dymola 2024x\Modelica/TransiEnt 2.0.3/Tables//ambient/UndergroundTemperature_Duesseldorf_1m_2017.txt
+>> Calling File: C:/Program Files/Dymola 2024x/Modelica/TransiEnt 2.0.3/Tables/ambient/UndergroundTemperature_Duesseldorf_1m_2017.txt
+>> Looking for file: C:\Program Files\Dymola 2024x\Modelica/TransiEnt 2.0.3/Tables//ambient/UndergroundTemperature_Duesseldorf_1m_2017.txt
+>> Calling File: C:/Program Files/Dymola 2024x/Modelica/TransiEnt 2.0.3/Tables/ambient/UndergroundTemperature_Duesseldorf_1m_2017.txt
+>> Looking for file: C:\Program Files\Dymola 2024x\Modelica/TransiEnt 2.0.3/Tables//ambient/UndergroundTemperature_Duesseldorf_1m_2017.txt
+>> Calling File: C:/Program Files/Dymola 2024x/Modelica/TransiEnt 2.0.3/Tables/ambient/UndergroundTemperature_Duesseldorf_1m_2017.txt
+>> Looking for file: C:\Program Files\Dymola 2024x\Modelica/TransiEnt 2.0.3/Tables//ambient/UndergroundTemperature_Duesseldorf_1m_2017.txt
+>> Calling File: C:/Program Files/Dymola 2024x/Modelica/TransiEnt 2.0.3/Tables/ambient/UndergroundTemperature_Duesseldorf_1m_2017.txt
+>> Looking for file: C:\Program Files\Dymola 2024x\Modelica/TransiEnt 2.0.3/Tables/electricity/ElectricityPrices_DayAhead_EPEX_Spot_2011.txt
+>> Calling File: C:/Program Files/Dymola 2024x/Modelica/TransiEnt 2.0.3/Tables/electricity/ElectricityPrices_DayAhead_EPEX_Spot_2011.txt
+>> Looking for file: C:\Program Files\Dymola 2024x\Modelica/TransiEnt 2.0.3/Tables/electricity/ElectricityPrices_DayAhead_EPEX_Spot_2011.txt
+>> Calling File: C:/Program Files/Dymola 2024x/Modelica/TransiEnt 2.0.3/Tables/electricity/ElectricityPrices_DayAhead_EPEX_Spot_2011.txt
+>> Looking for file: C:\Program Files\Dymola 2024x\Modelica/TransiEnt 2.0.3/Tables/electricity/ElectricityPrices_DayAhead_EPEX_Spot_2011.txt
+>> Calling File: C:/Program Files/Dymola 2024x/Modelica/TransiEnt 2.0.3/Tables/electricity/ElectricityPrices_DayAhead_EPEX_Spot_2011.txt
+>> Looking for file: C:\Program Files\Dymola 2024x\Modelica/TransiEnt 2.0.3/Tables/electricity/ElectricityPrices_DayAhead_EPEX_Spot_2011.txt
+>> Calling File: C:/Program Files/Dymola 2024x/Modelica/TransiEnt 2.0.3/Tables/electricity/ElectricityPrices_DayAhead_EPEX_Spot_2011.txt
+>> Looking for file: C:\Program Files\Dymola 2024x\Modelica/TransiEnt 2.0.3/Tables/electricity/ElectricityPrices_DayAhead_EPEX_Spot_2011.txt
+>> Calling File: C:/Program Files/Dymola 2024x/Modelica/TransiEnt 2.0.3/Tables/electricity/ElectricityPrices_DayAhead_EPEX_Spot_2011.txt
+>> Looking for file: C:\Program Files\Dymola 2024x\Modelica/TransiEnt 2.0.3/Tables/electricity/ElectricityPrices_DayAhead_EPEX_Spot_2011.txt
+>> Calling File: C:/Program Files/Dymola 2024x/Modelica/TransiEnt 2.0.3/Tables/electricity/ElectricityPrices_DayAhead_EPEX_Spot_2011.txt
+Error: The following error was detected at time: 0
+
+Model error - Modelica.Math.log (systemElectrolyzerL2_Simple_EnergyTot.electrolyzer1.i_dens_a/(2*systemElectrolyzerL2_Simple_EnergyTot.electrolyzer1.voltage.i_dens_0_an)+sqrt(1+systemElectrolyzerL2_Simple_EnergyTot.electrolyzer1.i_dens_a*systemElectrolyzerL2_Simple_EnergyTot.electrolyzer1.i_dens_a/(2*systemElectrolyzerL2_Simple_EnergyTot.electrolyzer1.voltage.i_dens_0_an)/(2*systemElectrolyzerL2_Simple_EnergyTot.electrolyzer1....) = Modelica.Math.log (0)
+
+Non-linear solver will silently attempt to handle this problem.
+Trying homotopy
+Non-linear solver gave up after attempt: 60
+
+Trying to solve non-linear system using global homotopy-method.
+>> Looking for file: C:\Program Files\Dymola 2024x\Modelica/TransiEnt 2.0.3/Tables//ambient/UndergroundTemperature_Duesseldorf_1m_2017.txt
+>> Calling File: C:/Program Files/Dymola 2024x/Modelica/TransiEnt 2.0.3/Tables/ambient/UndergroundTemperature_Duesseldorf_1m_2017.txt
+>> Looking for file: C:\Program Files\Dymola 2024x\Modelica/TransiEnt 2.0.3/Tables//ambient/UndergroundTemperature_Duesseldorf_1m_2017.txt
+>> Calling File: C:/Program Files/Dymola 2024x/Modelica/TransiEnt 2.0.3/Tables/ambient/UndergroundTemperature_Duesseldorf_1m_2017.txt
+>> Looking for file: C:\Program Files\Dymola 2024x\Modelica/TransiEnt 2.0.3/Tables//ambient/UndergroundTemperature_Duesseldorf_1m_2017.txt
+>> Calling File: C:/Program Files/Dymola 2024x/Modelica/TransiEnt 2.0.3/Tables/ambient/UndergroundTemperature_Duesseldorf_1m_2017.txt
+>> Looking for file: C:\Program Files\Dymola 2024x\Modelica/TransiEnt 2.0.3/Tables//ambient/UndergroundTemperature_Duesseldorf_1m_2017.txt
+>> Calling File: C:/Program Files/Dymola 2024x/Modelica/TransiEnt 2.0.3/Tables/ambient/UndergroundTemperature_Duesseldorf_1m_2017.txt
+>> Looking for file: C:\Program Files\Dymola 2024x\Modelica/TransiEnt 2.0.3/Tables//ambient/UndergroundTemperature_Duesseldorf_1m_2017.txt
+>> Calling File: C:/Program Files/Dymola 2024x/Modelica/TransiEnt 2.0.3/Tables/ambient/UndergroundTemperature_Duesseldorf_1m_2017.txt
+>> Looking for file: C:\Program Files\Dymola 2024x\Modelica/TransiEnt 2.0.3/Tables//ambient/UndergroundTemperature_Duesseldorf_1m_2017.txt
+>> Calling File: C:/Program Files/Dymola 2024x/Modelica/TransiEnt 2.0.3/Tables/ambient/UndergroundTemperature_Duesseldorf_1m_2017.txt
+>> Looking for file: C:\Program Files\Dymola 2024x\Modelica/TransiEnt 2.0.3/Tables/electricity/ElectricityPrices_DayAhead_EPEX_Spot_2011.txt
+>> Calling File: C:/Program Files/Dymola 2024x/Modelica/TransiEnt 2.0.3/Tables/electricity/ElectricityPrices_DayAhead_EPEX_Spot_2011.txt
+>> Looking for file: C:\Program Files\Dymola 2024x\Modelica/TransiEnt 2.0.3/Tables/electricity/ElectricityPrices_DayAhead_EPEX_Spot_2011.txt
+>> Calling File: C:/Program Files/Dymola 2024x/Modelica/TransiEnt 2.0.3/Tables/electricity/ElectricityPrices_DayAhead_EPEX_Spot_2011.txt
+>> Looking for file: C:\Program Files\Dymola 2024x\Modelica/TransiEnt 2.0.3/Tables/electricity/ElectricityPrices_DayAhead_EPEX_Spot_2011.txt
+>> Calling File: C:/Program Files/Dymola 2024x/Modelica/TransiEnt 2.0.3/Tables/electricity/ElectricityPrices_DayAhead_EPEX_Spot_2011.txt
+>> Looking for file: C:\Program Files\Dymola 2024x\Modelica/TransiEnt 2.0.3/Tables/electricity/ElectricityPrices_DayAhead_EPEX_Spot_2011.txt
+>> Calling File: C:/Program Files/Dymola 2024x/Modelica/TransiEnt 2.0.3/Tables/electricity/ElectricityPrices_DayAhead_EPEX_Spot_2011.txt
+>> Looking for file: C:\Program Files\Dymola 2024x\Modelica/TransiEnt 2.0.3/Tables/electricity/ElectricityPrices_DayAhead_EPEX_Spot_2011.txt
+>> Calling File: C:/Program Files/Dymola 2024x/Modelica/TransiEnt 2.0.3/Tables/electricity/ElectricityPrices_DayAhead_EPEX_Spot_2011.txt
+>> Looking for file: C:\Program Files\Dymola 2024x\Modelica/TransiEnt 2.0.3/Tables/electricity/ElectricityPrices_DayAhead_EPEX_Spot_2011.txt
+>> Calling File: C:/Program Files/Dymola 2024x/Modelica/TransiEnt 2.0.3/Tables/electricity/ElectricityPrices_DayAhead_EPEX_Spot_2011.txt
+>> Looking for file: C:\Program Files\Dymola 2024x\Modelica/TransiEnt 2.0.3/Tables//ambient/UndergroundTemperature_Duesseldorf_1m_2017.txt
+>> Calling File: C:/Program Files/Dymola 2024x/Modelica/TransiEnt 2.0.3/Tables/ambient/UndergroundTemperature_Duesseldorf_1m_2017.txt
+>> Looking for file: C:\Program Files\Dymola 2024x\Modelica/TransiEnt 2.0.3/Tables//ambient/UndergroundTemperature_Duesseldorf_1m_2017.txt
+>> Calling File: C:/Program Files/Dymola 2024x/Modelica/TransiEnt 2.0.3/Tables/ambient/UndergroundTemperature_Duesseldorf_1m_2017.txt
+>> Looking for file: C:\Program Files\Dymola 2024x\Modelica/TransiEnt 2.0.3/Tables//ambient/UndergroundTemperature_Duesseldorf_1m_2017.txt
+>> Calling File: C:/Program Files/Dymola 2024x/Modelica/TransiEnt 2.0.3/Tables/ambient/UndergroundTemperature_Duesseldorf_1m_2017.txt
+>> Looking for file: C:\Program Files\Dymola 2024x\Modelica/TransiEnt 2.0.3/Tables//ambient/UndergroundTemperature_Duesseldorf_1m_2017.txt
+>> Calling File: C:/Program Files/Dymola 2024x/Modelica/TransiEnt 2.0.3/Tables/ambient/UndergroundTemperature_Duesseldorf_1m_2017.txt
+>> Looking for file: C:\Program Files\Dymola 2024x\Modelica/TransiEnt 2.0.3/Tables//ambient/UndergroundTemperature_Duesseldorf_1m_2017.txt
+>> Calling File: C:/Program Files/Dymola 2024x/Modelica/TransiEnt 2.0.3/Tables/ambient/UndergroundTemperature_Duesseldorf_1m_2017.txt
+>> Looking for file: C:\Program Files\Dymola 2024x\Modelica/TransiEnt 2.0.3/Tables//ambient/UndergroundTemperature_Duesseldorf_1m_2017.txt
+>> Calling File: C:/Program Files/Dymola 2024x/Modelica/TransiEnt 2.0.3/Tables/ambient/UndergroundTemperature_Duesseldorf_1m_2017.txt
+>> Looking for file: C:\Program Files\Dymola 2024x\Modelica/TransiEnt 2.0.3/Tables/electricity/ElectricityPrices_DayAhead_EPEX_Spot_2011.txt
+>> Calling File: C:/Program Files/Dymola 2024x/Modelica/TransiEnt 2.0.3/Tables/electricity/ElectricityPrices_DayAhead_EPEX_Spot_2011.txt
+>> Looking for file: C:\Program Files\Dymola 2024x\Modelica/TransiEnt 2.0.3/Tables/electricity/ElectricityPrices_DayAhead_EPEX_Spot_2011.txt
+>> Calling File: C:/Program Files/Dymola 2024x/Modelica/TransiEnt 2.0.3/Tables/electricity/ElectricityPrices_DayAhead_EPEX_Spot_2011.txt
+>> Looking for file: C:\Program Files\Dymola 2024x\Modelica/TransiEnt 2.0.3/Tables/electricity/ElectricityPrices_DayAhead_EPEX_Spot_2011.txt
+>> Calling File: C:/Program Files/Dymola 2024x/Modelica/TransiEnt 2.0.3/Tables/electricity/ElectricityPrices_DayAhead_EPEX_Spot_2011.txt
+>> Looking for file: C:\Program Files\Dymola 2024x\Modelica/TransiEnt 2.0.3/Tables/electricity/ElectricityPrices_DayAhead_EPEX_Spot_2011.txt
+>> Calling File: C:/Program Files/Dymola 2024x/Modelica/TransiEnt 2.0.3/Tables/electricity/ElectricityPrices_DayAhead_EPEX_Spot_2011.txt
+>> Looking for file: C:\Program Files\Dymola 2024x\Modelica/TransiEnt 2.0.3/Tables/electricity/ElectricityPrices_DayAhead_EPEX_Spot_2011.txt
+>> Calling File: C:/Program Files/Dymola 2024x/Modelica/TransiEnt 2.0.3/Tables/electricity/ElectricityPrices_DayAhead_EPEX_Spot_2011.txt
+>> Looking for file: C:\Program Files\Dymola 2024x\Modelica/TransiEnt 2.0.3/Tables/electricity/ElectricityPrices_DayAhead_EPEX_Spot_2011.txt
+>> Calling File: C:/Program Files/Dymola 2024x/Modelica/TransiEnt 2.0.3/Tables/electricity/ElectricityPrices_DayAhead_EPEX_Spot_2011.txt
+Error: The following error was detected at time: 0
+
+Model error - Modelica.Math.log (systemElectrolyzerL2_Simple_EnergyTot.electrolyzer1.i_dens_a/(2*systemElectrolyzerL2_Simple_EnergyTot.electrolyzer1.voltage.i_dens_0_an)+sqrt(1+systemElectrolyzerL2_Simple_EnergyTot.electrolyzer1.i_dens_a*systemElectrolyzerL2_Simple_EnergyTot.electrolyzer1.i_dens_a/(2*systemElectrolyzerL2_Simple_EnergyTot.electrolyzer1.voltage.i_dens_0_an)/(2*systemElectrolyzerL2_Simple_EnergyTot.electrolyzer1....) = Modelica.Math.log (0)
+
+Non-linear solver will silently attempt to handle this problem.
+Trying homotopy
+Non-linear solver gave up after attempt: 41
+
+Error: Integrator failed to start model.
+
+... Error message from dymosim
+
+ERROR: The simulation of H2Microgrid_TransiEnt.ElectrolyzerBoPSystem.Tests.TestPEMElectrolyzerL2_Simple FAILED
+
