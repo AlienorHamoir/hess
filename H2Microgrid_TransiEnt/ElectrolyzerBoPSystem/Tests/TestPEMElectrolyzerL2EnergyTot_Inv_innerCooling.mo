@@ -59,7 +59,13 @@ model TestPEMElectrolyzerL2EnergyTot_Inv_innerCooling "Test of PEM Electrolyzer 
     useHeatPort=false,
     useFluidCoolantPort=false,
     T_out_coolant_target=323.15,
-    externalMassFlowControl=false) annotation (Placement(transformation(extent={{-12,-16},{16,14}})));
+    externalMassFlowControl=false,
+    electrolyzer1(temperature(cooling_PID(
+          controllerType=Modelica.Blocks.Types.SimpleController.PID,
+          k=1,
+          Tau_i=0.00001,
+          Tau_d=0.01,
+          Ni=0.9))))                 annotation (Placement(transformation(extent={{-12,-16},{16,14}})));
 equation
   connect(h2StorageSystem.H2PortOut, boundary_Txim_flow.gasPort) annotation (Line(
       points={{34.4,-62.6},{44,-62.6},{44,-62},{48,-62}},

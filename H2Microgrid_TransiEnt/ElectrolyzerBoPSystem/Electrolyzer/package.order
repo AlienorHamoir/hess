@@ -1,8 +1,8 @@
 PEMElectrolyzer_L1
 PEMElectrolyzer_L2
 PEMElectrolyzer_L2_EnergyTot
+PEMElectrolyzer_L2_EnergyTot_Inv
 PEMElectrolyzer_L2_EnergyTot_Inv_innerCooling
-PEMElectrolyzer_L2_EnergyTot_Inv_Cooling
 ElectrolyzerL1System_Dryer
 ElectrolyzerL2System
 FeedInStation_Storage_L1
@@ -12,4 +12,4 @@ SystemElectrolyzerL2_Simple_EnergyTot
 SystemElectrolyzerL2_Simple_EnergyTot_Inv_innerCooling
 SystemElectrolyzerL2_Simple_EnergyTot_Inv_Cooling
 Specifications
-Temperature1
+Temperature_modPID

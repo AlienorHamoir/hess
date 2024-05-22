@@ -50,9 +50,9 @@ end ElectrolyzerRecord;
         origin={106,-16})));
   TransiEnt.Basics.Interfaces.General.TemperatureIn T_set_coolant_out if useVariableCoolantOutputTemperature annotation (Placement(transformation(extent={{112,58},{88,82}}), iconTransformation(extent={{112,58},{88,82}})));
   TransiEnt.Basics.Interfaces.General.TemperatureOut temperatureOutElectrolyzer annotation (Placement(transformation(extent={{94,26},{118,50}}), iconTransformation(extent={{94,26},{118,50}})));
-  PEMElectrolyzer_L2_EnergyTot_Inv_Cooling electrolyzer(
+  PEMElectrolyzer_L2_EnergyTot_Inv electrolyzer(
     useFluidCoolantPort=false,
-      externalMassFlowControl=false,
+    externalMassFlowControl=false,
     useVariableCoolantOutputTemperature=false,
     T_out_coolant_target=T_out_coolant_target,
     usePowerPort=true,
@@ -61,7 +61,8 @@ end ElectrolyzerRecord;
     integrateH2Flow=true,
     integrateElPower=true,
     T_out=T_out,
-    medium=medium) annotation (Placement(transformation(extent={{-56,-10},{-36,10}})));
+    medium=medium,
+    redeclare model electrolyzerTemperature = H2Microgrid_TransiEnt.ElectrolyzerBoPSystem.Electrolyzer.Temperature_modPID) annotation (Placement(transformation(extent={{-66,-18},{-26,18}})));
 protected
   TransiEnt.Components.Sensors.RealGas.MassFlowSensor massflowSensor_ely(medium=medium, xiNumber=0)         annotation (Placement(transformation(
         extent={{7,6},{-7,-6}},
@@ -76,16 +77,16 @@ equation
       points={{5,-94},{1,-94},{1,0}},
       color={255,255,0},
       thickness=1.5));
-  connect(electrolyzer.epp, epp) annotation (Line(
-      points={{-56,0},{-100,0}},
+  connect(epp, electrolyzer.epp) annotation (Line(
+      points={{-100,0},{-66,0}},
       color={0,135,135},
       thickness=0.5));
-  connect(electrolyzer.P_el_set, P_el_set) annotation (Line(points={{-49.8,12},{-49.8,82},{0,82},{0,108}},          color={0,0,127}));
-  connect(electrolyzer.temperatureOut, temperatureOutElectrolyzer) annotation (Line(points={{-51.6,-3.2},{-60,-3.2},{-60,38},{106,38}},                     color={0,0,127}));
+  connect(electrolyzer.P_el_set, P_el_set) annotation (Line(points={{-53.6,21.6},{-53.6,82},{0,82},{0,108}}, color={0,0,127}));
   connect(electrolyzer.gasPortOut, massflowSensor_ely.gasPortIn) annotation (Line(
-      points={{-36,0},{-13,0}},
+      points={{-26,0},{-13,0}},
       color={255,255,0},
       thickness=1.5));
+  connect(electrolyzer.temperatureOut, temperatureOutElectrolyzer) annotation (Line(points={{-57.2,-5.76},{-64,-5.76},{-64,-6},{-20,-6},{-20,38},{106,38}}, color={0,0,127}));
   annotation (Icon(coordinateSystem(preserveAspectRatio=false), graphics={Rectangle(
           extent={{-100,100},{100,-100}},
           lineColor={0,0,0},
