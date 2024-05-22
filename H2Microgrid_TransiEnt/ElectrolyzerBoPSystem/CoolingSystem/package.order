@@ -1,4 +1,3 @@
-CoolingSubsystem
-ThermalHeatConsumer
-Cooling_Modelica
-Cooling_VirtualFCS
+HeatPortCooling
+FluidPortCooling
+Examples

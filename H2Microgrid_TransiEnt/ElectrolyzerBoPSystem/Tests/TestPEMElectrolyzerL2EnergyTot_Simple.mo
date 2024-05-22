@@ -69,7 +69,12 @@ model TestPEMElectrolyzerL2EnergyTot_Simple "Test of PEM Electrolyzer L2 connect
     P_el_min=275,
     k=1e11,
     p_out=20e5,
-    useHeatPort=true) annotation (Placement(transformation(extent={{-10,-10},{10,10}})));
+    useHeatPort=true,
+    electrolyzer(
+      useFluidCoolantPort=true,
+      useHeatPort=false,
+      externalMassFlowControl=true))
+                      annotation (Placement(transformation(extent={{-10,-10},{10,10}})));
 
   inner Modelica.Fluid.System system(energyDynamics=Modelica.Fluid.Types.Dynamics.FixedInitial, massDynamics=Modelica.Fluid.Types.Dynamics.SteadyStateInitial)     annotation (
     Placement(visible = true, transformation(origin={-16,-86},    extent = {{-10, -10}, {10, 10}}, rotation = 0)));

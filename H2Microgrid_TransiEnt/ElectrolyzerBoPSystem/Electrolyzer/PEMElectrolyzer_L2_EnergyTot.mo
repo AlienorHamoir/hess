@@ -30,7 +30,12 @@ model PEMElectrolyzer_L2_EnergyTot "PEMElectrolyzer_L2 Proton exchange membrane 
  extends TransiEnt.Producer.Gas.Electrolyzer.Base.PartialElectrolyzer(P_el_n=Specification.P_el_n,P_el_max=Specification.P_el_max,T_out=Specification.T_out,
     realExpression(y=P_el_tot),
     Q_flow_positive(y=Q_flow_heatprovision),
-    prescribedHeatFlow(T_ref=323.15, alpha=0.0001));
+    prescribedHeatFlow(T_ref=323.15, alpha=0.0001),
+    realExpression8(y=T_op_n),
+    heatFlow_externalMassFlowControl(
+      change_sign=false,
+      T_out_limit_const=348.15,
+      useVariableToutlimit=true));
 
   // _____________________________________________
   //
@@ -400,7 +405,7 @@ equation
   P_el = (V_el_stack)*i_el_stack;
   E_dry = E_dry_spec*mass_H2; // drying energy = 0.5 kWh/kg H2
   P_el_tot = P_el + der(E_dry);  // + P_el_pump ==| create error
-  EfficiencyCurve_Inverter.u=(P_el/(P_el_max));
+  EfficiencyCurve_Inverter.u=(P_el_tot/(P_el_max));
 
   //Efficiency
   if P_el>0 then

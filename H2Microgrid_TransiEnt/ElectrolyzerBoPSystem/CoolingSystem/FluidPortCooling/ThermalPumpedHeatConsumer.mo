@@ -1,5 +1,5 @@
-within H2Microgrid_TransiEnt.ElectrolyzerBoPSystem.CoolingSystem;
-model ThermalHeatConsumer "Thermal Heat Consumer based on a room with capacity and heat losses"
+within H2Microgrid_TransiEnt.ElectrolyzerBoPSystem.CoolingSystem.FluidPortCooling;
+model ThermalPumpedHeatConsumer "Thermal Heat Consumer based on a room with capacity and heat losses"
 
 //________________________________________________________________________________//
 // Component of the TransiEnt Library, version: 2.0.3                             //
@@ -17,7 +17,7 @@ model ThermalHeatConsumer "Thermal Heat Consumer based on a room with capacity a
 // Institute of Electrical Power and Energy Technology                            //
 // (Hamburg University of Technology)                                             //
 // Fraunhofer Institute for Environmental, Safety, and Energy Technology UMSICHT, //
-// Gas- und WÃ¤rme-Institut Essen						  //
+// Gas- und WÃ¤rme-Institut Essen                                                  //
 // and                                                                            //
 // XRG Simulation GmbH (Hamburg, Germany).                                        //
 //________________________________________________________________________________//
@@ -33,17 +33,17 @@ model ThermalHeatConsumer "Thermal Heat Consumer based on a room with capacity a
   //                 Parameters
   // _____________________________________________
 
-  parameter Modelica.Units.SI.Temperature T_set=20 + 273.15 "Setpoint for consumer (room) temperature";
-  parameter Modelica.Units.SI.Temperature T_start=T_set "Start value for consumer (room) temperature";
+  parameter Modelica.Units.SI.Temperature T_set=50 + 273.15 "Setpoint for consumer (room) temperature";
+  parameter Modelica.Units.SI.Temperature T_start=20 + 273.15 "Start value for consumer (room) temperature";
   parameter String T_amb_path="/ambientcsv/TemperatureHH_900s_01012012_0000_31122012_2345.txt" "Path relative to source directory";
 
   parameter Modelica.Units.SI.CoefficientOfHeatTransfer kc_nom=1.75e7 "Constant heat transfer coefficient of radiator";
-  parameter Modelica.Units.SI.ThermalConductance G=4e7 "Constant thermal conductance of consumer";
-  parameter Modelica.Units.SI.HeatCapacity C=2.48e12 "Heat capacity of consumer (= cp*m)";
+  parameter Modelica.Units.SI.ThermalConductance G=1777 "Constant thermal conductance of consumer";
+  parameter Modelica.Units.SI.HeatCapacity C=0.1 "Heat capacity of consumer (= cp*m)";
 
-  parameter ClaRa.Basics.Units.MassFlowRate m_flow_nom=3860 "Nominal mass flow rate";
-  parameter ClaRa.Basics.Units.Pressure Delta_p_nom=0.4e5 "Valve Nominal pressure loss";
-  parameter ClaRa.Basics.Units.DensityMassSpecific rho_in_nom=928 "Nominal mass flux density";
+  parameter ClaRa.Basics.Units.MassFlowRate m_flow_nom=0.12 "Nominal mass flow rate";
+  parameter ClaRa.Basics.Units.Pressure Delta_p_nom=0 "Pump Nominal pressure loss";
+  parameter ClaRa.Basics.Units.DensityMassSpecific rho_in_nom=1000 "Nominal mass flux density";
 
   parameter ClaRa.Basics.Units.Time t_ctrl_activationTime=0.0;
   parameter Real y_start=1 "Initial value of output";
@@ -57,7 +57,7 @@ model ThermalHeatConsumer "Thermal Heat Consumer based on a room with capacity a
 
   parameter Modelica.Units.SI.Time Ti_ctrl=0.5;
   parameter Real k_ctrl=1 "Gain of Proportional block";
-  parameter Real yMax=1 "Upper limit of output";
+  parameter Real yMax=1000 "Upper limit of output";
   parameter Real yMin=-CTRL_T_room.y_max "Lower limit of output";
 
   replaceable model PressureLoss = ClaRa.Components.VolumesValvesFittings.Valves.Fundamentals.Quadratic_EN60534_incompressible (
@@ -72,15 +72,15 @@ model ThermalHeatConsumer "Thermal Heat Consumer based on a room with capacity a
   // _____________________________________________
 
   ClaRa.Basics.Interfaces.EyeOut eye
-    annotation (Placement(transformation(extent={{90,-90},{110,-70}})));
+    annotation (Placement(transformation(extent={{96,68},{116,88}}), iconTransformation(extent={{96,68},{116,88}})));
 
   // _____________________________________________
   //
   //           Instances of other Classes
   // _____________________________________________
 
-  Modelica.Thermal.HeatTransfer.Components.HeatCapacitor heatCapacitor(
-      T(start=T_start), C=C)
+  Modelica.Thermal.HeatTransfer.Components.HeatCapacitor heatCapacitor(C=C,
+      T(start=T_start))
     annotation (Placement(transformation(extent={{-44,-36},{-24,-56}})));
   Modelica.Thermal.HeatTransfer.Components.ThermalConductor heatLossConductance(G=G)
     annotation (Placement(transformation(extent={{-22,-40},{-2,-20}},
@@ -89,20 +89,10 @@ model ThermalHeatConsumer "Thermal Heat Consumer based on a room with capacity a
     prescribedTemperature
     annotation (Placement(transformation(extent={{28,-40},{8,-20}})));
   TransiEnt.Basics.Tables.Ambient.Temperature_Hamburg_900s_2012 tamb(datasource=TransiEnt.Basics.Tables.DataPrivacy.isPublic, relativepath="ambient/Temperature_Hamburg-Fuhlsbuettel_3600s_01012012_31122012.txt") annotation (Placement(transformation(extent={{-17,-67},{3,-47}})));
-  Modelica.Thermal.HeatTransfer.Celsius.TemperatureSensor T_Room "Temperature to be controlled"
-                                   annotation (Placement(transformation(
+  Modelica.Thermal.HeatTransfer.Celsius.TemperatureSensor T_Electrolyzer "Temperature to be controlled" annotation (Placement(transformation(
         origin={-54,-38},
         extent={{10,-10},{-10,10}},
         rotation=90)));
-  ClaRa.Components.VolumesValvesFittings.Valves.GenericValveVLE_L1 Valve(
-    opening_const_=0.5,
-    openingInputIsActive=true,
-    opening_leak_=0.005,
-    redeclare model PressureLoss = PressureLoss)
-                         annotation (Placement(transformation(
-        extent={{-15,-14},{15,14}},
-        rotation=0,
-        origin={61,0})));
   Modelica.Blocks.Sources.Constant T_ConsumerTarget(k=T_set) annotation (Placement(transformation(extent={{-30,42},{-10,62}})));
   TransiEnt.Basics.Blocks.LimPID CTRL_T_room(
     controllerType=Modelica.Blocks.Types.SimpleController.PI,
@@ -124,7 +114,7 @@ model ThermalHeatConsumer "Thermal Heat Consumer based on a room with capacity a
     p_nom=dp_HX_nom,
     h_nom=h_nom,
     redeclare model HeatTransfer =
-        ClaRa.Basics.ControlVolumes.Fundamentals.HeatTransport.Generic_HT.Constant_L2 (                      alpha_nom=kc_nom),
+        ClaRa.Basics.ControlVolumes.Fundamentals.HeatTransport.Generic_HT.IdealHeatTransfer_L2,
     length=L,
     diameter_t=d_t,
     N_tubes=Nt,
@@ -142,10 +132,12 @@ model ThermalHeatConsumer "Thermal Heat Consumer based on a room with capacity a
   Modelica.Units.SI.Pressure dp=fluidPortOut.p - fluidPortIn.p;
   Modelica.Units.SI.Temperature deltaT_water(displayUnit="K") = HX_Consumer.summary.inlet.T - HX_Consumer.summary.outlet.T;
   Modelica.Units.SI.ThermalConductance G_eff_water=Q_flow_cons/deltaT_water;
-  Modelica.Units.SI.Temperature deltaT_room(displayUnit="K") = T_Room.T - tamb.y1;
+  Modelica.Units.SI.Temperature deltaT_room(displayUnit="K") = T_Electrolyzer.T - tamb.y1;
   Modelica.Units.SI.ThermalConductance G_eff_room=Q_flow_cons/deltaT_room;
 
   parameter Real y_inactive=1 "Reference value for actuated variable (used before controller is activated)";
+  ClaRa.Components.TurboMachines.Pumps.PumpVLE_L1_simple pumpVLE_L1_simple(eta_mech=0.63, m_flow_start=0.01)
+                                                                           annotation (Placement(transformation(extent={{54,-10},{74,10}})));
 equation
   // _____________________________________________
   //
@@ -161,37 +153,20 @@ equation
       points={{-2,-30},{8,-30}},
       color={191,0,0},
       smooth=Smooth.None));
-  connect(heatCapacitor.port,T_Room. port) annotation (Line(
+  connect(heatCapacitor.port, T_Electrolyzer.port) annotation (Line(
       points={{-34,-36},{-34,-28},{-54,-28}},
       color={191,0,0},
       smooth=Smooth.None));
-  connect(CTRL_T_room.y, Valve.opening_in) annotation (Line(
-      points={{51,52},{62,52},{62,21},{61,21}},
-      color={0,0,127},
-      smooth=Smooth.None));
-  connect(T_Room.T, CTRL_T_room.u_m) annotation (Line(
+  connect(T_Electrolyzer.T, CTRL_T_room.u_m) annotation (Line(
       points={{-54,-48},{-54,-80},{40.1,-80},{40.1,40}},
       color={0,0,127},
       smooth=Smooth.None));
-  connect(HX_Consumer.heat, T_Room.port) annotation (Line(
+  connect(HX_Consumer.heat, T_Electrolyzer.port) annotation (Line(
       points={{-54.5,-17},{-54,-17},{-54,-28}},
       color={167,25,48},
       thickness=0.5,
       smooth=Smooth.None));
 
-  connect(HX_Consumer.outlet, Valve.inlet) annotation (Line(
-      points={{-38,-0.5},{-8,-0.5},{-8,0},{46,0}},
-      color={0,131,169},
-      thickness=0.5,
-      smooth=Smooth.None));
-
-  connect(Valve.eye, eye) annotation (Line(
-      points={{76,-9.33333},{80,-9.33333},{80,-80},{100,-80}},
-      color={190,190,190},
-      smooth=Smooth.None), Text(
-      string="%second",
-      index=1,
-      extent={{6,3},{6,3}}));
   connect(tamb.y1, prescribedTemperature.T) annotation (Line(points={{4,-57},{14,-57},{14,-58},{38,-58},{38,-30},{30,-30}}, color={0,0,127}));
   connect(T_ConsumerTarget.y, to_DegC.Kelvin) annotation (Line(points={{-9,52},{-5.5,52},{-2,52}}, color={0,0,127}));
   connect(to_DegC.Celsius, CTRL_T_room.u_s) annotation (Line(points={{21,52},{28,52},{28,52}}, color={0,0,127}));
@@ -199,10 +174,18 @@ equation
       points={{-98,20},{-80,20},{-80,2},{-80,-0.5},{-71,-0.5}},
       color={175,0,0},
       thickness=0.5));
-  connect(fluidPortOut, Valve.outlet) annotation (Line(
-      points={{-98,-20},{-98,-90},{66,-90},{66,-54},{92,-54},{92,0},{76,0}},
-      color={175,0,0},
+  connect(CTRL_T_room.y, pumpVLE_L1_simple.P_drive) annotation (Line(points={{51,52},{64,52},{64,12}}, color={0,0,127}));
+  connect(HX_Consumer.outlet, pumpVLE_L1_simple.inlet) annotation (Line(
+      points={{-38,-0.5},{52,-0.5},{52,0},{54,0}},
+      color={0,131,169},
+      pattern=LinePattern.Solid,
       thickness=0.5));
+  connect(pumpVLE_L1_simple.outlet, fluidPortOut) annotation (Line(
+      points={{74,0},{82,0},{82,-84},{-98,-84},{-98,-20}},
+      color={0,131,169},
+      pattern=LinePattern.Solid,
+      thickness=0.5));
+  connect(pumpVLE_L1_simple.eye, eye) annotation (Line(points={{75,-6},{86,-6},{86,78},{106,78}},   color={190,190,190}));
   annotation (Documentation(info="<html>
 <h4><span style=\"color: #008000\">1. Purpose of model</span></h4>
 <p>Model of a thermal heat consumer supplied by hot water that controls the water mass flow in order to hold the consumer temperature steady.</p>
@@ -289,6 +272,5 @@ equation
           points={{-32,0},{-20,0},{-16,10},{-12,-10},{-8,0},{34,0}},
           color={0,0,0},
           smooth=Smooth.None)}),
-    Diagram(graphics,
-            coordinateSystem(preserveAspectRatio=false, extent={{-100,-100},{100,100}})));
-end ThermalHeatConsumer;
+    Diagram(coordinateSystem(preserveAspectRatio=false, extent={{-100,-100},{100,100}})));
+end ThermalPumpedHeatConsumer;
