@@ -12,7 +12,7 @@ model innerCooling_Modelica
 
   parameter Integer n_cells=Specification.n_cells "Number of electrolysis cells in series";
 
-  replaceable H2Microgrid_TransiEnt.ElectrolyzerBoPSystem.Electrolyzer.Specifications.AREVAGiner46kW Specification constrainedby H2Microgrid_TransiEnt.ElectrolyzerBoPSystem.Electrolyzer.Specifications.Base5kWElectrolyzerL2Specification;
+  replaceable H2Microgrid_TransiEnt.ElectrolyzerBoPSystem.Electrolyzer.Specifications.GinerELX5kW Specification constrainedby H2Microgrid_TransiEnt.ElectrolyzerBoPSystem.Electrolyzer.Specifications.Base5kWElectrolyzerL2Specification;
 
   output Modelica.Units.SI.TemperatureDifference dTCooler=innerPipe.T_q-outerPipe.T_q
     "Cooler's temperature increase between inner and outer pipes";
@@ -48,8 +48,6 @@ model innerCooling_Modelica
     annotation (Placement(transformation(extent={{-34,72},{-14,92}})));
   Modelica.Blocks.Sources.Constant outerGc(k=100)
     annotation (Placement(transformation(extent={{-14,22},{6,42}})));
-  Modelica.Blocks.Sources.Constant innerGc(k=100)
-    annotation (Placement(transformation(extent={{-14,12},{6,-8}})));
   Modelica.Thermal.FluidHeatFlow.Components.Pipe
                                 outerPipe(
     medium=outerMedium,
@@ -77,11 +75,6 @@ model innerCooling_Modelica
     T0fixed=true,
     useHeatPort=true)
     annotation (Placement(transformation(extent={{26,-36},{46,-56}})));
-  Modelica.Thermal.HeatTransfer.Components.Convection innerConvection
-    annotation (Placement(transformation(
-        origin={36,2},
-        extent={{-10,10},{10,-10}},
-        rotation=270)));
   Modelica.Thermal.HeatTransfer.Components.Convection outerConvection
     annotation (Placement(transformation(
         origin={36,32},
@@ -122,15 +115,15 @@ model innerCooling_Modelica
                                   annotation (Placement(transformation(
         extent={{-10,-10},{10,10}},
         rotation=-90,
-        origin={-46,-30})));
+        origin={-174,-12})));
   Modelica.Thermal.HeatTransfer.Sensors.HeatFlowSensor heatFlowSensor annotation (Placement(transformation(
         extent={{-6,-6},{6,6}},
         rotation=-90,
-        origin={36,-22})));
+        origin={36,2})));
   Modelica.Thermal.HeatTransfer.Sensors.TemperatureSensor temperatureSensor annotation (Placement(transformation(
         extent={{-6,-6},{6,6}},
         rotation=180,
-        origin={10,-36})));
+        origin={12,-12})));
   inner SimCenter simCenter annotation (Placement(transformation(extent={{-84,2},{-64,22}})));
 equation
   connect(ambient1.flowPort,outerPump. flowPort_a)
@@ -144,10 +137,6 @@ equation
     annotation (Line(points={{46,62},{66,62}}, color={255,0,0}));
   connect(outerPipe.heatPort,outerConvection. fluid)
     annotation (Line(points={{36,52},{36,42}},         color={191,0,0}));
-  connect(outerConvection.solid,innerConvection. solid)
-    annotation (Line(points={{36,22},{36,12}},         color={191,0,0}));
-  connect(innerGc.y,innerConvection. Gc)
-    annotation (Line(points={{7,2},{26,2}},                        color={0,0,127}));
   connect(outerGc.y,outerConvection. Gc)
     annotation (Line(points={{7,32},{26,32}},  color={0,0,127}));
   connect(outerVolumeFlow.y,outerPump. volumeFlow) annotation (Line(
@@ -159,11 +148,10 @@ equation
     annotation (Line(points={{-38,-68},{-24,-68}}));
   connect(idealPump.flowPort_b, innerPipe.flowPort_a) annotation (Line(points={{-14,-58},{-14,-46},{26,-46}},color={255,0,0}));
   connect(absolutePressure.flowPort, flowPort_out) annotation (Line(points={{66,-58},{62,-58},{62,-84},{66,-84},{66,-98}}, color={255,0,0}));
-  connect(temperatureSensor.T, indirect_HEX_const_T_out_L1_1.T_in) annotation (Line(points={{3.4,-36},{-24,-36},{-24,-36.8},{-38,-36.8}}, color={0,0,127}));
-  connect(innerPipe.heatPort, heatFlowSensor.port_b) annotation (Line(points={{36,-36},{36,-28}}, color={191,0,0}));
-  connect(heatFlowSensor.port_a, innerConvection.fluid) annotation (Line(points={{36,-16},{36,-8}}, color={191,0,0}));
-  connect(heatFlowSensor.Q_flow, indirect_HEX_const_T_out_L1_1.Q_demand) annotation (Line(points={{29.4,-22},{-38,-22},{-38,-22.8}}, color={0,0,127}));
-  connect(temperatureSensor.port, innerPipe.heatPort) annotation (Line(points={{16,-36},{36,-36}}, color={191,0,0}));
+  connect(innerPipe.heatPort, heatFlowSensor.port_b) annotation (Line(points={{36,-36},{36,-4}},  color={191,0,0}));
+  connect(temperatureSensor.port, innerPipe.heatPort) annotation (Line(points={{18,-12},{36,-12},{36,-36}},
+                                                                                                   color={191,0,0}));
   connect(flowPort_in, idealPump.flowPort_a) annotation (Line(points={{-14,-100},{-14,-78}}, color={255,0,0}));
+  connect(heatFlowSensor.port_a, outerConvection.solid) annotation (Line(points={{36,8},{36,22}}, color={191,0,0}));
   annotation (Icon(coordinateSystem(preserveAspectRatio=false)), Diagram(coordinateSystem(preserveAspectRatio=false)));
 end innerCooling_Modelica;

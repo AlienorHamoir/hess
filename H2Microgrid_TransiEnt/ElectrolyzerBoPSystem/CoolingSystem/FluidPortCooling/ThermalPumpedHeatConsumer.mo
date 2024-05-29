@@ -81,19 +81,14 @@ model ThermalPumpedHeatConsumer "Thermal Heat Consumer based on a room with capa
 
   Modelica.Thermal.HeatTransfer.Components.HeatCapacitor heatCapacitor(C=C,
       T(start=T_start))
-    annotation (Placement(transformation(extent={{-44,-36},{-24,-56}})));
+    annotation (Placement(transformation(extent={{16,-4},{36,-24}})));
   Modelica.Thermal.HeatTransfer.Components.ThermalConductor heatLossConductance(G=G)
-    annotation (Placement(transformation(extent={{-22,-40},{-2,-20}},
-                                                                   rotation=0)));
-  Modelica.Thermal.HeatTransfer.Celsius.PrescribedTemperature
-    prescribedTemperature
-    annotation (Placement(transformation(extent={{28,-40},{8,-20}})));
-  TransiEnt.Basics.Tables.Ambient.Temperature_Hamburg_900s_2012 tamb(datasource=TransiEnt.Basics.Tables.DataPrivacy.isPublic, relativepath="ambient/Temperature_Hamburg-Fuhlsbuettel_3600s_01012012_31122012.txt") annotation (Placement(transformation(extent={{-17,-67},{3,-47}})));
+    annotation (Placement(transformation(extent={{46,-10},{66,10}},rotation=0)));
   Modelica.Thermal.HeatTransfer.Celsius.TemperatureSensor T_Electrolyzer "Temperature to be controlled" annotation (Placement(transformation(
-        origin={-54,-38},
+        origin={10,-66},
         extent={{10,-10},{-10,10}},
         rotation=90)));
-  Modelica.Blocks.Sources.Constant T_ConsumerTarget(k=T_set) annotation (Placement(transformation(extent={{-30,42},{-10,62}})));
+  Modelica.Blocks.Sources.Constant T_ConsumerTarget(k=T_set) annotation (Placement(transformation(extent={{-34,68},{-14,88}})));
   TransiEnt.Basics.Blocks.LimPID CTRL_T_room(
     controllerType=Modelica.Blocks.Types.SimpleController.PI,
     Ni=0.9,
@@ -104,9 +99,9 @@ model ThermalPumpedHeatConsumer "Thermal Heat Consumer based on a room with capa
     y_max=yMax,
     y_min=yMin,
     y_inactive=y_inactive,
-    initOption=if ((Modelica.Blocks.Types.Init.InitialOutput) == Modelica.Blocks.Types.Init.SteadyState) then 798 elseif ((Modelica.Blocks.Types.Init.InitialOutput) == Modelica.Blocks.Types.Init.InitialOutput) then 796 elseif ((Modelica.Blocks.Types.Init.InitialOutput) == Modelica.Blocks.Types.Init.InitialState) then 797 elseif ((Modelica.Blocks.Types.Init.InitialOutput) == Modelica.Blocks.Types.Init.InitialState) then 795 else 501) annotation (Placement(transformation(extent={{30,42},{50,62}})));
+    initOption=if ((Modelica.Blocks.Types.Init.InitialOutput) == Modelica.Blocks.Types.Init.SteadyState) then 798 elseif ((Modelica.Blocks.Types.Init.InitialOutput) == Modelica.Blocks.Types.Init.InitialOutput) then 796 elseif ((Modelica.Blocks.Types.Init.InitialOutput) == Modelica.Blocks.Types.Init.InitialState) then 797 elseif ((Modelica.Blocks.Types.Init.InitialOutput) == Modelica.Blocks.Types.Init.InitialState) then 795 else 501) annotation (Placement(transformation(extent={{30,68},{50,88}})));
 
-  Modelica.Thermal.HeatTransfer.Celsius.FromKelvin                        to_DegC                                                                            annotation (Placement(transformation(extent={{0,42},{20,62}})));
+  Modelica.Thermal.HeatTransfer.Celsius.FromKelvin                        to_DegC                                                                            annotation (Placement(transformation(extent={{-4,68},{16,88}})));
 
   ClaRa.Components.HeatExchangers.IdealShell_L2 HX_Consumer(
     m_flow_nom=simCenter.m_flow_nom,
@@ -120,8 +115,8 @@ model ThermalPumpedHeatConsumer "Thermal Heat Consumer based on a room with capa
     N_tubes=Nt,
     p_start=500000) annotation (Placement(transformation(
         extent={{-16.5,16.5},{16.5,-16.5}},
-        rotation=0,
-        origin={-54.5,-0.5})));
+        rotation=180,
+        origin={-36.5,-20.5})));
 
   // _____________________________________________
   //
@@ -137,7 +132,7 @@ model ThermalPumpedHeatConsumer "Thermal Heat Consumer based on a room with capa
 
   parameter Real y_inactive=1 "Reference value for actuated variable (used before controller is activated)";
   ClaRa.Components.TurboMachines.Pumps.PumpVLE_L1_simple pumpVLE_L1_simple(eta_mech=0.63, m_flow_start=0.01)
-                                                                           annotation (Placement(transformation(extent={{54,-10},{74,10}})));
+                                                                           annotation (Placement(transformation(extent={{-46,10},{-26,30}})));
 equation
   // _____________________________________________
   //
@@ -145,47 +140,42 @@ equation
   // _____________________________________________
 
   connect(heatLossConductance.port_a,heatCapacitor. port) annotation (Line(
-      points={{-22,-30},{-34,-30},{-34,-36}},
-      color={191,0,0},
-      smooth=Smooth.None));
-  connect(heatLossConductance.port_b,prescribedTemperature. port) annotation (
-      Line(
-      points={{-2,-30},{8,-30}},
+      points={{46,0},{26,0},{26,-4}},
       color={191,0,0},
       smooth=Smooth.None));
   connect(heatCapacitor.port, T_Electrolyzer.port) annotation (Line(
-      points={{-34,-36},{-34,-28},{-54,-28}},
+      points={{26,-4},{26,0},{10,0},{10,-56}},
       color={191,0,0},
       smooth=Smooth.None));
   connect(T_Electrolyzer.T, CTRL_T_room.u_m) annotation (Line(
-      points={{-54,-48},{-54,-80},{40.1,-80},{40.1,40}},
+      points={{10,-76},{10,-80},{40.1,-80},{40.1,66}},
       color={0,0,127},
       smooth=Smooth.None));
   connect(HX_Consumer.heat, T_Electrolyzer.port) annotation (Line(
-      points={{-54.5,-17},{-54,-17},{-54,-28}},
+      points={{-36.5,-4},{-36.5,0},{10,0},{10,-56}},
       color={167,25,48},
       thickness=0.5,
       smooth=Smooth.None));
 
-  connect(tamb.y1, prescribedTemperature.T) annotation (Line(points={{4,-57},{14,-57},{14,-58},{38,-58},{38,-30},{30,-30}}, color={0,0,127}));
-  connect(T_ConsumerTarget.y, to_DegC.Kelvin) annotation (Line(points={{-9,52},{-5.5,52},{-2,52}}, color={0,0,127}));
-  connect(to_DegC.Celsius, CTRL_T_room.u_s) annotation (Line(points={{21,52},{28,52},{28,52}}, color={0,0,127}));
-  connect(fluidPortIn, HX_Consumer.inlet) annotation (Line(
-      points={{-98,20},{-80,20},{-80,2},{-80,-0.5},{-71,-0.5}},
+  connect(T_ConsumerTarget.y, to_DegC.Kelvin) annotation (Line(points={{-13,78},{-6,78}},          color={0,0,127}));
+  connect(to_DegC.Celsius, CTRL_T_room.u_s) annotation (Line(points={{17,78},{28,78}},         color={0,0,127}));
+  connect(CTRL_T_room.y, pumpVLE_L1_simple.P_drive) annotation (Line(points={{51,78},{56,78},{56,42},{-36,42},{-36,32}},
+                                                                                                       color={0,0,127}));
+  connect(pumpVLE_L1_simple.eye, eye) annotation (Line(points={{-25,14},{106,14},{106,78}},         color={190,190,190}));
+  connect(fluidPortIn, pumpVLE_L1_simple.inlet) annotation (Line(
+      points={{-98,20},{-46,20}},
       color={175,0,0},
       thickness=0.5));
-  connect(CTRL_T_room.y, pumpVLE_L1_simple.P_drive) annotation (Line(points={{51,52},{64,52},{64,12}}, color={0,0,127}));
-  connect(HX_Consumer.outlet, pumpVLE_L1_simple.inlet) annotation (Line(
-      points={{-38,-0.5},{52,-0.5},{52,0},{54,0}},
+  connect(pumpVLE_L1_simple.outlet, HX_Consumer.inlet) annotation (Line(
+      points={{-26,20},{-14,20},{-14,-20.5},{-20,-20.5}},
       color={0,131,169},
       pattern=LinePattern.Solid,
       thickness=0.5));
-  connect(pumpVLE_L1_simple.outlet, fluidPortOut) annotation (Line(
-      points={{74,0},{82,0},{82,-84},{-98,-84},{-98,-20}},
+  connect(HX_Consumer.outlet, fluidPortOut) annotation (Line(
+      points={{-53,-20.5},{-54,-20},{-98,-20}},
       color={0,131,169},
       pattern=LinePattern.Solid,
       thickness=0.5));
-  connect(pumpVLE_L1_simple.eye, eye) annotation (Line(points={{75,-6},{86,-6},{86,78},{106,78}},   color={190,190,190}));
   annotation (Documentation(info="<html>
 <h4><span style=\"color: #008000\">1. Purpose of model</span></h4>
 <p>Model of a thermal heat consumer supplied by hot water that controls the water mass flow in order to hold the consumer temperature steady.</p>

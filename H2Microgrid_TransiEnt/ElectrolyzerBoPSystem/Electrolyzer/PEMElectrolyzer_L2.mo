@@ -219,8 +219,7 @@ public
 //     Dialog(tab="General", group="Specification"),
 //     choices(choicesAllMatching=true);
 
-  replaceable H2Microgrid_TransiEnt.ElectrolyzerBoPSystem.Electrolyzer.Specifications.AREVAGiner46kW Specification constrainedby H2Microgrid_TransiEnt.ElectrolyzerBoPSystem.Electrolyzer.Specifications.Base5kWElectrolyzerL2Specification
-                                                                                                                                                                                                        "Record containing technical data of electrolyzer system" annotation (
+  replaceable H2Microgrid_TransiEnt.ElectrolyzerBoPSystem.Electrolyzer.Specifications.GinerELX5kW Specification constrainedby H2Microgrid_TransiEnt.ElectrolyzerBoPSystem.Electrolyzer.Specifications.Base5kWElectrolyzerL2Specification "Record containing technical data of electrolyzer system" annotation (
     Placement(transformation(extent={{-58,-98},{-38,-78}})),
     Dialog(tab="General", group="Specification"),
     choices(choicesAllMatching=true));

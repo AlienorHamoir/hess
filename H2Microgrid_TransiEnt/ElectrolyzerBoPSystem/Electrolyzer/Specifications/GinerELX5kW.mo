@@ -1,5 +1,5 @@
 within H2Microgrid_TransiEnt.ElectrolyzerBoPSystem.Electrolyzer.Specifications;
-record AREVAGiner46kW "Areva Energy Storage Giner Electrolyzer system specific parameters"
+record GinerELX5kW "Areva Energy Storage Giner Electrolyzer system specific parameters"
 
 //________________________________________________________________________________//
 // Component of the TransiEnt Library, version: 2.0.3                             //
@@ -73,4 +73,4 @@ record AREVAGiner46kW "Areva Energy Storage Giner Electrolyzer system specific p
 <h4><span style=\"color: #008000\">10. Version History</span></h4>
 <p>Created by John Webster (jcwebste@edu.uwaterloo.ca) October 2018.</p>
 </html>"));
-end AREVAGiner46kW;
+end GinerELX5kW;

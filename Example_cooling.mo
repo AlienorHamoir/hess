@@ -15,7 +15,8 @@ model Example_cooling
     annotation (Placement(transformation(extent={{-50,-60},{-30,-40}})));
   Buildings.Fluid.Sources.Boundary_pT airtowater(
     redeclare package Medium = Buildings.Media.Water,
-    use_T_in=true,
+    use_T_in=false,
+    T=292.15,
     nPorts=1) annotation (Placement(transformation(extent={{-20,40},{0,60}})));
   Buildings.Fluid.FixedResistances.PressureDrop pipe(
     redeclare package Medium = Buildings.Media.Water,
@@ -44,6 +45,14 @@ model Example_cooling
   Buildings.BoundaryConditions.WeatherData.Bus
       weaBus "Weather data bus" annotation (Placement(transformation(extent={{-60,40},
             {-40,60}}),          iconTransformation(extent={{190,-10},{210,10}})));
+  Modelica.Thermal.HeatTransfer.Sources.PrescribedHeatFlow prescribedHeatFlow1(T_ref=T_std, alpha=0.0001)
+                                                                               annotation (Placement(transformation(extent={{100,-60},{110,-50}})));
+  Modelica.Blocks.Sources.RealExpression Q_flow_nonCooling(y=C_th*der(T_op) - Q_flow)
+                                                                                    annotation (Placement(transformation(extent={{78,-62},{94,-50}})));
+  Modelica.Thermal.HeatTransfer.Interfaces.HeatPort_a heatTotal annotation (Placement(transformation(extent={{104,-98},{124,-78}})));
+  Buildings.Fluid.Movers.FlowControlled_m_flow mov(redeclare package Medium = Buildings.Media.Water, redeclare H2Microgrid_TransiEnt.ElectrolyzerBoPSystem.CoolingSystem.HeatPortCooling.CoolingPumpDESL per) annotation (Placement(transformation(extent={{30,-60},{50,-40}})));
+  Buildings.Fluid.Movers.SpeedControlled_y pump1(redeclare package Medium = Buildings.Media.Water, redeclare H2Microgrid_TransiEnt.ElectrolyzerBoPSystem.CoolingSystem.HeatPortCooling.CoolingPumpDESL per)
+    annotation (Placement(transformation(extent={{12,-16},{36,8}})));
 equation
   connect(load.y, losses.Q_flow)
     annotation (Line(points={{-79,-80},{-68,-80}}, color={0,0,127}));
@@ -53,8 +62,6 @@ equation
     annotation (Line(points={{0,50},{10,50}}, color={0,127,255}));
   connect(pipe.port_b, pump.port_a)
     annotation (Line(points={{30,50},{40,50}}, color={0,127,255}));
-  connect(heatexchanger.heatPort, losses.port) annotation (Line(points={{60,10},
-          {-20,10},{-20,-80},{-48,-80}}, color={191,0,0}));
   connect(fuelcellTemperature.port, fuelcell.port)
     annotation (Line(points={{-80,-30},{-80,-60},{-40,-60}}, color={191,0,0}));
   connect(controller.y, pump.y)
@@ -81,6 +88,10 @@ equation
       horizontalAlignment=TextAlignment.Right));
   connect(sink.ports[1], heatexchanger.ports[2])
     annotation (Line(points={{80,50},{71,50},{71,20}}, color={0,127,255}));
+  connect(fuelcell.port, heatexchanger.heatPort) annotation (Line(points={{-40,-60},{-40,-80},{54,-80},{54,10},{60,10}}, color={191,0,0}));
+  connect(Q_flow_nonCooling.y,prescribedHeatFlow1. Q_flow) annotation (Line(points={{94.8,-56},{94.8,-55},{100,-55}},
+                                                                                                                   color={0,0,127}));
+  connect(prescribedHeatFlow1.port, heatTotal) annotation (Line(points={{110,-55},{110,-56},{114,-56},{114,-88}}, color={191,0,0}));
   annotation (
     uses(Buildings(version="11.0.0"), Modelica(version="4.0.0")),
     experiment(

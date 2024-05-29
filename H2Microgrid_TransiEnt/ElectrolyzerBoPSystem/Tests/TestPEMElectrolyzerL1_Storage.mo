@@ -30,13 +30,6 @@ public
   parameter SI.Efficiency eta_n=0.75 "Nominal efficiency of the electrolyzer";
   parameter SI.Pressure p_out=50e5 "Pressure of the produced hydrogen";
 
-  Electrolyzer.ElectrolyzerL1System_Dryer electrolyzerSystem(
-    medium=medium_gas,
-    usePowerPort=true,
-    eta_n=0.75,
-    m_flow_start=1e-4,
-    P_el_min=1e5,
-    k=1e11) annotation (Placement(transformation(extent={{-26,-30},{20,12}})));
   TransiEnt.Components.Boundaries.Electrical.ActivePower.Frequency ElectricGrid_0thOrder annotation (Placement(transformation(
         extent={{-10,-10},{10,10}},
         rotation=180,

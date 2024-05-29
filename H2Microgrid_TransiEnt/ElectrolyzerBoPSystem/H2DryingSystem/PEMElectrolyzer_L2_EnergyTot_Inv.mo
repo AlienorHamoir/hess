@@ -1,5 +1,5 @@
-within H2Microgrid_TransiEnt.ElectrolyzerBoPSystem.Electrolyzer;
-model PEMElectrolyzer_L2_EnergyTot_Inv_innerCooling "PEMElectrolyzer_L2 Proton exchange membrane electrolyzer with selectable physics submodels"
+within H2Microgrid_TransiEnt.ElectrolyzerBoPSystem.H2DryingSystem;
+model PEMElectrolyzer_L2_EnergyTot_Inv "PEMElectrolyzer_L2 Proton exchange membrane electrolyzer with selectable physics submodels"
 
 //________________________________________________________________________________//
 // Component of the TransiEnt Library, version: 2.0.3                             //
@@ -55,14 +55,6 @@ public
   parameter Modelica.Units.SI.Temperature T_op_start=T_std "initial operating temperature of PEM Electrolyzer" annotation (Dialog(group="Initialization"));
   parameter Modelica.Units.SI.Temperature T_op_n=273.15 + 50 "nominal operating temperature of PEM Electrolyzer";
 
-  //Cooling parameters
-  parameter Modelica.Thermal.FluidHeatFlow.Media.Medium innerMedium=Modelica.Thermal.FluidHeatFlow.Media.Water()
-    "Inner medium" annotation (choicesAllMatching=true);
-  output Modelica.Units.SI.TemperatureDifference dTSource= prescribedHeatFlow1.port.T-T_amb "Source over Ambient";
-  output Modelica.Units.SI.TemperatureDifference dTtoPipe=prescribedHeatFlow1.port.T-pipe1.T_q
-    "Source over inner Coolant";
-  output Modelica.Units.SI.TemperatureDifference dTinnerCoolant=pipe1.dT
-    "Inner Coolant's temperature increase";
 
   //Electrolyzer system specific parameters
 protected
@@ -360,36 +352,6 @@ public
 
   Modelica.Blocks.Math.Gain inverter(k=eta_inv_n) annotation (Placement(transformation(extent={{-30,74},{-20,84}})));
 
-  Modelica.Thermal.FluidHeatFlow.Components.Pipe
-                                pipe1(
-    medium=innerMedium,
-    m=0.1,
-    T0=T_amb,
-    V_flowLaminar=1,
-    V_flowNominal=2,
-    h_g=0,
-    T0fixed=true,
-    useHeatPort=true,
-    dpLaminar=1000,
-    dpNominal=2000)
-    annotation (Placement(transformation(extent={{10,-10},{-10,10}},
-        rotation=180,
-        origin={18,-84})));
-  Modelica.Thermal.FluidHeatFlow.Interfaces.FlowPort_b flowPort_out(medium=innerMedium)                                  annotation (Placement(transformation(extent={{22,-114},{46,-90}}), iconTransformation(extent={{22,-114},{46,-90}})));
-  Modelica.Thermal.FluidHeatFlow.Interfaces.FlowPort_a flowPort_in(medium=innerMedium)                                  annotation (Placement(transformation(extent={{-12,-114},{12,-90}}), iconTransformation(extent={{-12,-114},{12,-90}})));
-  Modelica.Blocks.Sources.RealExpression Q_flow_pipe(y=Q_flow_heatprovision) annotation (Placement(transformation(
-        extent={{-8,-5},{8,5}},
-        rotation=0,
-        origin={-2,-49})));
-  Modelica.Thermal.HeatTransfer.Sources.PrescribedHeatFlow prescribedHeatFlow1 annotation (Placement(transformation(
-        extent={{-6,-6},{6,6}},
-        rotation=270,
-        origin={18,-60})));
-  Modelica.Thermal.HeatTransfer.Sources.PrescribedHeatFlow prescribedHeatFlow2(T_ref=T_std, alpha=0.0001)
-                                                                               annotation (Placement(transformation(extent={{-40,-68},{-30,-58}})));
-  Modelica.Blocks.Sources.RealExpression Q_flow_nonCooling(y=temperature.Q_flow_convective + temperature.Q_flow_H2Oelectrolysis + temperature.P_pump_diss + temperature.H_flow_prod)
-                                                                                    annotation (Placement(transformation(extent={{-64,-70},{-48,-58}})));
-  Modelica.Thermal.HeatTransfer.Interfaces.HeatPort_a heatTotal annotation (Placement(transformation(extent={{-36,-112},{-16,-92}})));
 initial equation
   if userSetTemp == false then
     T_op = T_op_start;
@@ -406,7 +368,6 @@ equation
 
   gasPortPressure = gasPortOut.p;
   Q_flow=-(temperature.Q_flow_cooling);
-
 
   if whichInput == 1 then
     //set current
@@ -459,10 +420,6 @@ equation
     eta_NCV = eta_GCV;
   end if;
 
-if useHeatPort then
-  heat.T = T_op;
-end if;
-
   // _____________________________________________
   //
   //           Connect Statements
@@ -488,15 +445,6 @@ end if;
       pattern=LinePattern.Dash));
   connect(inverter.u, P_el_set) annotation (Line(points={{-31,79},{-34,79},{-34,80},{-38,80},{-38,120}}, color={0,0,127}));
   connect(inverter.y, getInputs.P_el_set) annotation (Line(points={{-19.5,79},{-4,79},{-4,70}}, color={0,0,127}));
-  connect(pipe1.flowPort_b, flowPort_out) annotation (Line(points={{28,-84},{34,-84},{34,-102}}, color={255,0,0}));
-  connect(pipe1.flowPort_a, flowPort_in) annotation (Line(points={{8,-84},{4,-84},{4,-102},{0,-102}}, color={255,0,0}));
-  connect(Q_flow_pipe.y, prescribedHeatFlow1.Q_flow) annotation (Line(points={{6.8,-49},{6.8,-50},{12,-50},{12,-54},{18,-54}},
-                                                                                                               color={0,0,127}));
-  connect(prescribedHeatFlow1.port, pipe1.heatPort) annotation (Line(points={{18,-66},{18,-74}}, color={191,0,0}));
-  connect(Q_flow_nonCooling.y,prescribedHeatFlow2. Q_flow) annotation (Line(points={{-47.2,-64},{-47.2,-63},{-40,-63}},
-                                                                                                                   color={0,0,127}));
-  connect(prescribedHeatFlow2.port,heatTotal)  annotation (Line(points={{-30,-63},{-30,-64},{-26,-64},{-26,-102}},
-                                                                                                              color={191,0,0}));
   annotation(defaultComponentName="electrolyzer",
   Documentation(info="<html>
 <h4><span style=\"color: #008000\">1. Purpose of model</span></h4>
@@ -531,4 +479,4 @@ end if;
 <p>Model created by John Webster (jcwebste@edu.uwaterloo.ca) in October 2018</p>
 <p>Model adjusted for TransiEnt by Jan Westphal (j.westphal@tuhh.de) in dec 2019</p>
 </html>"));
-end PEMElectrolyzer_L2_EnergyTot_Inv_innerCooling;
+end PEMElectrolyzer_L2_EnergyTot_Inv;

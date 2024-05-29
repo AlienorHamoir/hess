@@ -23,7 +23,6 @@ public
         extent={{-10,10},{10,-10}},
         rotation=180,
         origin={70,-70})));
-  Electrolyzer.ElectrolyzerL1System_Dryer electrolyzerSystem(medium=medium_gas) annotation (Placement(transformation(extent={{-30,4},{16,46}})));
   TransiEnt.Components.Boundaries.Electrical.ActivePower.Frequency ElectricGrid_0thOrder annotation (Placement(transformation(
         extent={{-10,-10},{10,10}},
         rotation=180,

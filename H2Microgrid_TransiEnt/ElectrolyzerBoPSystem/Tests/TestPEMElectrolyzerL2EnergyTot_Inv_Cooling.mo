@@ -1,5 +1,5 @@
 within H2Microgrid_TransiEnt.ElectrolyzerBoPSystem.Tests;
-model TestPEMElectrolyzerL2EnergyTot_Inv_Cooling_Simple "Test of PEM Electrolyzer L2 connection to storage"
+model TestPEMElectrolyzerL2EnergyTot_Inv_Cooling "Test of PEM Electrolyzer L2 connection to storage"
 
   extends TransiEnt.Basics.Icons.Checkmodel;
   import TransiEnt;
@@ -31,8 +31,9 @@ model TestPEMElectrolyzerL2EnergyTot_Inv_Cooling_Simple "Test of PEM Electrolyze
     includeHeatTransfer=false,
     eta_n=0.75,
     V_geo=1,
-    p_out=20e5,
-    p_start=17e5)  annotation (Placement(transformation(extent={{14,-70},{34,-50}})));
+    p_out=2000000,
+    p_start=1700000)
+                   annotation (Placement(transformation(extent={{14,-70},{34,-50}})));
   inner TransiEnt.ModelStatistics modelStatistics annotation (Placement(transformation(extent={{46,74},{66,94}})));
 
   Modelica.Blocks.Sources.Ramp MassflowRamp(
@@ -54,13 +55,14 @@ model TestPEMElectrolyzerL2EnergyTot_Inv_Cooling_Simple "Test of PEM Electrolyze
     t_overload=900,
     m_flow_start=1e-4,
     P_el_min=275,
-    k=1e2,
     p_out=2000000,
-    useHeatPort=false,
+    useHeatPort=true,
     useFluidCoolantPort=false,
     T_out_coolant_target=323.15,
     externalMassFlowControl=false,
-    electrolyzer(temperature(cooling_PID(k=10))))
+    electrolyzer(temperature(
+        k_p=0.5, tau_i=5e-7,
+        tau_d=0.1, N_d=0.6,  N_i=10,           PID_T_max(y=323.15))))
                                    annotation (Placement(transformation(extent={{-14,-14},{14,14}})));
 equation
   connect(h2StorageSystem.H2PortOut, boundary_Txim_flow.gasPort) annotation (Line(
@@ -79,8 +81,9 @@ equation
       thickness=1.5));
   annotation (Icon(coordinateSystem(preserveAspectRatio=false)), Diagram(coordinateSystem(preserveAspectRatio=false)),
     experiment(
-      StopTime=10000,
+      StartTime=2000,
+      StopTime=6000,
       Interval=1,
       Tolerance=1e-06,
       __Dymola_Algorithm="Dassl"));
-end TestPEMElectrolyzerL2EnergyTot_Inv_Cooling_Simple;
+end TestPEMElectrolyzerL2EnergyTot_Inv_Cooling;

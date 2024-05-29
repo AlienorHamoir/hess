@@ -22,9 +22,7 @@ model SystemElectrolyzerL2_Simple_EnergyTot_Inv_Cooling
   parameter Modelica.Units.SI.Temperature T_out=273.15 + 10 "Hydrogen output temperature from electrolyser" annotation (Dialog(tab="General", group="Electrolyzer"));
   parameter Real specificWaterConsumption=10 "Mass of water per mass of hydrogen" annotation (Dialog(tab="General", group="Electrolyzer"));
 
-  parameter Real k=1e8 "Gain for feed-in control" annotation (Dialog(tab="General", group="Controller"));
-  parameter Real Ti=0.1 "Ti for feed-in control" annotation (Dialog(tab="General", group="Controller"));
-  parameter Real Td=0.1 "Td for feed-in control" annotation (Dialog(tab="General", group="Controller"));
+
 
   parameter Boolean useFluidCoolantPort=false "choose if fluid port for coolant shall be used" annotation (Dialog(enable=not useHeatPort,group="Coolant"));
   parameter Boolean useHeatPort=true "choose if heat port for coolant shall be used" annotation (Dialog(enable=not useFluidCoolantPort,group="Coolant"));
@@ -49,9 +47,9 @@ end ElectrolyzerRecord;
         rotation=0,
         origin={106,-16})));
   TransiEnt.Basics.Interfaces.General.TemperatureIn T_set_coolant_out if useVariableCoolantOutputTemperature annotation (Placement(transformation(extent={{112,58},{88,82}}), iconTransformation(extent={{112,58},{88,82}})));
-  TransiEnt.Basics.Interfaces.General.TemperatureOut temperatureOutElectrolyzer annotation (Placement(transformation(extent={{94,26},{118,50}}), iconTransformation(extent={{94,26},{118,50}})));
   PEMElectrolyzer_L2_EnergyTot_Inv electrolyzer(
     useFluidCoolantPort=false,
+    useHeatPort=true,
     externalMassFlowControl=false,
     useVariableCoolantOutputTemperature=false,
     T_out_coolant_target=T_out_coolant_target,
@@ -63,6 +61,7 @@ end ElectrolyzerRecord;
     T_out=T_out,
     medium=medium,
     redeclare model electrolyzerTemperature = H2Microgrid_TransiEnt.ElectrolyzerBoPSystem.Electrolyzer.Temperature_modPID) annotation (Placement(transformation(extent={{-66,-18},{-26,18}})));
+  CoolingSystem.HeatPortCooling.Cooling_PIDpump cooling_PIDpump annotation (Placement(transformation(extent={{24,-24},{64,0}})));
 protected
   TransiEnt.Components.Sensors.RealGas.MassFlowSensor massflowSensor_ely(medium=medium, xiNumber=0)         annotation (Placement(transformation(
         extent={{7,6},{-7,-6}},
@@ -81,12 +80,14 @@ equation
       points={{-100,0},{-66,0}},
       color={0,135,135},
       thickness=0.5));
-  connect(electrolyzer.P_el_set, P_el_set) annotation (Line(points={{-53.6,21.6},{-53.6,82},{0,82},{0,108}}, color={0,0,127}));
   connect(electrolyzer.gasPortOut, massflowSensor_ely.gasPortIn) annotation (Line(
       points={{-26,0},{-13,0}},
       color={255,255,0},
       thickness=1.5));
-  connect(electrolyzer.temperatureOut, temperatureOutElectrolyzer) annotation (Line(points={{-57.2,-5.76},{-64,-5.76},{-64,-6},{-20,-6},{-20,38},{106,38}}, color={0,0,127}));
+  connect(electrolyzer.temperatureOut, cooling_PIDpump.T_op) annotation (Line(points={{-57.2,-5.76},{-70,-5.76},{-70,-22},{6,-22},{6,-4.08},{22.8,-4.08}}, color={0,0,127}));
+  connect(electrolyzer.P_el_set, P_el_set) annotation (Line(points={{-53.6,21.6},{-53.6,82},{0,82},{0,108}}, color={0,0,127}));
+  connect(cooling_PIDpump.P_coolingPump, electrolyzer.coolingPumpPowerIn) annotation (Line(points={{64.8,-7.92},{72,-7.92},{72,18},{-18,18},{-18,5.4},{-22,5.4}}, color={0,0,127}));
+  connect(electrolyzer.heat, cooling_PIDpump.heatPortCooling) annotation (Line(points={{-26,-11.88},{14,-11.88},{14,-28},{24,-28},{24,-23.04}}, color={191,0,0}));
   annotation (Icon(coordinateSystem(preserveAspectRatio=false), graphics={Rectangle(
           extent={{-100,100},{100,-100}},
           lineColor={0,0,0},
