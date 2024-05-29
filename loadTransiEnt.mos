@@ -1,0 +1,34 @@
+﻿// define local paths (absolute paths with front slashes)
+repopath="C:\Program Files\Dymola 2024x\Modelica";
+resultpath="C:\Users\alienor\Documents\Dymola\simulationsresults";
+
+
+// Some recommended options
+Advanced.ManhattanizeConnection = true;
+Advanced.MaxLineLength=1000;
+OutputCPUtime = true;
+Advanced.DefaultStoreAsOneFile=false;
+Advanced.SmartConnect=false;
+
+// Define units
+RunScript("$DYMOLA/insert/displayunit.mos", true);
+RunScript(repopath + "/TransiEnt  2.0.3/Scripts/loadTransiEntUnits.mos", true);
+
+// ==== Load frequently used libraries:
+//
+openModel(repopath + "/TILMedia 1.8.1 ClaRa/package.mo");
+openModel(repopath + "/ClaRa 1.8.1/package.mo");
+openModel(repopath + "/TransiEnt 2.0.3/package.mo");
+
+// ==== Set environtment variables:
+//
+Modelica.Utilities.System.setEnvironmentVariable("workingdir", resultpath);
+Modelica.Utilities.System.setEnvironmentVariable("startupscript", repopath + "/loadTransiEnt.mos");
+Modelica.Utilities.System.setEnvironmentVariable("public-data", repopath + "/TransiEnt 2.0.3/Tables/");
+Modelica.Utilities.System.setEnvironmentVariable("private-data", repopath + "/TransiEnt 2.0.3/Tables/");
+Modelica.Utilities.System.setEnvironmentVariable("superstructure-tables", repopath+"/TransiEnt 2.0.3/Tables/superstructure/Tables/");
+Modelica.Utilities.System.setEnvironmentVariable("superstructure-input", repopath+"/TransiEnt 2.0.3/Tables/superstructure/RegionInformation/")
+
+// ==== Change working directory:
+//
+cd(resultpath)
