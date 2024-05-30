@@ -1,8 +1,8 @@
 PEMElectrolyzer_L1
 PEMElectrolyzer_L2
 PEMElectrolyzer_L2_EnergyTot
-PEMElectrolyzer_L2_EnergyTot_Inv
 PEMElectrolyzer_L2_EnergyTot_Inv_innerCooling
+PEMElectrolyzer_L2_EnergyTot_Inv
 ElectrolyzerL2System
 SystemElectrolyzerL2_Simple
 SystemElectrolyzerL2_Simple_EnergyTot

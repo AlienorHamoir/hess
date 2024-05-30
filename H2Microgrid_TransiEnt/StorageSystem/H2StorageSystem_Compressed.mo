@@ -59,8 +59,8 @@ public
     max=1)=0.75 "Nominal efficency refering to the GCV (min = 0, max = 1)" annotation (Dialog(tab="General", group="Electrolyzer"));
   parameter TransiEnt.Basics.Units.MonetaryUnitPerEnergy Cspec_demAndRev_el_other=1;
 
-  TransiEnt.Basics.Interfaces.Gas.RealGasPortIn H2PortIn(Medium=medium) "inlet flow" annotation (Placement(transformation(extent={{-110,-36},{-90,-16}})));
-  TransiEnt.Basics.Interfaces.Gas.RealGasPortOut H2PortOut(Medium=medium) "outlet flow" annotation (Placement(transformation(extent={{94,-36},{114,-16}})));
+  TransiEnt.Basics.Interfaces.Gas.RealGasPortIn H2PortIn(Medium=medium) "inlet flow" annotation (Placement(transformation(extent={{-12,-114},{14,-88}}), iconTransformation(extent={{-12,-114},{14,-88}})));
+  TransiEnt.Basics.Interfaces.Gas.RealGasPortOut H2PortOut(Medium=medium) "outlet flow" annotation (Placement(transformation(extent={{-14,84},{14,112}}), iconTransformation(extent={{-14,84},{14,112}})));
   TransiEnt.Basics.Interfaces.General.PressureOut pressureTank annotation (Placement(transformation(extent={{96,50},{116,70}})));
   StorageSystem.TankSOC tankSOC annotation (Placement(transformation(extent={{42,76},{62,96}})));
   Modelica.Blocks.Interfaces.RealOutput socTank annotation (Placement(transformation(extent={{96,76},{116,96}})));
@@ -129,11 +129,11 @@ equation
       color={255,255,0},
       thickness=1.5));
   connect(massFlowSensorToFC.gasPortOut, H2PortOut) annotation (Line(
-      points={{78,-26},{78,-28},{88,-28},{88,-26},{104,-26}},
+      points={{78,-26},{78,-28},{88,-28},{88,98},{0,98}},
       color={255,255,0},
       thickness=1.5));
   connect(H2PortIn, compressorRealGasIsothermal_L1_simple.gasPortIn) annotation (Line(
-      points={{-100,-26},{-74,-26}},
+      points={{1,-101},{-44,-101},{-44,-102},{-88,-102},{-88,-26},{-74,-26}},
       color={255,255,0},
       thickness=1.5));
   connect(compressorRealGasIsothermal_L1_simple.gasPortOut, massFlowSensorFromElectrolyzer.gasPortIn) annotation (Line(
@@ -154,15 +154,15 @@ equation
           fillColor={255,255,255},
           fillPattern=FillPattern.Solid),
         Ellipse(
-          extent={{-60,-66},{60,-86}},
+          extent={{-60,-62},{60,-82}},
           lineColor={28,108,200},
           fillColor={28,108,200},
           fillPattern=FillPattern.Solid),
-        Line(points={{-60,64},{-60,-76}}, color={28,108,200}),
+        Line(points={{-60,68},{-60,-72}}, color={28,108,200}),
         Ellipse(
-          extent={{-60,74},{60,54}},
+          extent={{-60,78},{60,58}},
           lineColor={28,108,200},
           fillColor={28,108,200},
           fillPattern=FillPattern.Solid),
-        Line(points={{60,64},{60,-76}}, color={28,108,200})}), Diagram(coordinateSystem(preserveAspectRatio=false)));
+        Line(points={{60,68},{60,-72}}, color={28,108,200})}), Diagram(coordinateSystem(preserveAspectRatio=false)));
 end H2StorageSystem_Compressed;

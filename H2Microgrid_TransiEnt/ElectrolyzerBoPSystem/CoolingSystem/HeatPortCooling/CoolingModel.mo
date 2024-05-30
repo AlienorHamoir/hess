@@ -1,5 +1,5 @@
 within H2Microgrid_TransiEnt.ElectrolyzerBoPSystem.CoolingSystem.HeatPortCooling;
-model Cooling_PIDpump
+model CoolingModel
 
   Buildings.Fluid.Movers.SpeedControlled_y pump(redeclare package Medium = Buildings.Media.Water, redeclare H2Microgrid_TransiEnt.ElectrolyzerBoPSystem.CoolingSystem.HeatPortCooling.CoolingPumpDESL per)
     annotation (Placement(transformation(extent={{10,-12},{34,12}})));
@@ -71,4 +71,4 @@ HeatPort")}),
       StopTime=13470000,
       Interval=1,
       __Dymola_Algorithm="Dassl"));
-end Cooling_PIDpump;
+end CoolingModel;

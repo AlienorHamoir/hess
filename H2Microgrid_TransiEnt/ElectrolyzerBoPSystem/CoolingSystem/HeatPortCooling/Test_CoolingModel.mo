@@ -1,5 +1,5 @@
 within H2Microgrid_TransiEnt.ElectrolyzerBoPSystem.CoolingSystem.HeatPortCooling;
-model TestCooling_PIDpump
+model Test_CoolingModel
     extends TransiEnt.Basics.Icons.Checkmodel;
 
   Buildings.Fluid.Movers.SpeedControlled_y pump(redeclare package Medium = Buildings.Media.Water,
@@ -78,4 +78,4 @@ HeatPort")}),
       StopTime=13470000,
       Interval=1,
       __Dymola_Algorithm="Dassl"));
-end TestCooling_PIDpump;
+end Test_CoolingModel;

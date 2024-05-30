@@ -1,7 +1,17 @@
 within H2Microgrid_TransiEnt.ElectrolyzerBoPSystem.Electrolyzer;
 model SystemElectrolyzerL2_Simple_EnergyTot_Inv_Cooling
 
-  extends TransiEnt.Producer.Gas.Electrolyzer.Base.PartialFeedInStation(gasPortOut(Medium=medium), break m_flow_feedIn);
+  extends TransiEnt.Producer.Gas.Electrolyzer.Base.PartialFeedInStation(
+    gasPortOut(Medium=medium) annotation(Placement(
+      transformation(
+        origin={400, 400},
+        extent={{-10, -10}, {10, 10}},
+        rotation=0))),
+    break m_flow_feedIn);
+
+     // Change these values to your desired position
+                                          // Change the size if needed
+                      // Change the rotation if needed
 
   parameter TILMedia.VLEFluidTypes.BaseVLEFluid medium=simCenter.gasModel3;
   parameter TILMedia.VLEFluidTypes.BaseVLEFluid medium_coolant=simCenter.fluid1;
@@ -42,11 +52,10 @@ end ElectrolyzerRecord;
   TransiEnt.Basics.Interfaces.General.MassFlowRateOut H2massFlowRateOutElectrolyzer annotation (Placement(transformation(
         extent={{-11,-11},{11,11}},
         rotation=0,
-        origin={105,7}),  iconTransformation(
+        origin={105,65}), iconTransformation(
         extent={{-12,-12},{12,12}},
         rotation=0,
         origin={106,-16})));
-  TransiEnt.Basics.Interfaces.General.TemperatureIn T_set_coolant_out if useVariableCoolantOutputTemperature annotation (Placement(transformation(extent={{112,58},{88,82}}), iconTransformation(extent={{112,58},{88,82}})));
   PEMElectrolyzer_L2_EnergyTot_Inv electrolyzer(
     useFluidCoolantPort=false,
     useHeatPort=true,
@@ -61,7 +70,7 @@ end ElectrolyzerRecord;
     T_out=T_out,
     medium=medium,
     redeclare model electrolyzerTemperature = H2Microgrid_TransiEnt.ElectrolyzerBoPSystem.Electrolyzer.Temperature_modPID) annotation (Placement(transformation(extent={{-66,-18},{-26,18}})));
-  CoolingSystem.HeatPortCooling.Cooling_PIDpump cooling_PIDpump annotation (Placement(transformation(extent={{24,-24},{64,0}})));
+  CoolingSystem.HeatPortCooling.CoolingModel cooling_PIDpump annotation (Placement(transformation(extent={{36,-54},{76,-30}})));
 protected
   TransiEnt.Components.Sensors.RealGas.MassFlowSensor massflowSensor_ely(medium=medium, xiNumber=0)         annotation (Placement(transformation(
         extent={{7,6},{-7,-6}},
@@ -69,7 +78,7 @@ protected
         origin={-6,6})));
 
 equation
-  connect(massflowSensor_ely.m_flow, H2massFlowRateOutElectrolyzer) annotation (Line(points={{1.7,6},{54,6},{54,7},{105,7}},
+  connect(massflowSensor_ely.m_flow, H2massFlowRateOutElectrolyzer) annotation (Line(points={{1.7,6},{88,6},{88,65},{105,65}},
                                                                                                                         color={0,0,127}));
 
   connect(gasPortOut, massflowSensor_ely.gasPortOut) annotation (Line(
@@ -84,13 +93,19 @@ equation
       points={{-26,0},{-13,0}},
       color={255,255,0},
       thickness=1.5));
-  connect(electrolyzer.temperatureOut, cooling_PIDpump.T_op) annotation (Line(points={{-57.2,-5.76},{-70,-5.76},{-70,-22},{6,-22},{6,-4.08},{22.8,-4.08}}, color={0,0,127}));
+  connect(electrolyzer.temperatureOut, cooling_PIDpump.T_op) annotation (Line(points={{-57.2,-5.76},{-70,-5.76},{-70,-34},{26,-34},{26,-34.08},{33.6,-34.08}},
+                                                                                                                                                           color={0,0,127}));
   connect(electrolyzer.P_el_set, P_el_set) annotation (Line(points={{-53.6,21.6},{-53.6,82},{0,82},{0,108}}, color={0,0,127}));
-  connect(cooling_PIDpump.P_coolingPump, electrolyzer.coolingPumpPowerIn) annotation (Line(points={{64.8,-7.92},{72,-7.92},{72,18},{-18,18},{-18,5.4},{-22,5.4}}, color={0,0,127}));
-  connect(electrolyzer.heat, cooling_PIDpump.heatPortCooling) annotation (Line(points={{-26,-11.88},{14,-11.88},{14,-28},{24,-28},{24,-23.04}}, color={191,0,0}));
+  connect(cooling_PIDpump.P_coolingPump, electrolyzer.coolingPumpPowerIn) annotation (Line(points={{76.8,-37.92},{84,-37.92},{84,-8},{-16,-8},{-16,2},{-22,2},{-22,5.4}},
+                                                                                                                                                                  color={0,0,127}));
+  connect(electrolyzer.heat, cooling_PIDpump.heatPortCooling) annotation (Line(points={{-26,-11.88},{24,-11.88},{24,-58},{36,-58},{36,-53.04}}, color={191,0,0}));
   annotation (Icon(coordinateSystem(preserveAspectRatio=false), graphics={Rectangle(
           extent={{-100,100},{100,-100}},
           lineColor={0,0,0},
-          fillColor={0,0,0},
-          fillPattern=FillPattern.Solid)}), Diagram(coordinateSystem(preserveAspectRatio=false)));
+          fillColor={135,135,135},
+          fillPattern=FillPattern.Solid), Text(
+          extent={{-76,38},{76,-42}},
+          textColor={255,255,255},
+          textString="Electrolyzer",
+          textStyle={TextStyle.Bold})}),    Diagram(coordinateSystem(preserveAspectRatio=false)));
 end SystemElectrolyzerL2_Simple_EnergyTot_Inv_Cooling;

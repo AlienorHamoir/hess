@@ -226,6 +226,7 @@ public
     Placement(transformation(extent={{-58,-98},{-38,-78}})),
     Dialog(tab="General", group="Specification"),
     choices(choicesAllMatching=true));
+
   electrolyzerVoltage voltage annotation (Placement(transformation(extent={{20,12},{34,26}})));
 
   electrolyzerTemperature temperature(cooling_PID(controllerType=Modelica.Blocks.Types.SimpleController.PI, Tau_d=0.1))

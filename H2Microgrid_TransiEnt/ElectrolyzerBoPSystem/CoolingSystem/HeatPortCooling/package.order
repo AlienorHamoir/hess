@@ -1,6 +1,6 @@
 Cooling_Modelica
 Cooling_VirtualFCS
 innerCooling_Modelica
-Cooling_PIDpump
-TestCooling_PIDpump
+CoolingModel
+Test_CoolingModel
 CoolingPumpDESL
