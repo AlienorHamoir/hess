@@ -1,4 +1,4 @@
-within H2Microgrid_TransiEnt.ElectrolyzerBoPSystem.Electrolyzer;
+within H2Microgrid_TransiEnt.ElectrolyzerBoPSystem.H2DryingSystem;
 model PEMElectrolyzer_L2_EnergyTot_Inv "PEMElectrolyzer_L2 Proton exchange membrane electrolyzer with selectable physics submodels"
 
 //________________________________________________________________________________//
@@ -29,8 +29,8 @@ model PEMElectrolyzer_L2_EnergyTot_Inv "PEMElectrolyzer_L2 Proton exchange membr
 
  extends TransiEnt.Producer.Gas.Electrolyzer.Base.PartialElectrolyzer(P_el_n=Specification.P_el_n,P_el_max=Specification.P_el_max,T_out=Specification.T_out,
     realExpression(y=P_el_tot),
-    Q_flow_positive(y=-Q_flow_heatprovision),
-    prescribedHeatFlow(T_ref=T_op_n, alpha=0.0001),
+    Q_flow_positive(y=Q_flow_heatprovision),
+    prescribedHeatFlow(T_ref=323.15, alpha=0.0001),
     realExpression8(y=T_op_n),
     heatFlow_externalMassFlowControl(
       change_sign=false,
@@ -54,6 +54,7 @@ public
   inner parameter Modelica.Units.SI.Temperature T_amb=23 + 273.15 "K, ambient temperature" annotation (Dialog(group="Fundamental Definitions"));
   parameter Modelica.Units.SI.Temperature T_op_start=T_std "initial operating temperature of PEM Electrolyzer" annotation (Dialog(group="Initialization"));
   parameter Modelica.Units.SI.Temperature T_op_n=273.15 + 50 "nominal operating temperature of PEM Electrolyzer";
+
 
   //Electrolyzer system specific parameters
 protected
@@ -226,10 +227,9 @@ public
     Placement(transformation(extent={{-58,-98},{-38,-78}})),
     Dialog(tab="General", group="Specification"),
     choices(choicesAllMatching=true));
-
   electrolyzerVoltage voltage annotation (Placement(transformation(extent={{20,12},{34,26}})));
 
-  electrolyzerTemperature temperature(cooling_PID(controllerType=Modelica.Blocks.Types.SimpleController.PI, Tau_d=0.1))
+  electrolyzerTemperature temperature(cooling_PID(activate_(y=true)), PID_T_max(y=T_cool_set))
                                       annotation (Placement(transformation(extent={{22,-12},{36,2}})));
 
   electrolyzerPressures pressure annotation (Placement(transformation(extent={{58,12},{44,26}})));
@@ -352,13 +352,6 @@ public
 
   Modelica.Blocks.Math.Gain inverter(k=eta_inv_n) annotation (Placement(transformation(extent={{-30,74},{-20,84}})));
 
-  TransiEnt.Basics.Interfaces.Electrical.ElectricPowerIn coolingPumpPowerIn annotation (Placement(transformation(
-        extent={{-20,-20},{20,20}},
-        rotation=180,
-        origin={120,30}), iconTransformation(
-        extent={{-20,-20},{20,20}},
-        rotation=180,
-        origin={120,30})));
 initial equation
   if userSetTemp == false then
     T_op = T_op_start;
@@ -407,7 +400,7 @@ equation
   i_el_stack = i_dens_a*PEM_area;
   P_el = (V_el_stack)*i_el_stack;
   E_dry = E_dry_spec*mass_H2; // drying energy = 0.5 kWh/kg H2
-  P_el_tot = P_el + der(E_dry) + coolingPumpPowerIn;
+  P_el_tot = P_el + der(E_dry);  // + P_el_pump ==| create error (after inverter)
 
   //Efficiency
   if P_el>0 then

@@ -49,7 +49,7 @@ record GinerELX5kW "Areva Energy Storage Giner Electrolyzer system specific para
     Delta_p_pump=6.9*100000,
     T_op_max=273.15 + 75,
     T_cool_set=273.15 + 50,
-    Q_flow_cool_max=6911);
+    Q_flow_cool_max=1550);
 
   annotation (Documentation(info="<html>
 <h4><span style=\"color: #008000\">1. Purpose of model</span></h4>

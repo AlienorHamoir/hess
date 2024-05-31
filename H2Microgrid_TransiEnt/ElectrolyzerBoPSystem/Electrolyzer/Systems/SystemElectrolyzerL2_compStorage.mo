@@ -1,5 +1,5 @@
-within H2Microgrid_TransiEnt.ElectrolyzerBoPSystem.Electrolyzer;
-model SystemElectrolyzerL2_Simple_EnergyTot_Inv_Cooling
+within H2Microgrid_TransiEnt.ElectrolyzerBoPSystem.Electrolyzer.Systems;
+model SystemElectrolyzerL2_compStorage
 
   extends TransiEnt.Producer.Gas.Electrolyzer.Base.PartialFeedInStation(
     gasPortOut(Medium=medium) annotation(Placement(
@@ -32,8 +32,6 @@ model SystemElectrolyzerL2_Simple_EnergyTot_Inv_Cooling
   parameter Modelica.Units.SI.Temperature T_out=273.15 + 10 "Hydrogen output temperature from electrolyser" annotation (Dialog(tab="General", group="Electrolyzer"));
   parameter Real specificWaterConsumption=10 "Mass of water per mass of hydrogen" annotation (Dialog(tab="General", group="Electrolyzer"));
 
-
-
   parameter Boolean useFluidCoolantPort=false "choose if fluid port for coolant shall be used" annotation (Dialog(enable=not useHeatPort,group="Coolant"));
   parameter Boolean useHeatPort=true "choose if heat port for coolant shall be used" annotation (Dialog(enable=not useFluidCoolantPort,group="Coolant"));
   parameter Boolean useVariableCoolantOutputTemperature=false "choose if temperature of cooland output shall be defined by input" annotation (Dialog(enable=useFluidCoolantPort,group="Coolant"));
@@ -56,7 +54,7 @@ end ElectrolyzerRecord;
         extent={{-12,-12},{12,12}},
         rotation=0,
         origin={106,-16})));
-  PEMElectrolyzer_L2_EnergyTot_Inv electrolyzer(
+  PEMElectrolyzer_L2_compEnergy electrolyzer(
     useFluidCoolantPort=false,
     useHeatPort=true,
     externalMassFlowControl=false,
@@ -69,8 +67,12 @@ end ElectrolyzerRecord;
     integrateElPower=true,
     T_out=T_out,
     medium=medium,
-    redeclare model electrolyzerTemperature = H2Microgrid_TransiEnt.ElectrolyzerBoPSystem.Electrolyzer.Temperature_modPID) annotation (Placement(transformation(extent={{-66,-18},{-26,18}})));
-  CoolingSystem.HeatPortCooling.CoolingModel cooling_PIDpump annotation (Placement(transformation(extent={{36,-54},{76,-30}})));
+    redeclare model electrolyzerVoltage = TransiEnt.Producer.Gas.Electrolyzer.Base.Physics.Voltage.V_cell1,
+    redeclare model electrolyzerTemperature = H2Microgrid_TransiEnt.ElectrolyzerBoPSystem.Electrolyzer.PhysicsSubmodels.Temperature_modPID,
+    redeclare model electrolyzerPressures = TransiEnt.Producer.Gas.Electrolyzer.Base.Physics.Pressures.Pressures1,
+    redeclare model electrolyzerMassFlow = TransiEnt.Producer.Gas.Electrolyzer.Base.Physics.MassFlow.MassFlow0thOrderDynamics) annotation (Placement(transformation(extent={{-66,-18},{-26,18}})));
+  CoolingSubystem.HeatPortCooling.CoolingModel CoolingSystem annotation (Placement(transformation(extent={{36,-54},{76,-30}})));
+  TransiEnt.Basics.Interfaces.Electrical.ElectricPowerIn CompressorPower "Electrical power from the storage compressor" annotation (Placement(transformation(extent={{-120,-72},{-90,-44}}), iconTransformation(extent={{-120,-72},{-90,-44}})));
 protected
   TransiEnt.Components.Sensors.RealGas.MassFlowSensor massflowSensor_ely(medium=medium, xiNumber=0)         annotation (Placement(transformation(
         extent={{7,6},{-7,-6}},
@@ -93,12 +95,11 @@ equation
       points={{-26,0},{-13,0}},
       color={255,255,0},
       thickness=1.5));
-  connect(electrolyzer.temperatureOut, cooling_PIDpump.T_op) annotation (Line(points={{-57.2,-5.76},{-70,-5.76},{-70,-34},{26,-34},{26,-34.08},{33.6,-34.08}},
-                                                                                                                                                           color={0,0,127}));
+  connect(electrolyzer.temperatureOut, CoolingSystem.T_op) annotation (Line(points={{-57.2,-5.76},{-70,-5.76},{-70,-34},{26,-34},{26,-34.08},{33.6,-34.08}}, color={0,0,127}));
   connect(electrolyzer.P_el_set, P_el_set) annotation (Line(points={{-53.6,21.6},{-53.6,82},{0,82},{0,108}}, color={0,0,127}));
-  connect(cooling_PIDpump.P_coolingPump, electrolyzer.coolingPumpPowerIn) annotation (Line(points={{76.8,-37.92},{84,-37.92},{84,-8},{-16,-8},{-16,2},{-22,2},{-22,5.4}},
-                                                                                                                                                                  color={0,0,127}));
-  connect(electrolyzer.heat, cooling_PIDpump.heatPortCooling) annotation (Line(points={{-26,-11.88},{24,-11.88},{24,-58},{36,-58},{36,-53.04}}, color={191,0,0}));
+  connect(CoolingSystem.P_coolingPump, electrolyzer.coolingPumpPowerIn) annotation (Line(points={{76.8,-37.92},{84,-37.92},{84,-8},{-16,-8},{-16,2},{-22,2},{-22,3.6}}, color={0,0,127}));
+  connect(electrolyzer.heat, CoolingSystem.heatPortCooling) annotation (Line(points={{-26,-11.88},{24,-11.88},{24,-58},{36,-58},{36,-53.04}}, color={191,0,0}));
+  connect(electrolyzer.storageCompressorPowerIn, CompressorPower) annotation (Line(points={{-70,-13.68},{-84,-13.68},{-84,-58},{-105,-58}}, color={0,127,127}));
   annotation (Icon(coordinateSystem(preserveAspectRatio=false), graphics={Rectangle(
           extent={{-100,100},{100,-100}},
           lineColor={0,0,0},
@@ -108,4 +109,4 @@ equation
           textColor={255,255,255},
           textString="Electrolyzer",
           textStyle={TextStyle.Bold})}),    Diagram(coordinateSystem(preserveAspectRatio=false)));
-end SystemElectrolyzerL2_Simple_EnergyTot_Inv_Cooling;
+end SystemElectrolyzerL2_compStorage;

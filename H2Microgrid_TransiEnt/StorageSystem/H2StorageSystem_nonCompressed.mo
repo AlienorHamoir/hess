@@ -2,6 +2,7 @@ within H2Microgrid_TransiEnt.StorageSystem;
 model H2StorageSystem_nonCompressed
 public
   TransiEnt.Storage.Gas.GasStorage_constXi_L2 storage(
+    calculateCost=false,
     start_pressure=start_pressure,
     includeHeatTransfer=includeHeatTransfer,
     medium=medium,
@@ -11,8 +12,7 @@ public
     p_gas_start=p_start,
     T_gas_start=T_start,
     p_max=p_maxHigh,
-    eta_ely=eta_n,
-    Cspec_demAndRev_el=Cspec_demAndRev_el_other) annotation (Placement(transformation(
+    eta_ely=eta_n) annotation (Placement(transformation(
         extent={{14,-15},{-14,15}},
         rotation=90,
         origin={0,1})));
@@ -30,24 +30,13 @@ public
   parameter Modelica.Units.SI.Pressure p_out = 30e5;
   parameter Modelica.Units.SI.Pressure p_maxLow=p_maxHigh - 1e5 "Lower limit of the maximum pressure in storage" annotation (Dialog(tab="Storage", group="Control"));
   parameter Modelica.Units.SI.Pressure p_maxHigh=p_out "Upper limit of the maximum pressure in storage" annotation (Dialog(tab="Storage", group="Control"));
-  parameter Modelica.Units.SI.Pressure p_minLow_constantDemand=0.5e3 "storage can be emptied via 'm_flow_hydrogenDemand_constant' up to 'p_minLow_constantDemand'" annotation (Dialog(tab="Storage", group="Control"));
-  parameter Modelica.Units.SI.MassFlowRate m_flow_hydrogenDemand_constant=0 "constant hydrogen demand if hydrogen is available" annotation (Dialog(tab="Storage", group="Control"));
-
- parameter Modelica.Units.SI.Temperature T_out=283.15 "Hydrogen output temperature" annotation(Dialog(group="Fundamental Definitions"));
-
-  parameter Modelica.Units.SI.Pressure dp_Low=1e3 "if valve open and (p_in-p_out) <= dp_Low, close valve" annotation (Dialog(tab="Storage", group="Control"));
-  parameter Modelica.Units.SI.Pressure dp_High=1e5 "if valve closed and (p_in-p_out) >= dp_High, open valve" annotation (Dialog(tab="Storage", group="Control"));
-
-  parameter Boolean StoreAllHydrogen=false "|Storage|Control|All Hydrogen is stored before beeing fed in" annotation (Dialog(tab="Storage", group="Control"));
-
-
+  parameter Modelica.Units.SI.Temperature T_out=283.15 "Hydrogen output temperature" annotation(Dialog(group="Fundamental Definitions"));
   parameter Modelica.Units.SI.Efficiency eta_n(
     min=0,
-    max=1)=0.75 "Nominal efficency refering to the GCV (min = 0, max = 1)" annotation (Dialog(tab="General", group="Electrolyzer"));
-  parameter TransiEnt.Basics.Units.MonetaryUnitPerEnergy Cspec_demAndRev_el_other=1;
+    max=1)=0.655 "Nominal efficency refering to the GCV (min = 0, max = 1)" annotation (Dialog(tab="General", group="Electrolyzer"));
 
-  TransiEnt.Basics.Interfaces.Gas.RealGasPortIn H2PortIn(Medium=medium) "inlet flow" annotation (Placement(transformation(extent={{-104,-10},{-84,10}})));
-  TransiEnt.Basics.Interfaces.Gas.RealGasPortOut H2PortOut(Medium=medium) "outlet flow" annotation (Placement(transformation(extent={{100,-10},{120,10}})));
+  TransiEnt.Basics.Interfaces.Gas.RealGasPortIn H2PortIn(Medium=medium) "inlet flow" annotation (Placement(transformation(extent={{-110,-10},{-90,10}})));
+  TransiEnt.Basics.Interfaces.Gas.RealGasPortOut H2PortOut(Medium=medium) "outlet flow" annotation (Placement(transformation(extent={{90,-10},{110,10}})));
   TransiEnt.Basics.Interfaces.General.PressureOut pressureTank annotation (Placement(transformation(extent={{96,44},{116,64}})));
   StorageSystem.TankSOC tankSOC annotation (Placement(transformation(extent={{22,66},{42,86}})));
   Modelica.Blocks.Interfaces.RealOutput socTank annotation (Placement(transformation(extent={{96,66},{116,86}})));
@@ -93,14 +82,18 @@ public
   inner TransiEnt.SimCenter simCenter annotation (Placement(transformation(extent={{64,-94},{84,-74}})));
 equation
   connect(storage.gasPortOut, H2PortOut) annotation (Line(
-      points={{9.45,1},{9.45,0},{110,0}},
+      points={{9.45,1},{9.45,0},{100,0}},
       color={255,255,0},
       thickness=1.5));
   connect(storage.p_gas, pressureTank) annotation (Line(points={{0,8},{0,54},{106,54}},    color={0,0,127}));
   connect(tankSOC.currentTankPressure, storage.p_gas) annotation (Line(points={{21.8,75.8},{0,75.8},{0,8}},    color={0,0,127}));
   connect(tankSOC.tankSOC, socTank) annotation (Line(points={{42.6,76},{106,76}}, color={0,0,127}));
   connect(H2PortIn, storage.gasPortIn) annotation (Line(
-      points={{-94,0},{-20,0},{-20,1},{-7.35,1}},
+      points={{-100,0},{-20,0},{-20,1},{-7.35,1}},
+      color={255,255,0},
+      thickness=1.5));
+  connect(H2PortOut, H2PortOut) annotation (Line(
+      points={{100,0},{100,0}},
       color={255,255,0},
       thickness=1.5));
   annotation (Icon(coordinateSystem(preserveAspectRatio=false), graphics={

@@ -1,6 +1,6 @@
 within H2Microgrid_TransiEnt;
 model HESS
-  ElectrolyzerBoPSystem.Electrolyzer.SystemElectrolyzerL2_Simple_EnergyTot_Inv_Cooling systemElectrolyzerL2_Simple_EnergyTot_Inv_Cooling annotation (Placement(transformation(extent={{-60,-80},{-20,-40}})));
+  ElectrolyzerBoPSystem.Electrolyzer.Systems.SystemElectrolyzerL2_compStorage systemElectrolyzerL2_Simple_EnergyTot_Inv_Cooling annotation (Placement(transformation(extent={{-60,-80},{-20,-40}})));
   StorageSystem.H2StorageSystem_Compressed h2StorageSystem_Compressed annotation (Placement(transformation(extent={{20,-40},{60,20}})));
   TransiEnt.Basics.Interfaces.Electrical.ElectricPowerIn P_set_electrolyzer "Electric power input" annotation (Placement(transformation(extent={{-112,-42},{-92,-22}})));
   Modelica.Blocks.Interfaces.RealOutput socTankH2 annotation (Placement(transformation(extent={{96,-10},{116,10}})));

@@ -1,5 +1,5 @@
 within H2Microgrid_TransiEnt;
-model H2Microgrid_2
+model H2Microgrid
 
   parameter Real building_scale = 1 "Building scale";
   parameter Real der_scale = 1 "DER scale";
@@ -7,7 +7,6 @@ model H2Microgrid_2
   parameter Real building_ft2 = 50e3 "Building ft2 scale";
   parameter String weather_file = "" "Path to weather file";
   // parameter String weather_file = Modelica.Utilities.Files.loadResource("modelica://Buildings/Resources/weatherdata/USA_CA_San.Francisco.Intl.AP.724940_TMY3.mos") "Path to weather file";
-
 
   HESS hESS annotation (Placement(transformation(extent={{20,-60},{60,-20}})));
   Buildings.BoundaryConditions.WeatherData.ReaderTMY3 weaDat(
@@ -120,4 +119,4 @@ equation
           fontName="Arial Black",
           textStyle={TextStyle.Bold},
           textString="H2 Grid")}), Diagram(coordinateSystem(preserveAspectRatio=false)));
-end H2Microgrid_2;
+end H2Microgrid;

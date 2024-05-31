@@ -3,8 +3,8 @@ record CoolingPumpDESL "Pump data for a Tuthill D-series pump"
   extends Buildings.Fluid.Movers.Data.Generic(
     final powerOrEfficiencyIsHydraulic=false,
     etaHydMet=Buildings.Fluid.Movers.BaseClasses.Types.HydraulicEfficiencyMethod.Power_VolumeFlowRate,
-    motorEfficiency_yMot(y={0.5}, eta={0.51}),
-    etaMot_max=0.51,
+    motorEfficiency_yMot(y={0.5, 0.75, 1}, eta={0.51, 0.58, 0.63}),
+    etaMot_max=0.63,
     speed_nominal=1,
     power(V_flow={2.76e-05},
          P={    180}),

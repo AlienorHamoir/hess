@@ -42,11 +42,11 @@ public
 equation
   connect(source.m_flow, ramp2.y) annotation (Line(points={{-48,26},{-50,26},{-50,50},{-63,50}},       color={0,0,127}));
   connect(source.gasPort, h2StorageSystem_Compressed.H2PortIn) annotation (Line(
-      points={{-26,20},{-6,20},{-6,19.4},{-4,19.4}},
+      points={{-26,20},{-6,20},{-6,11.9},{6.1,11.9}},
       color={255,255,0},
       thickness=1.5));
   connect(h2StorageSystem_Compressed.H2PortOut, sink_syngas.gasPort) annotation (Line(
-      points={{16.4,19.4},{36,19.4},{36,20},{42,20}},
+      points={{6,31.8},{36,31.8},{36,20},{42,20}},
       color={255,255,0},
       thickness=1.5));
   annotation (Icon(coordinateSystem(preserveAspectRatio=false)), Diagram(coordinateSystem(preserveAspectRatio=false)));

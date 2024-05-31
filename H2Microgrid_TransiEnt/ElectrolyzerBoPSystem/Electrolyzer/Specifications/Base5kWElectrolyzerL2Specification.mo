@@ -48,7 +48,12 @@ record Base5kWElectrolyzerL2Specification "Record used for specification of an E
   parameter SI.HeatCapacity C_th=54038.66667 "Overall lumped thermal capacitance" annotation(Dialog(group="Fundamental Definitions"));
   parameter SI.CurrentDensity i_dens_0_an_std=1e-7 "Exchange current density at electrodes at T_std" annotation(Dialog(group="Fundamental Definitions"));
   parameter SI.Thickness t_mem=254e-6 "PE membrane thickness" annotation(Dialog(group="Fundamental Definitions"));
-  parameter SI.Conductivity mem_conductivity_ref=10.47 "Membrane conductivity value at T_std" annotation(Dialog(group="Fundamental Definitions"));
+  parameter SI.Conductivity mem_conductivity_ref=10.47 "S/m, Membrane conductivity value at T_std" annotation(Dialog(group="Fundamental Definitions"));
+  parameter SI.Thickness t_el= 8e-6
+                                   "PE electrical thickness - ref. Nafion 117 / Abdin 2015";
+  parameter SI.Resistivity el_resistivity=10.6e-8 "Ohm.m, electrical resistivity reference value at T_std, Abdin 2015; typically [10.6 * 10e-6]S/cm, 283(Agbli 2011)";
+
+
   parameter Real specificWaterConsumption=10 "Mass of water per mass of hydrogen" annotation(Dialog(group="Fundamental Definitions")); //Stolzenburg, K. et al.: Integration von Wind-Wasserstoff-Systemen in das Energiesystem: Abschlussbericht, 2014
   parameter SI.Temperature T_out=273.15 + 40 "Hydrogen output temperature" annotation(Dialog(group="Fundamental Definitions"));
   parameter SI.Power P_el_pump = 285.7 "pump el power consumption" annotation(Dialog(group="Cooling circuit"));
@@ -58,7 +63,7 @@ record Base5kWElectrolyzerL2Specification "Record used for specification of an E
   parameter SI.PressureDifference Delta_p_pump=6.9*100000 "total pump head" annotation(Dialog(group="Cooling circuits"));
   parameter SI.Temperature T_op_max=273.15 + 75 "max operating temp" annotation(Dialog(group="Cooling circuit"));
   parameter SI.Temperature T_cool_set=273.15 + 50 "Cooling trigger point" annotation(Dialog(group="Cooling circuit"));
-  parameter SI.HeatFlowRate Q_flow_cool_max=6911 "Maximum cooling power" annotation(Dialog(group="Cooling circuit"));
+  parameter SI.HeatFlowRate Q_flow_cool_max=1550 "Maximum cooling power" annotation(Dialog(group="Cooling circuit"));
 
   annotation (Documentation(info="<html>
 <h4><span style=\"color: #008000\">1. Purpose of model</span></h4>
