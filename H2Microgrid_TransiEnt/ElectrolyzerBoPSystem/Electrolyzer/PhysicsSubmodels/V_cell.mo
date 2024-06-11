@@ -1,5 +1,5 @@
 within H2Microgrid_TransiEnt.ElectrolyzerBoPSystem.Electrolyzer.PhysicsSubmodels;
-model V_cell "PEM cell voltage as modeled by Abdin, 2015 where R_el is not neglected"
+model V_cell "PEM cell voltage as modeled by Abdin, 2015 where R_el is not neglected (it is so close to 0 that it can be neglected)"
   //The following must all be calculated in the Voltage model.
   // V_el_stack, V_cell, V_tn
 
@@ -54,6 +54,7 @@ model V_cell "PEM cell voltage as modeled by Abdin, 2015 where R_el is not negle
   outer parameter SI.Conductivity mem_conductivity_ref "S/m, Membrane conductivity reference value at T_std,Espinosa 2018; typically [0.058,0.096]S/cm, 283(Agbli 2011)";
   outer parameter SI.Thickness t_el "PE electrical thickness - ref. Nafion 117";
   outer parameter SI.Resistivity el_resistivity "Ohm.m, electrical resistivity reference value at T_std, Abdin 2015; typically [10.6 * 10e-6]S/cm, 283(Agbli 2011)";
+  outer parameter MembraneResistance R_el "Resistance of PE membrane to electrical flow";
   outer parameter Real alpha_an "charge transfer coefficient for anode, as Espinosa 2018 uses";
 
   parameter Real z=2 "Stoichiometric coefficient for transferred electrons; = 2 for electrolysis";
@@ -67,7 +68,6 @@ model V_cell "PEM cell voltage as modeled by Abdin, 2015 where R_el is not negle
   //Voltage and Overpotential Variables
 public
   MembraneResistance R_mem "Resistance of PE membrane to ionic flow";
-  MembraneResistance R_el "Resistance of PE membrane to electrical flow";
   inner SI.Voltage V_rev "Voltage from Gibb's free energy incl. pressure and temp";
   SI.Voltage V_nernst "Nernst potential of Water electrolysis";
   SI.Voltage V_activation "Electrode overpotential contribution";
@@ -92,7 +92,7 @@ public
   outer SI.Pressure pp_O2 "Pa, partial pressure of O2,";
   outer SI.Pressure p_cat "cathode pressure";
 
-  replaceable model PEMconductivity = TransiEnt.Producer.Gas.Electrolyzer.Base.Physics.Voltage.ConductivityModels.PEMconductivity1 constrainedby TransiEnt.Producer.Gas.Electrolyzer.Base.Physics.Voltage.ConductivityModels.PartialPEMConductivity
+  replaceable model PEMconductivity = TransiEnt.Producer.Gas.Electrolyzer.Base.Physics.Voltage.ConductivityModels.PEMconductivity3 constrainedby TransiEnt.Producer.Gas.Electrolyzer.Base.Physics.Voltage.ConductivityModels.PartialPEMConductivity
                                                                                                                                                                                                         "conductivity of PEM" annotation (
     Dialog(group="Fundamental Definitions"),
     choicesAllMatching=true,
@@ -135,7 +135,6 @@ equation
 
   //Ohmic Overpotential
   R_mem = t_mem/mem_conductivity;
-  R_el = t_el*el_resistivity;
 
   V_ohmic = (R_mem+R_el)*i_dens_a;
 

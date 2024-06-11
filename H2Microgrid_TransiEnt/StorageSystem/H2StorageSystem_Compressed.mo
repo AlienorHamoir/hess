@@ -1,16 +1,16 @@
 within H2Microgrid_TransiEnt.StorageSystem;
-model H2StorageSystem_Compressed
+model H2StorageSystem_Compressed "High-pressure storage at 350 bar"
 protected
   TransiEnt.Components.Gas.Compressor.Controller.ControllerCompressor_dp controlCompressor(
     p_paramBefore=true,
     p_paramAfter=false,
     p_beforeCompParam=p_out,
-    p_afterCompParam=p_maxHigh) annotation (Placement(transformation(extent={{-66,20},{-46,40}})));
+    p_afterCompParam=p_maxHigh) annotation (Placement(transformation(extent={{-66,30},{-46,50}})));
 public
   TransiEnt.Storage.Gas.GasStorage_constXi_L2 H2storage(
     calculateCost=false,
     start_pressure=start_pressure,
-    includeHeatTransfer=includeHeatTransfer,
+    includeHeatTransfer=false,
     medium=medium,
     V_geo=V_geo,
     redeclare model HeatTransfer = TransiEnt.Storage.Gas.Base.ConstantHTOuterTemperature_L2 (alpha_nom=alpha_nom),
@@ -27,13 +27,13 @@ public
 
   parameter Boolean start_pressure=true "true if a start pressure is defined, false if a start mass is defined" annotation (Dialog(tab="Storage"));
   parameter Boolean includeHeatTransfer=false "false for neglecting heat transfer" annotation (Dialog(tab="Storage"));
-  parameter Modelica.Units.SI.Volume V_geo=0.1 "Geometric volume of storage" annotation (Dialog(tab="Storage"));
+  parameter Modelica.Units.SI.Volume V_geo=1.6 "m3, Geometric volume of storage" annotation (Dialog(tab="Storage"));
   parameter Modelica.Units.SI.Height height=3.779*V_geo^(1/3) "Height of storage" annotation (Dialog(tab="Storage"));
   parameter Modelica.Units.SI.CoefficientOfHeatTransfer alpha_nom=4 "Heat transfer coefficient inside the storage cylinder" annotation (Dialog(tab="Storage"));
   parameter Modelica.Units.SI.Mass m_start=1 "Stored gas mass at t=0" annotation (Dialog(tab="Storage"));
-  parameter Modelica.Units.SI.Pressure p_start=simCenter.p_amb_const + simCenter.p_eff_2 + 3.7e5  "Pressure in storage at t=0" annotation (Dialog(tab="Storage")); // p_start = 17 bar
-  parameter Modelica.Units.SI.ThermodynamicTemperature T_start=283.15 "Temperature of gas in storage at t=0" annotation (Dialog(tab="Storage"));
-  parameter Modelica.Units.SI.Pressure p_out = 20.7e5;
+  parameter Modelica.Units.SI.Pressure p_start=simCenter.p_amb_const + simCenter.p_eff_2   "Pressure in storage at t=0" annotation (Dialog(tab="Storage")); // p_start = 17 bar
+  parameter Modelica.Units.SI.ThermodynamicTemperature T_start=T_out "Temperature of gas in storage at t=0" annotation (Dialog(tab="Storage"));
+  parameter Modelica.Units.SI.Pressure p_out = 30e5;
   parameter Modelica.Units.SI.Pressure p_maxLow=p_maxHigh - 1e5 "Lower limit of the maximum pressure in storage" annotation (Dialog(tab="Storage", group="Control"));
   parameter Modelica.Units.SI.Pressure p_maxHigh=350e5 "Upper limit of the maximum pressure in storage" annotation (Dialog(tab="Storage", group="Control"));
 
@@ -43,11 +43,11 @@ public
 
   parameter Modelica.Units.SI.Efficiency eta_mech_compressor(
     min=0,
-    max=1)=0.7 "Sets a with increasing input power linear degrading efficiency coefficient (min = 0, max = 1)" annotation (Dialog(tab="General", group="Electrolyzer"));
+    max=1)=0.7 "Compressor mechanical efficiency coefficient (min = 0, max = 1)" annotation (Dialog(tab="General", group="Electrolyzer"));
   parameter Modelica.Units.SI.Efficiency eta_el_compressor(
     min=0,
-    max=1)=0.9 "Sets a with increasing input power linear degrading efficiency coefficient (min = 0, max = 1)" annotation (Dialog(tab="General", group="Electrolyzer"));
-  parameter Modelica.Units.SI.Power P_el_n_compressor=0.53504;
+    max=1)=0.9 "Compressor motor electrical efficiency coefficient (min = 0, max = 1)" annotation (Dialog(tab="General", group="Electrolyzer"));
+  parameter Modelica.Units.SI.Power P_el_n_compressor=62.72 "W, compressor nominal electrical power";
 
   parameter Modelica.Units.SI.Efficiency eta_n(
     min=0,
@@ -110,14 +110,19 @@ public
     presetVariableType="dp",
     useMechPowerPort=true,
     use_Delta_p_input=true,
-    integrateElPower=true) annotation (Placement(transformation(extent={{-74,-36},{-54,-16}})));
+    Delta_p_fixed=200000,
+    integrateElPower=true,
+    P_el_n=P_el_n_compressor,
+    Delta_p_start=10000,
+    allow_reverseFlow=true)
+                           annotation (Placement(transformation(extent={{-74,-36},{-54,-16}})));
   TransiEnt.Components.Sensors.RealGas.MassFlowSensor massFlowSensorToFC(medium=medium) annotation (Placement(transformation(extent={{58,-26},{78,-6}})));
   TransiEnt.Components.Sensors.RealGas.MassFlowSensor massFlowSensorFromElectrolyzer(medium=medium) annotation (Placement(transformation(extent={{-32,-26},{-12,-6}})));
   TransiEnt.Components.Sensors.ElectricPowerComplex electricPowerComplex annotation (Placement(transformation(extent={{-6,-74},{14,-54}})));
   TransiEnt.Basics.Interfaces.Electrical.ElectricPowerOut P_comp "Compressor active Power" annotation (Placement(transformation(extent={{94,-60},{114,-40}})));
+  Modelica.Blocks.Math.Abs abs annotation (Placement(transformation(extent={{64,-56},{76,-44}})));
 equation
   connect(tankSOC.tankSOC, socTank) annotation (Line(points={{62.6,86},{106,86}}, color={0,0,127}));
-  connect(controlCompressor.Delta_p, compressor.dp_in) annotation (Line(points={{-56,19},{-56,-15}}, color={0,0,127}));
   connect(H2storage.gasPortOut, massFlowSensorToFC.gasPortIn) annotation (Line(
       points={{31.45,-25},{31.45,-26},{58,-26}},
       color={255,255,0},
@@ -138,7 +143,7 @@ equation
       points={{-12,-26},{2,-26},{2,-25},{14.65,-25}},
       color={255,255,0},
       thickness=1.5));
-  connect(H2storage.p_gas, controlCompressor.p_afterCompIn) annotation (Line(points={{22,-18},{22,30},{-46,30}}, color={0,0,127}));
+  connect(H2storage.p_gas, controlCompressor.p_afterCompIn) annotation (Line(points={{22,-18},{22,40},{-46,40}}, color={0,0,127}));
   connect(H2storage.p_gas, tankSOC.currentTankPressure) annotation (Line(points={{22,-18},{22,85.8},{41.8,85.8}}, color={0,0,127}));
   connect(H2storage.p_gas, pressureTank) annotation (Line(points={{22,-18},{22,60},{106,60}}, color={0,0,127}));
   connect(motorComplex.epp, electricPowerComplex.epp_IN) annotation (Line(
@@ -150,10 +155,12 @@ equation
       color={28,108,200},
       thickness=0.5));
   connect(motorComplex.mpp, compressor.mpp) annotation (Line(points={{-46,-64},{-64,-64},{-64,-36}}, color={95,95,95}));
-  connect(electricPowerComplex.P, P_comp) annotation (Line(
-      points={{-1,-55.4},{0,-55.4},{0,-50},{104,-50}},
+  connect(controlCompressor.Delta_p, compressor.dp_in) annotation (Line(points={{-56,29},{-56,-15}}, color={0,0,127}));
+  connect(electricPowerComplex.P, abs.u) annotation (Line(
+      points={{-1,-55.4},{-2,-55.4},{-2,-50},{62.8,-50}},
       color={0,135,135},
       pattern=LinePattern.Dash));
+  connect(abs.y, P_comp) annotation (Line(points={{76.6,-50},{104,-50}}, color={0,0,127}));
   annotation (Icon(coordinateSystem(preserveAspectRatio=false), graphics={
         Rectangle(
           extent={{-100,100},{100,-100}},

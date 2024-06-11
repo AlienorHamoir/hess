@@ -17,7 +17,7 @@ model SimCenter "SimCenter for global parameters, ambient conditions and collect
 // Institute of Electrical Power and Energy Technology                            //
 // (Hamburg University of Technology)                                             //
 // Fraunhofer Institute for Environmental, Safety, and Energy Technology UMSICHT, //
-// Gas- und WÃ¤rme-Institut Essen						  //
+// Gas- und WÃ¤rme-Institut Essen                                                  //
 // and                                                                            //
 // XRG Simulation GmbH (Hamburg, Germany).                                        //
 //________________________________________________________________________________//
@@ -70,11 +70,6 @@ model SimCenter "SimCenter for global parameters, ambient conditions and collect
 
   // ==== Media ===
 
-  parameter Modelica.Units.SI.SpecificEnthalpy HeatingValue_natGas=40e6 "Heating value of natural gas" annotation (Dialog(tab="Media and Materials", group="Constant heating values"), choices(choice=40e6 "Heating value of natural gas"));
-
-  parameter Modelica.Units.SI.SpecificEnthalpy HeatingValue_LightOil=43e6 "Heating value of heating oil" annotation (Dialog(tab="Media and Materials", group="Constant heating values"), choices(choice=43e6 "Upper heating value of heating oil", choice=42.8e6 "Lower heating valie of heating oil"));
-
-  parameter Modelica.Units.SI.SpecificEnthalpy HeatingValue_Wood=17.03e6 "Heating value of wood pellets" annotation (Dialog(tab="Media and Materials", group="Constant heating values"), choices(choice=9.42e6 "Heating value of wood with a moisture content of 45%", choice=17.03e6 "Heating value of wood pellets with a moisture content of 10%"));
 
   // ==== Electric grid ====
 
@@ -107,39 +102,6 @@ model SimCenter "SimCenter for global parameters, ambient conditions and collect
 
   //Modelica.SIunits.Frequency f_global(start=50) "global Frequency in the electric grid" annotation (Dialog(tab="Electric Grid", group="Nominal values (Top Level)"));
 
-  // ==== District heating network ====
-
-  parameter Boolean integrateHeatFlow=false "true if heat flows shall be integrated" annotation (Dialog(tab="District Heating Grid", group="General"));
-  parameter Integer no_cells_per_pipe=3 "Number of discretisation cells per pipe" annotation (Dialog(tab="District Heating Grid", group="Nominal Values"));
-  parameter Modelica.Units.SI.Power Q_flow_n=100e9 "Nominal transmitted power" annotation (Dialog(tab="District Heating Grid", group="Nominal Values"));
-  parameter Modelica.Units.SI.Pressure p_nom[2]={6e5,8e5} "Nominal pressure levels" annotation (Dialog(tab="District Heating Grid", group="Nominal Values"));
-  parameter Modelica.Units.SI.MassFlowRate m_flow_nom=30 "Nominal mass flow in grid" annotation (Dialog(tab="District Heating Grid", group="Nominal Values"));
-  replaceable parameter TILMedia.VLEFluidTypes.TILMedia_SplineWater fluid1
-   constrainedby TILMedia.VLEFluidTypes.BaseVLEFluid(final ID=1) "Medium name of working fluid in district heating grid" annotation(choicesAllMatching, Dialog(tab="District Heating Grid"));
-  replaceable TransiEnt.Basics.Tables.HeatGrid.HeatingCurves.ConstantSupplyTemperature heatingCurve constrainedby TransiEnt.Basics.Tables.HeatGrid.HeatingCurves.PartialHeatingCurve "Heating curve defining supply and return water temperatures" annotation (Dialog(tab="District Heating Grid"), choicesAllMatching);
-  replaceable parameter TILMedia.VLEFluidTypes.TILMedia_SplineWater refrigerantFluid1
-   constrainedby TILMedia.VLEFluidTypes.BaseVLEFluid(final ID=1) "Medium name of working fluid for refrigerant based cycles, e.g. heat pumps"
-                                                                                              annotation(choicesAllMatching, Dialog(tab="District Heating Grid"));
-  // == DHN - PlugFlow specific parameters ==:
-  parameter Integer activate_consumer_pipes= 0 "Activate / Deactivate house pipes for faster simulation. 1 = house pipes activated | Only used in GridConstructors" annotation (Dialog(tab="District Heating Grid", group="Simulation"));
-  parameter Boolean activate_volumes= false "Activate / Deactivate volumes to better represent delayed temperatrue changes due to heat capacity effects" annotation (Dialog(tab="District Heating Grid", group="Simulation"));
-  parameter Boolean calc_initial_dstrb = true "Activates the calculation of a initial temperature distribution inside the pipes" annotation (Dialog(tab="District Heating Grid", group="Simulation"));
-
-  parameter Modelica.Units.SI.Temperature T_supply=90 + 273.15 "Temperature of the fluid at start in supply" annotation (Dialog(tab="District Heating Grid", group="Initialisation"));
-  parameter Modelica.Units.SI.Temperature T_return=70 + 273.15 "Temperature of the fluid at start in return" annotation (Dialog(tab="District Heating Grid", group="Initialisation"));
-  parameter Real dT = 20 "Target temperature difference"
-                                                        annotation (Dialog(tab="District Heating Grid", group="Operation"));
-  parameter Modelica.Units.SI.MassFlowRate m_flow_min=0.0001 "Minimum mass flow rate in substations" annotation (Dialog(tab="District Heating Grid", group="Operation"));
-  parameter Modelica.Units.SI.Velocity v_nom=1 "Design Velocity of the pipes used." annotation (Dialog(tab="District Heating Grid", group="Operation"));
-  parameter Modelica.Units.SI.ThermalConductivity lambda_ground=1.2 "Heat-Transfer Coefficient of the ground surrounding the pipes" annotation (Dialog(tab="District Heating Grid", group="Pipe Data"));
-  parameter Modelica.Units.SI.Length K=0.000045 "average height of surface asperities" annotation (Dialog(tab="District Heating Grid", group="Pipe Data"));
-  parameter Modelica.Units.SI.SpecificHeatCapacity pipe_wall_capacity=450 "HeatCapacity of the pipe wall material" annotation (Dialog(tab="District Heating Grid", group="Pipe Data"));
-  parameter Modelica.Units.SI.Density pipe_wall_d=7850 "Density of the pipe wall material" annotation (Dialog(tab="District Heating Grid", group="Pipe Data"));
-
-  replaceable model DHN_Pipe_Manufacturer = TransiEnt.Components.Heat.VolumesValvesFittings.Pipes.Base.DHN_Pipes.DN_IsoPlus
-    constrainedby TransiEnt.Components.Heat.VolumesValvesFittings.Pipes.Base.DHN_Pipes.DN_table_base
-                                                                                                "Type of DN-Data to be used" annotation(choicesAllMatching=true,Dialog(tab="District Heating Grid", group="Pipe Data"));
- final parameter Real DNmat[:,:] = DHN_Pipe_Manufacturer.DNmat;
 
   // ==== Gas grid ====
 
@@ -198,100 +160,6 @@ model SimCenter "SimCenter for global parameters, ambient conditions and collect
 
   // ==== Economics and Emissions ====
 
-  // Parameter table with economics and emissions-related assumptions
-  parameter Boolean calculateCost=false "true if cost shall be calculated"  annotation (Dialog(tab="Costs", group="General"));
-  parameter Real InterestRate=0.07 "Interest Rate in percent"  annotation (Dialog(tab="Costs", group="Annuity Inputs"));
-  parameter Real priceChangeRateInv=0 "Price change rate of the invest cost" annotation (Dialog(tab="Costs", group="Annuity Inputs"));
-  parameter Real priceChangeRateDemand=0 "Price change rate of the demand-related cost" annotation (Dialog(tab="Costs", group="Annuity Inputs"));
-  parameter Real priceChangeRateOM=0 "Price change rate of the operation-related cost" annotation (Dialog(tab="Costs", group="Annuity Inputs"));
-  parameter Real priceChangeRateOther=0 "Price change rate of other cost" annotation (Dialog(tab="Costs", group="Annuity Inputs"));
-  parameter Real priceChangeRateRevenue=0 "Price change rate of the revenue" annotation (Dialog(tab="Costs", group="Annuity Inputs"));
-  parameter Real Duration=20 "in Years, observation period for cost calculation"  annotation (Dialog(tab="Costs", group="Annuity Inputs"));
-  parameter Real C_CO2 = 6e-3 "EUR/kg" annotation (Dialog(tab="Costs", group="CO2 certificates"));
-
-  //Costs Hard Coal fired power Plant
-  parameter TransiEnt.Basics.Units.MonetaryUnitPerPower Cinv_HardCoal(displayUnit="EUR/W") = 1.500 annotation (Dialog(tab="Costs", group="Investment costs in EUR/W"));
-  parameter TransiEnt.Basics.Units.MonetaryUnitPerPower CfixOM_HardCoal(displayUnit="EUR/W") = 0.0225 annotation (Dialog(tab="Costs", group="Fix O&M costs in EUR/W"));
-  parameter TransiEnt.Basics.Units.MonetaryUnitPerEnergy Cvar_HardCoal(displayUnit="EUR/J") = 1.3/3.6e9 annotation (Dialog(tab="Costs", group="Variable costs in EUR/J_el"));
-  parameter TransiEnt.Basics.Units.MonetaryUnitPerEnergy Cfue_HardCoal(displayUnit="EUR/J") = 10.19/3.6e9 annotation (Dialog(tab="Costs", group="Fuel costs in EUR/J_fuel"));
-  parameter TransiEnt.Basics.Units.Time_year lifeTime_HardCoal=30 annotation (Dialog(tab="Costs", group="Plant life for annuitiy"));
-
-  //Costs Brown Coal fired power Plant
-  parameter TransiEnt.Basics.Units.MonetaryUnitPerPower Cinv_BrownCoal(displayUnit="EUR/W") = 1.600 annotation (Dialog(tab="Costs", group="Investment costs in EUR/W"));
-  parameter TransiEnt.Basics.Units.MonetaryUnitPerPower CfixOM_BrownCoal(displayUnit="EUR/W") = 0.0256 annotation (Dialog(tab="Costs", group="Fix O&M costs in EUR/W"));
-  parameter TransiEnt.Basics.Units.MonetaryUnitPerEnergy Cvar_BrownCoal(displayUnit="EUR/J") = 1.65/3.6e9 annotation (Dialog(tab="Costs", group="Variable costs in EUR/J_el"));
-  parameter TransiEnt.Basics.Units.MonetaryUnitPerEnergy Cfue_BrownCoal(displayUnit="EUR/J") = 5.4/3.6e9 annotation (Dialog(tab="Costs", group="Fuel costs in EUR/J_fuel"));
-  parameter TransiEnt.Basics.Units.Time_year lifeTime_BrownCoal=30 annotation (Dialog(tab="Costs", group="Plant life for annuitiy"));
-
-  //Costs GuD
-  parameter TransiEnt.Basics.Units.MonetaryUnitPerPower Cinv_GasCCGT(displayUnit="EUR/W") = 0.650 annotation (Dialog(tab="Costs", group="Investment costs in EUR/W"));
-  parameter TransiEnt.Basics.Units.MonetaryUnitPerPower CfixOM_GasCCGT(displayUnit="EUR/W") = 0.0046 annotation (Dialog(tab="Costs", group="Fix O&M costs in EUR/W"));
-  parameter TransiEnt.Basics.Units.MonetaryUnitPerEnergy Cvar_GasCCGT(displayUnit="EUR/J") = 3.5/3.6e9 annotation (Dialog(tab="Costs", group="Variable costs in EUR/J_el"));
-  parameter TransiEnt.Basics.Units.MonetaryUnitPerEnergy Cfue_GasCCGT(displayUnit="EUR/J") = 25/3.6e9 annotation (Dialog(tab="Costs", group="Fuel costs in EUR/J_fuel"));
-  parameter TransiEnt.Basics.Units.Time_year lifeTime_GasCCGT=20 annotation (Dialog(tab="Costs", group="Plant life for annuitiy"));
-
-  //Costs Gas Turbine
-  parameter TransiEnt.Basics.Units.MonetaryUnitPerPower Cinv_GT(displayUnit="EUR/W") = 0.500 annotation (Dialog(tab="Costs", group="Investment costs in EUR/W"));
-  parameter TransiEnt.Basics.Units.MonetaryUnitPerPower CfixOM_GT(displayUnit="EUR/W") = 0.0025 annotation (Dialog(tab="Costs", group="Fix O&M costs in EUR/W"));
-  parameter TransiEnt.Basics.Units.MonetaryUnitPerEnergy Cvar_GT(displayUnit="EUR/J") = 5/3.6e9 annotation (Dialog(tab="Costs", group="Variable costs in EUR/J_el"));
-  parameter TransiEnt.Basics.Units.MonetaryUnitPerEnergy Cfue_GT(displayUnit="EUR/J") = 25/3.6e9 annotation (Dialog(tab="Costs", group="Fuel costs in EUR/J_fuel"));
-  parameter TransiEnt.Basics.Units.Time_year lifeTime_GT=20 annotation (Dialog(tab="Costs", group="Plant life for annuitiy"));
-
-  //Costs Wind Onshore Power Plant
-  parameter TransiEnt.Basics.Units.MonetaryUnitPerPower Cinv_Wind_On(displayUnit="EUR/W") = 1.170 annotation (Dialog(tab="Costs", group="Investment costs in EUR/W"));
-  parameter TransiEnt.Basics.Units.MonetaryUnitPerPower CfixOM_Wind_On(displayUnit="EUR/W") = 0 annotation (Dialog(tab="Costs", group="Fix O&M costs in EUR/W"));
-  parameter TransiEnt.Basics.Units.MonetaryUnitPerEnergy Cvar_Wind_On(displayUnit="EUR/J") = 18/3.6e9 annotation (Dialog(tab="Costs", group="Variable costs in EUR/J_el"));
-  parameter TransiEnt.Basics.Units.MonetaryUnitPerEnergy Cfue_Wind_On(displayUnit="EUR/J") = 0 annotation (Dialog(tab="Costs", group="Fuel costs in EUR/J_fuel"));
-  parameter TransiEnt.Basics.Units.Time_year lifeTime_Wind_On=20 annotation (Dialog(tab="Costs", group="Plant life for annuitiy"));
-
-  //Costs Wind Offshore Power Plant
-  parameter TransiEnt.Basics.Units.MonetaryUnitPerPower Cinv_Wind_Off(displayUnit="EUR/W") = 3.000 annotation (Dialog(tab="Costs", group="Investment costs in EUR/W"));
-  parameter TransiEnt.Basics.Units.MonetaryUnitPerPower CfixOM_Wind_Off(displayUnit="EUR/W") = 0 annotation (Dialog(tab="Costs", group="Fix O&M costs in EUR/W"));
-  parameter TransiEnt.Basics.Units.MonetaryUnitPerEnergy Cvar_Wind_Off(displayUnit="EUR/J") = 35/3.6e9 annotation (Dialog(tab="Costs", group="Variable costs in EUR/J_el"));
-  parameter TransiEnt.Basics.Units.MonetaryUnitPerEnergy Cfue_Wind_Off(displayUnit="EUR/J") = 0 annotation (Dialog(tab="Costs", group="Fuel costs in EUR/J_fuel"));
-  parameter TransiEnt.Basics.Units.Time_year lifeTime_Wind_Off=20 annotation (Dialog(tab="Costs", group="Plant life for annuitiy"));
-
-  //Costs PV Power Plant
-  parameter TransiEnt.Basics.Units.MonetaryUnitPerPower Cinv_PV(displayUnit="EUR/W") = 1.300 annotation (Dialog(tab="Costs", group="Investment costs in EUR/W"));
-  parameter TransiEnt.Basics.Units.MonetaryUnitPerPower CfixOM_PV(displayUnit="EUR/W") = 0.035 annotation (Dialog(tab="Costs", group="Fix O&M costs in EUR/W"));
-  parameter TransiEnt.Basics.Units.MonetaryUnitPerEnergy Cvar_PV(displayUnit="EUR/J") = 0 annotation (Dialog(tab="Costs", group="Variable costs in EUR/J_el"));
-  parameter TransiEnt.Basics.Units.MonetaryUnitPerEnergy Cfue_PV(displayUnit="EUR/J") = 0 annotation (Dialog(tab="Costs", group="Fuel costs in EUR/J_fuel"));
-  parameter TransiEnt.Basics.Units.Time_year lifeTime_PV=20 annotation (Dialog(tab="Costs", group="Plant life for annuitiy"));
-
-  //Costs Central Gas Boiler
-  parameter TransiEnt.Basics.Units.MonetaryUnitPerPower Cinv_GasBoiler(displayUnit="EUR/W") = 0.24 annotation (Dialog(tab="Costs", group="Investment costs in EUR/W"));
-                                                                                                                                                                      //Haferweg: .  https://www.dtad.de/details/Neubau_eines_Heizwerkes_40_Mio_Euro_22769_Hamburg-8065848_10
-  parameter TransiEnt.Basics.Units.MonetaryUnitPerPower CfixOM_GasBoiler(displayUnit="EUR/W") = 0.0046 annotation (Dialog(tab="Costs", group="Fix O&M costs in EUR/W"));//idem GuD (temporal solution)
-  parameter TransiEnt.Basics.Units.MonetaryUnitPerEnergy Cvar_GasBoiler(displayUnit="EUR/J") = 0 annotation (Dialog(tab="Costs", group="Variable costs in EUR/J_th"));
-  parameter TransiEnt.Basics.Units.MonetaryUnitPerEnergy Cfue_GasBoiler(displayUnit="EUR/J") = 25/3.6e9 annotation (Dialog(tab="Costs", group="Fuel costs in EUR/J_fuel"));
-  parameter TransiEnt.Basics.Units.Time_year lifeTime_GasBoiler=20 annotation (Dialog(tab="Costs", group="Plant life for annuitiy"));
-
-  //Costs Central Garbage Boiler
-  parameter TransiEnt.Basics.Units.MonetaryUnitPerPower Cinv_GarbageBoiler(displayUnit="EUR/W") = 0.24 annotation (Dialog(tab="Costs", group="Investment costs in EUR/W"));
-                                                                                                                                                                          //idem Haferweg (temporal solution): .  https://www.dtad.de/details/Neubau_eines_Heizwerkes_40_Mio_Euro_22769_Hamburg-8065848_10
-  parameter TransiEnt.Basics.Units.MonetaryUnitPerPower CfixOM_GarbageBoiler(displayUnit="EUR/W") = 0.0046 annotation (Dialog(tab="Costs", group="Fix O&M costs in EUR/W"));//idem GuD (temporal solution)
-  parameter TransiEnt.Basics.Units.MonetaryUnitPerEnergy Cvar_GarbageBoiler(displayUnit="EUR/J") = 0 annotation (Dialog(tab="Costs", group="Variable costs in EUR/J_th"));
-  parameter TransiEnt.Basics.Units.MonetaryUnitPerEnergy Cfue_GarbageBoiler(displayUnit="EUR/J") = 0 annotation (Dialog(tab="Costs", group="Fuel costs in EUR/J_fuel"));
-                                                                                                                                                                       //Supposing that the city does not pay for the burned garbage
-  parameter TransiEnt.Basics.Units.Time_year lifeTime_GarbageBoiler=30 annotation (Dialog(tab="Costs", group="Plant life for annuitiy"));
-
-  //Costs Nuclear Power Plant; Source: Panos Konstantin: Praxisbuch Energiewirtschaft - ISBN:978-3-642-37264-3
-  parameter TransiEnt.Basics.Units.MonetaryUnitPerPower Cinv_Nuclear(displayUnit="EUR/W") = 5.15 annotation (Dialog(tab="Costs", group="Investment costs in EUR/W"));
-  parameter TransiEnt.Basics.Units.MonetaryUnitPerPower CfixOM_Nuclear(displayUnit="EUR/W") = 0 annotation (Dialog(tab="Costs", group="Fix O&M costs in EUR/W"));
-  parameter TransiEnt.Basics.Units.MonetaryUnitPerEnergy Cvar_Nuclear(displayUnit="EUR/J") = 19.92/3.6e9 annotation (Dialog(tab="Costs", group="Variable costs in EUR/J_el"));
-  parameter TransiEnt.Basics.Units.MonetaryUnitPerEnergy Cfue_Nuclear(displayUnit="EUR/J") = 11.3/3.6e9 annotation (Dialog(tab="Costs", group="Fuel costs in EUR/J_fuel"));
-  parameter TransiEnt.Basics.Units.Time_year lifeTime_Nuclear=30 annotation (Dialog(tab="Costs", group="Plant life for annuitiy"));
-
-  //Costs generic Biomass unit
-  parameter TransiEnt.Basics.Units.MonetaryUnitPerPower Cinv_Biomass(displayUnit="EUR/W") = 2.5 annotation (Dialog(tab="Costs", group="Investment costs in EUR/W"));
-                                                                                                                                                                   //P.Konstantin, 2013. pp. 419
-  parameter TransiEnt.Basics.Units.MonetaryUnitPerPower CfixOM_Biomass(displayUnit="EUR/W") = 0.0046 annotation (Dialog(tab="Costs", group="Fix O&M costs in EUR/W"));//idem GuD (temporal solution)
-  parameter TransiEnt.Basics.Units.MonetaryUnitPerEnergy Cvar_Biomass(displayUnit="EUR/J") = 19.92/3.6e9 annotation (Dialog(tab="Costs", group="Variable costs in EUR/J_el"));
-                                                                                                                                                                             //idem GuD (temporal solution)
-  parameter TransiEnt.Basics.Units.MonetaryUnitPerEnergy Cfue_Biomass(displayUnit="EUR/J") = 3.8/3.6e9 annotation (Dialog(tab="Costs", group="Fuel costs in EUR/J_fuel"));
-                                                                                                                                                                         //P.Konstantin, 2013. pp. 419
-  parameter TransiEnt.Basics.Units.Time_year lifeTime_Biomass=20 annotation (Dialog(tab="Costs", group="Plant life for annuitiy"));
-
   //Costs Cavern
   parameter TransiEnt.Basics.Units.Time_year lifeTime_Cavern=100 annotation (Dialog(tab="Costs", group="Plant life for annuitiy"));
   parameter TransiEnt.Basics.Units.Time_year lifeTime_Electrolyzer=20 annotation (Dialog(tab="Costs", group="Plant life for annuitiy"));
@@ -299,38 +167,9 @@ model SimCenter "SimCenter for global parameters, ambient conditions and collect
   parameter TransiEnt.Basics.Units.MonetaryUnitPerEnergy Cfue_Oil(displayUnit="EUR/J") = 45*1/159*1/36e6 annotation (Dialog(tab="Costs", group="Fuel costs in EUR/J_fuel"));
                                                                                                                                                                             //X [EUR/barrel]*1/159[barrel/liter]*1/36[liter/MJ]*3.6e9[J/MWh]
 
-  //Costs pipelines in EUR/m
-  parameter Real Cinv_DHN_pipe(displayUnit="EUR/m")=3000 annotation (Dialog(tab="Costs", group="Specific pipeline costs in EUR/m")); //EUR/m, DN700, KRM. includes material, mounting and civil engineering (Source: [1]MVV Energie AG: Wärmetransport im Wettbewerb zu dislozierter Wärmeerzeugung, 2013)
-  parameter Real Cinv_H2_pipe(displayUnit="EUR/m")=300 annotation (Dialog(tab="Costs", group="Specific pipeline costs in EUR/m"));   //EUR/m,DN100, Includes material and mounting costs. (Source: [1]Krieg, Dennis: Konzept und Kosten eines Pipelinesystems zur Versorgung des deutschen Straßenverkehrs mit Wasserstoff, 2010 — ISBN 9783893368006)
-
-  //Fuel specific Emissions, excluding supply chain related emissions (Source: FfE 2010, Basisdaten von Energietraegern. https://www.ffe.de/download/wissen/186_Basisdaten_Energietraeger/Basisdaten_von_Energietraegern_2010.pdf. page 3)
-  parameter Boolean integrateCDE=false "true if CDE should be integrated" annotation (Dialog(tab="Emissions", group="General Settings"));
-  parameter TransiEnt.Basics.Units.MassOfCDEperEnergy FuelSpecEmis_BrownCoal=403/3.6e9 annotation (Dialog(tab="Emissions", group="Fuel specific CO2 emissions in kg/J (Source: FfE 2010)"));
-  parameter TransiEnt.Basics.Units.MassOfCDEperEnergy FuelSpecEmis_HardCoal=337/3.6e9 annotation (Dialog(tab="Emissions", group="Fuel specific CO2 emissions in kg/J (Source: FfE 2010)"));
-  parameter TransiEnt.Basics.Units.MassOfCDEperEnergy FuelSpecEmis_NaturalGas=202/3.6e9 annotation (Dialog(tab="Emissions", group="Fuel specific CO2 emissions in kg/J (Source: FfE 2010)"));
-  parameter TransiEnt.Basics.Units.MassOfCDEperEnergy FuelSpecEmis_LightFuelOil=266/3.6e9 annotation (Dialog(tab="Emissions", group="Fuel specific CO2 emissions in kg/J (Source: FfE 2010)"));
-  parameter TransiEnt.Basics.Units.MassOfCDEperEnergy FuelSpecEmis_HeavyFuelOil=281/3.6e9 annotation (Dialog(tab="Emissions", group="Fuel specific CO2 emissions in kg/J (Source: FfE 2010)"));
-  parameter TransiEnt.Basics.Units.MassOfCDEperEnergy FuelSpecEmis_Nuclear=0/3.6e9 annotation (Dialog(tab="Emissions", group="Fuel specific CO2 emissions in kg/J (Source: FfE 2010)"));
-  parameter TransiEnt.Basics.Units.MassOfCDEperEnergy FuelSpecEmis_Biomass=0/3.6e9 annotation (Dialog(tab="Emissions", group="Fuel specific CO2 emissions in kg/J (Source: FfE 2010)"));       //because CO2 produced during production is captured again by plant growth
-  parameter TransiEnt.Basics.Units.MassOfCDEperEnergy FuelSpecEmis_Garbage=162/3.6e9 annotation (Dialog(tab="Emissions", group="Fuel specific CO2 emissions in kg/J (Source: FfE 2010)"));
-  parameter TransiEnt.Basics.Units.MassOfCDEperEnergy FuelSpecEmis_Diesel=266/3.6e9 annotation (Dialog(tab="Emissions", group="Fuel specific CO2 emissions in kg/J (Source: FfE 2010)"));
-
-  parameter TransiEnt.Basics.Units.MassOfCDEperEnergy FuelSpecEmis_WindOnshore=0/3.6e9 annotation (Dialog(tab="Emissions", group="Fuel specific CO2 emissions in kg/J (Source: FfE 2010)"));
-  parameter TransiEnt.Basics.Units.MassOfCDEperEnergy FuelSpecEmis_WindOffshore=0/3.6e9 annotation (Dialog(tab="Emissions", group="Fuel specific CO2 emissions in kg/J (Source: FfE 2010)"));
-  parameter TransiEnt.Basics.Units.MassOfCDEperEnergy FuelSpecEmis_Photovoltaic=0/3.6e9 annotation (Dialog(tab="Emissions", group="Fuel specific CO2 emissions in kg/J (Source: FfE 2010)"));
-  parameter TransiEnt.Basics.Units.MassOfCDEperEnergy FuelSpecEmis_Hydro=0/3.6e9 annotation (Dialog(tab="Emissions", group="Fuel specific CO2 emissions in kg/J (Source: FfE 2010)"));
 
   // //Subsidies, Feed in Tariffs and selling prices
 
-  //CHP subsidy, Sources: BDEW, 2013 "Umsetzungshilfe zum KWKG";
-  parameter TransiEnt.Basics.Units.MonetaryUnitPerEnergy CHPelectricityLarger20_new(displayUnit="EUR/J") = 28/3.6e9 "CHP subisidy for new plants over 2 MWe, in EUR/J" annotation (Dialog(tab="PricesAndSubsidies", group="KWKG"));
-  parameter TransiEnt.Basics.Units.MonetaryUnitPerEnergy CHPelectricityLarger20_old(displayUnit="EUR/J") = 18/3.6e9 "CHP subisidy for old plants over 2 MWe, in EUR/J" annotation (Dialog(tab="PricesAndSubsidies", group="KWKG"));
-
-  //FIT RE, Source: BDEW, "Erneuerbare Energien und das EEG 2014"
-  parameter TransiEnt.Basics.Units.MonetaryUnitPerEnergy FIT_Wind_On(displayUnit="EUR/J") = 91.6/3.6e9 "Average wind onshore feed in tariff in EUR/J" annotation (Dialog(tab="PricesAndSubsidies", group="EEG"));
-  parameter TransiEnt.Basics.Units.MonetaryUnitPerEnergy FIT_Wind_Off(displayUnit="EUR/J") = 152.6/3.6e9 "Average wind onshore feed in tariff in EUR/J" annotation (Dialog(tab="PricesAndSubsidies", group="EEG"));
-  parameter TransiEnt.Basics.Units.MonetaryUnitPerEnergy FIT_PV(displayUnit="EUR/J") = 365.3/3.6e9 "Average photovoltaic feed in tariff in EUR/J" annotation (Dialog(tab="PricesAndSubsidies", group="EEG"));
-  parameter TransiEnt.Basics.Units.MonetaryUnitPerEnergy FIT_Biomass(displayUnit="EUR/J") = 200.1/3.6e9 "Average biomass feed in tariff in EUR/J" annotation (Dialog(tab="PricesAndSubsidies", group="EEG"));
 
   //Selling prices in EUR/J
   parameter TransiEnt.Basics.Units.MonetaryUnitPerEnergy sellPriceElEnergy(displayUnit="EUR/J") = 210/3.6e9 "EUR/J_el" annotation (Dialog(tab="PricesAndSubsidies", group="Sale prices"));

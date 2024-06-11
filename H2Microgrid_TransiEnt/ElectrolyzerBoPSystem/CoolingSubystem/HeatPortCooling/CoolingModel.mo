@@ -11,13 +11,13 @@ model CoolingModel
     nPorts=1) annotation (Placement(transformation(extent={{-62,-10},{-42,10}})));
   Buildings.Fluid.FixedResistances.PressureDrop pipe(
     redeclare package Medium = Buildings.Media.Water,
-    m_flow_nominal=2.76e-2,
+    m_flow_nominal=5e-2,
     dp_nominal(displayUnit="bar") = 400000)
     annotation (Placement(transformation(extent={{-30,-10},{-10,10}})));
   Buildings.Fluid.MixingVolumes.MixingVolume heatexchanger(
     redeclare package Medium = Buildings.Media.Water,
-    m_flow_nominal=2.76e-2,
-    V=0.001,
+    m_flow_nominal=5e-2,
+    V=0.002,
     nPorts=2) annotation (Placement(transformation(extent={{46,-54},{66,-74}})));
   Buildings.Fluid.Sources.Boundary_pT sink(redeclare package Medium = Buildings.Media.Water, nPorts=1)
     annotation (Placement(transformation(extent={{88,-10},{68,10}})));
@@ -57,7 +57,7 @@ equation
   connect(heatPortCooling, cellBuffer.port) annotation (Line(points={{-100,-92},{-18,-92},{-18,-56}}, color={191,0,0}));
   connect(cellBuffer.port, heatexchanger.heatPort) annotation (Line(points={{-18,-56},{-18,-64},{46,-64}}, color={191,0,0}));
   connect(fuelcellTemperature.T, controller.u_m) annotation (Line(points={{-68,-31},{-68,54}},                                                 color={0,0,127}));
-  connect(fuelcellTemperature.port, cellBuffer.port) annotation (Line(points={{-68,-52},{-68,-62},{-18,-62},{-18,-56}},           color={191,0,0}));
+  connect(fuelcellTemperature.port, cellBuffer.port) annotation (Line(points={{-68,-52},{-68,-64},{-18,-64},{-18,-56}},           color={191,0,0}));
   annotation (
     Icon(coordinateSystem(preserveAspectRatio=false)),
     Diagram(coordinateSystem(preserveAspectRatio=false), graphics={

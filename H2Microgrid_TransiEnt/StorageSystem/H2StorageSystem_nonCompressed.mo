@@ -1,5 +1,5 @@
 within H2Microgrid_TransiEnt.StorageSystem;
-model H2StorageSystem_nonCompressed
+model H2StorageSystem_nonCompressed "Low pressure storage at 30 bar - DESL system"
 public
   TransiEnt.Storage.Gas.GasStorage_constXi_L2 storage(
     calculateCost=false,
@@ -21,16 +21,16 @@ public
 
   parameter Boolean start_pressure=true "true if a start pressure is defined, false if a start mass is defined" annotation (Dialog(tab="Storage"));
   parameter Boolean includeHeatTransfer=false "false for neglecting heat transfer" annotation (Dialog(tab="Storage"));
-  parameter Modelica.Units.SI.Volume V_geo=1e5 "Geometric volume of storage" annotation (Dialog(tab="Storage"));
+  parameter Modelica.Units.SI.Volume V_geo=1.6 "Geometric volume of storage" annotation (Dialog(tab="Storage"));
   parameter Modelica.Units.SI.Height height=3.779*V_geo^(1/3) "Height of storage" annotation (Dialog(tab="Storage"));
   parameter Modelica.Units.SI.CoefficientOfHeatTransfer alpha_nom=4 "Heat transfer coefficient inside the storage cylinder" annotation (Dialog(tab="Storage"));
   parameter Modelica.Units.SI.Mass m_start=1 "Stored gas mass at t=0" annotation (Dialog(tab="Storage"));
   parameter Modelica.Units.SI.Pressure p_start=simCenter.p_amb_const + simCenter.p_eff_2  "Pressure in storage at t=0" annotation (Dialog(tab="Storage")); // p_start = 17 bar
-  parameter Modelica.Units.SI.ThermodynamicTemperature T_start=283.15 "Temperature of gas in storage at t=0" annotation (Dialog(tab="Storage"));
+  parameter Modelica.Units.SI.ThermodynamicTemperature T_start=T_out "Temperature of gas in storage at t=0" annotation (Dialog(tab="Storage"));
   parameter Modelica.Units.SI.Pressure p_out = 30e5;
   parameter Modelica.Units.SI.Pressure p_maxLow=p_maxHigh - 1e5 "Lower limit of the maximum pressure in storage" annotation (Dialog(tab="Storage", group="Control"));
-  parameter Modelica.Units.SI.Pressure p_maxHigh=p_out "Upper limit of the maximum pressure in storage" annotation (Dialog(tab="Storage", group="Control"));
-  parameter Modelica.Units.SI.Temperature T_out=283.15 "Hydrogen output temperature" annotation(Dialog(group="Fundamental Definitions"));
+  parameter Modelica.Units.SI.Pressure p_maxHigh=p_out "if no compressor, p_max = p_out - Upper limit of the maximum pressure in storage" annotation (Dialog(tab="Storage", group="Control"));
+  parameter Modelica.Units.SI.Temperature T_out=273.15+40 "Hydrogen output temperature" annotation(Dialog(group="Fundamental Definitions"));
   parameter Modelica.Units.SI.Efficiency eta_n(
     min=0,
     max=1)=0.655 "Nominal efficency refering to the GCV (min = 0, max = 1)" annotation (Dialog(tab="General", group="Electrolyzer"));

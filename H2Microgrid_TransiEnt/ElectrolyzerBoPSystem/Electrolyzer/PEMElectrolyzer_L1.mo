@@ -1,5 +1,5 @@
 within H2Microgrid_TransiEnt.ElectrolyzerBoPSystem.Electrolyzer;
-model PEMElectrolyzer_L1 "PEMElectrolyzer_L1 Proton exchange membrane electrolyzer"
+model PEMElectrolyzer_L1 "PEMElectrolyzer_L1 Proton exchange membrane electrolyzer PEMElectrolyzer_L2 Proton exchange membrane electrolyzer with Charline efficiency and Dynamics models, including inverter efficiency in total power setpoint, compressor and cooling pump power"
 
 //________________________________________________________________________________//
 // Component of the TransiEnt Library, version: 2.0.3                             //
@@ -17,7 +17,7 @@ model PEMElectrolyzer_L1 "PEMElectrolyzer_L1 Proton exchange membrane electrolyz
 // Institute of Electrical Power and Energy Technology                            //
 // (Hamburg University of Technology)                                             //
 // Fraunhofer Institute for Environmental, Safety, and Energy Technology UMSICHT, //
-// Gas- und WÃ¤rme-Institut Essen						  //
+// Gas- und WÃ¤rme-Institut Essen                                                  //
 // and                                                                            //
 // XRG Simulation GmbH (Hamburg, Germany).                                        //
 //________________________________________________________________________________//
@@ -27,7 +27,9 @@ model PEMElectrolyzer_L1 "PEMElectrolyzer_L1 Proton exchange membrane electrolyz
   //          Imports and Class Hierarchy
   // _____________________________________________
 
- extends TransiEnt.Producer.Gas.Electrolyzer.Base.PartialElectrolyzer(  P_el_n=1e6,P_el_max=3*P_el_n);
+ extends TransiEnt.Producer.Gas.Electrolyzer.Base.PartialElectrolyzer(  P_el_n=5e3,P_el_max=1*P_el_n,
+    Q_flow_positive(y=-Q_flow_heatprovision),
+    realExpression(y=P_el_tot));
 
   // _____________________________________________
   //
@@ -38,15 +40,20 @@ model PEMElectrolyzer_L1 "PEMElectrolyzer_L1 Proton exchange membrane electrolyz
 
   parameter Modelica.Units.SI.LinearTemperatureCoefficient k_therm_relative=0.325436e-3 "temperature conductivity for heat losses relative to electrical power" annotation (Dialog(group="Coolant"));
                                                                                                                                                                                         //default value based on [1] - 0.325436e-3 =1/(0.0668KW^-1)/46e3W
-  parameter Modelica.Units.SI.Temperature T_amb=273.15 + 15 "ambient temperature for heat loss calculation" annotation (Dialog(group="Coolant"));
-  parameter Real specificWaterConsumption=10 "Mass of water per mass of hydrogen" annotation(Dialog(group="Fundamental Definitions")); //Stolzenburg, K. et al.: Integration von Wind-Wasserstoff-Systemen in das Energiesystem: Abschlussbericht, 2014
+  parameter Modelica.Units.SI.Temperature T_amb=273.15 + 23 "ambient temperature for heat loss calculation" annotation (Dialog(group="Coolant"));
+  parameter Real specificWaterConsumption=11 "Mass of water per mass of hydrogen" annotation(Dialog(group="Fundamental Definitions")); //Stolzenburg, K. et al.: Integration von Wind-Wasserstoff-Systemen in das Energiesystem: Abschlussbericht, 2014
+
+//  parameter Real eta_inv_n=0.956 "nominal efficiency of the inverter" annotation (Dialog(group="Fundamental Definitions")); // we neglect all losses relative to grid constraints, including inverter efficiency
+  parameter Real E_dry_spec=500*3600
+                                    "specific energy consumption of dryer in Ws/kg H2";
+  parameter Modelica.Units.SI.Power P_el_pump = 285.7 "W, pump el power consumption";
 
   parameter Modelica.Units.SI.Efficiency eta_n(
     min=0,
-    max=1)=0.75 "Nominal efficiency refering to the GCV (min = 0, max = 1)" annotation (Dialog(group="Fundamental Definitions"));
+    max=1)=0.755 "Nominal efficiency refering to the GCV (min = 0, max = 1)" annotation (Dialog(group="Fundamental Definitions"));
   parameter Modelica.Units.SI.Efficiency eta_scale(
     min=0,
-    max=1)=0 "Sets a with increasing input power linear degrading efficiency coefficient (min=0,max=1)" annotation (Dialog(group="Fundamental Definitions"));
+    max=1)=0.01 "Sets a with increasing input power linear degrading efficiency coefficient (min=0,max=1)" annotation (Dialog(group="Fundamental Definitions"));
   parameter Integer whichInput=1 "use P_el_set or m_flow_H2_set as input" annotation(Dialog(group="Fundamental Definitions"),choices(__Dymola_radioButtons=true, choice=1 "P_el_set", choice=2 "m_flow_H2_set"));
 
   parameter Boolean useLeakageMassFlow=false "Constant leakage gas mass flow of 'm_flow_small' to avoid zero mass flow"  annotation(Dialog(group="Numerical Stability"));
@@ -63,6 +70,8 @@ public
   Modelica.Units.SI.Mass mass_H2(start=0, fixed=true) "produced H2 mass";
   Modelica.Units.SI.HeatFlowRate Q_flow "waste heat";
   Modelica.Units.SI.HeatFlowRate Q_loss "heat losses to environment";
+  Modelica.Units.SI.Power P_el_tot "Electric power consumed by the electrolyzer and dryer and cooling";
+  Modelica.Units.SI.Energy E_dry "Electric energy consumed by the dryer";
   Modelica.Units.SI.Efficiency eta_NCV(min=0, max=1) "Efficiency of the electrolyzer based on NCV" annotation (Dialog(group="Initialization", showStartAttribute=true));
   Modelica.Units.SI.Efficiency eta_GCV(
     min=0,
@@ -115,7 +124,7 @@ public
   //           Instances of other Classes
   // _____________________________________________
 protected
-  Dynamics dynamics(final useHomotopy=useHomotopy, final P_el_n=P_el_n, final eta_n=eta_n) annotation (Placement(transformation(extent={{20,-10},{40,10}})));
+  Dynamics dynamics(final useHomotopy=useHomotopy, final P_el_n=P_el_n, final eta_n=eta_n) annotation (Placement(transformation(extent={{22,-10},{42,10}})));
   Charline charline(final P_el_n=P_el_n, final eta_n=eta_n, final eta_scale=eta_scale) annotation (Placement(transformation(extent={{-40,-10},{-20,10}})));
 
   Modelica.Blocks.Sources.Constant P_el_set_(k=0) if not whichInput==1;
@@ -156,6 +165,22 @@ public
       otherCosts=collectCosts.costsCollector.OtherCosts,
       revenues=collectCosts.costsCollector.Revenues)) annotation (Placement(transformation(extent={{-58,-100},{-38,-80}})));
 
+  TransiEnt.Basics.Interfaces.Electrical.ElectricPowerIn storageCompressorPowerIn "Electrical power from the storage compressor" annotation (Placement(transformation(
+        extent={{-20,-20},{20,20}},
+        rotation=180,
+        origin={120,42}), iconTransformation(
+        extent={{-20,-20},{20,20}},
+        rotation=0,
+        origin={-120,-76})));
+  TransiEnt.Basics.Interfaces.Electrical.ElectricPowerIn coolingPumpPowerIn annotation (Placement(transformation(
+        extent={{-20,-20},{20,20}},
+        rotation=180,
+        origin={120,14}), iconTransformation(
+        extent={{-20,-20},{20,20}},
+        rotation=180,
+        origin={120,20})));
+  Modelica.Blocks.Sources.RealExpression P_el_out(y=P_el_tot) annotation (Placement(transformation(extent={{-88,-58},{-68,-38}})));
+  TransiEnt.Basics.Interfaces.Electrical.ElectricPowerOut electrolyzerPowerOut annotation (Placement(transformation(extent={{-54,-58},{-34,-38}})));
 equation
   // _____________________________________________
   //
@@ -174,7 +199,7 @@ equation
   end if;
 
   if whichInput==1 then
-    P_el=getInputs.P_el_set;
+    P_el_tot=getInputs.P_el_set;
   else
     m_flow_H2=getInputs.m_flow_H2_set;
   end if;
@@ -187,8 +212,19 @@ equation
   m_flow_H2O = specificWaterConsumption*m_flow_H2;
   eta_NCV=eta_GCV*NCV_H2[end]/GCV_H2[end];
 
+  //Power and energy
+  E_dry = E_dry_spec*mass_H2; // drying energy = 0.5 kWh/kg H2
+
+ if P_el_tot>0 then
+    P_el_tot = P_el + der(E_dry) + coolingPumpPowerIn + storageCompressorPowerIn  + P_el_pump;
+  else
+    P_el_tot = 0;
+ end if;
+
   Q_flow=min(0,-(P_el-dynamics.H_flow_H2)+Q_loss);
   Q_loss=k_therm_relative*P_el*(T_out-T_amb);
+
+
   //Dynamics
   dynamics.H_flow_H2 = m_flow_H2 * (GCV_H2[end] + (vleFluidH2.h - h0));
   dynamics.P_el=P_el;
@@ -205,8 +241,9 @@ equation
   connect(P_el_set_.y, getInputs.P_el_set);
   connect(m_flow_H2_set_.y, getInputs.m_flow_H2_set);
 
-  connect(P_el_set, getInputs.P_el_set) annotation (Line(points={{-40,120},{-40,82},{-4,82},{-4,72}}, color={0,127,127}));
   connect(getInputs.m_flow_H2_set, m_flow_H2_set) annotation (Line(points={{4,72},{4,82},{40,82},{40,120}}, color={0,0,127}));
+  connect(P_el_set, getInputs.P_el_set) annotation (Line(points={{-40,120},{-40,82},{-4,82},{-4,72}}, color={0,127,127}));
+  connect(P_el_out.y, electrolyzerPowerOut) annotation (Line(points={{-67,-48},{-44,-48}}, color={0,0,127}));
   annotation(defaultComponentName="electrolyzer",
   Documentation(info="<html>
 <h4><span style=\"color: #008000\">1. Purpose of model</span></h4>

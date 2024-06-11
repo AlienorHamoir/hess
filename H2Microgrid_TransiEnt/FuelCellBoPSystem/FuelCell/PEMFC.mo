@@ -17,7 +17,7 @@ model PEMFC "Model of PEM Fuel Cell stack"
 // Institute of Electrical Power and Energy Technology                            //
 // (Hamburg University of Technology)                                             //
 // Fraunhofer Institute for Environmental, Safety, and Energy Technology UMSICHT, //
-// Gas- und WÃ¤rme-Institut Essen						  //
+// Gas- und WÃ¤rme-Institut Essen                                                  //
 // and                                                                            //
 // XRG Simulation GmbH (Hamburg, Germany).                                        //
 //________________________________________________________________________________//
@@ -28,6 +28,8 @@ model PEMFC "Model of PEM Fuel Cell stack"
   // _____________________________________________
   extends TransiEnt.Basics.Icons.Model;
   import TransiEnt;
+  extends TransiEnt.Producer.Heat.Base.PartialHeatProvision(       T_out_coolant_target=68+273.15);
+
 
   // _____________________________________________
   //
@@ -61,6 +63,8 @@ model PEMFC "Model of PEM Fuel Cell stack"
 
   parameter Modelica.Units.SI.Pressure p_Kathode=100000 "Pressure at the cathode";
 
+  parameter Modelica.Units.SI.Pressure p_Amb=1e5 "Pressure at the cathode";
+
   parameter TransiEnt.Basics.Media.Gases.Gas_VDIWA_SG7_var Syngas=TransiEnt.Basics.Media.Gases.Gas_VDIWA_SG7_var() "Medium model of Syngas" annotation (choicesAllMatching);
 
   parameter TransiEnt.Basics.Media.Gases.Gas_MoistAir Air=TransiEnt.Basics.Media.Gases.Gas_MoistAir() "Medium model of air" annotation (choicesAllMatching);
@@ -77,6 +81,8 @@ model PEMFC "Model of PEM Fuel Cell stack"
 
   parameter Modelica.Units.SI.Temperature T_nom=820 + 273.15 "Temperature in nominal point (i.e. minimum temperature for heat)";
 
+  parameter Modelica.Units.SI.Temperature T_amb= 25 + 273.15 "Ambient temperature";
+
   parameter Modelica.Units.SI.ThermalConductance ka=0.5 "Thermal conductance of the wall";
 
   parameter Modelica.Units.SI.Voltage v_n=simCenter.v_n "Nominal Voltage for grid";
@@ -89,7 +95,7 @@ model PEMFC "Model of PEM Fuel Cell stack"
   // _____________________________________________
 
   Modelica.Units.SI.Temperature T_cell=T_stack "Temperature of one cell";
-  Modelica.Units.SI.Temperature T_stack(start=25 + 273.15) "Temperature of the stack" annotation (Dialog(group="Initialization", showStartAttribute=true));
+  Modelica.Units.SI.Temperature T_stack(start=T_amb) "Temperature of the stack" annotation (Dialog(group="Initialization", showStartAttribute=true));
   Modelica.Units.SI.Temperature T_syng_ein "Temperature of the syngas";
   Modelica.Units.SI.Temperature T_air_ein "Temperature of the air";
 //   Modelica.SIunits.Temperature T_heatdemand = 60+273.15;
@@ -146,7 +152,7 @@ model PEMFC "Model of PEM Fuel Cell stack"
   TransiEnt.Basics.Interfaces.Gas.IdealGasTempPortIn feedh(Medium=Syngas) annotation (Placement(transformation(extent={{-110,30},{-90,50}}), iconTransformation(extent={{-114,46},{-86,74}})));
   TransiEnt.Basics.Interfaces.Gas.IdealGasTempPortOut drainh(Medium=Syngas) annotation (Placement(transformation(extent={{90,30},{110,50}}), iconTransformation(extent={{86,46},{114,74}})));
   TransiEnt.Basics.Interfaces.Gas.IdealGasTempPortIn feeda(Medium=Air) annotation (Placement(transformation(extent={{-106,-66},{-86,-46}}), iconTransformation(extent={{-114,-74},{-86,-46}})));
-  TransiEnt.Basics.Interfaces.Gas.IdealGasTempPortOut draina(Medium=Air) annotation (Placement(transformation(extent={{90,-50},{110,-30}}), iconTransformation(extent={{86,-74},{114,-46}})));
+  TransiEnt.Basics.Interfaces.Gas.IdealGasTempPortOut draina(Medium=Air) annotation (Placement(transformation(extent={{90,-14},{110,6}}),   iconTransformation(extent={{86,-74},{114,-46}})));
 
   replaceable TransiEnt.Basics.Interfaces.Electrical.ActivePowerPort epp if usePowerPort constrainedby TransiEnt.Basics.Interfaces.Electrical.PartialPowerPort "Choice of power port" annotation (Dialog(group="Replaceable Components"),choicesAllMatching=true, Placement(transformation(extent={{-10,48},{10,68}}), iconTransformation(extent={{-10,48},{10,68}})));
 
@@ -220,7 +226,7 @@ model PEMFC "Model of PEM Fuel Cell stack"
     annotation (Placement(transformation(extent={{62,24},{86,54}})));
 
     TILMedia.Gas_pT synga(
-    p=1e5,
+    p=p_Amb,
     T=T_cell,
     xi= drainh.xi_outflow,
     gasType = Syngas)
@@ -229,10 +235,10 @@ model PEMFC "Model of PEM Fuel Cell stack"
 
     TILMedia.Gas_pT aira(
     T=T_cell,
-    p=1e5,
+    p=p_Amb,
     xi=draina.xi_outflow,
     gasType = Air) "Moist air is used which consists of N2, H2O and O2. This is why the component O2 can be used from it!"
-    annotation (Placement(transformation(extent={{64,-58},{88,-28}})));
+    annotation (Placement(transformation(extent={{62,-8},{86,22}})));
 
   replaceable TransiEnt.Components.Boundaries.Electrical.ActivePower.Power powerBoundary
                                                                                if usePowerPort constrainedby TransiEnt.Components.Boundaries.Electrical.Base.PartialModelPowerBoundary "Choice of power boundary model. The power boundary model must match the power port." annotation (

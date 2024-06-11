@@ -1,6 +1,8 @@
 ElectrolyzerBoPSystem
 FuelCellBoPSystem
 StorageSystem
-HESS
-H2Microgrid
+HESS_Compressed
+HESS_nonCompressed
+H2Microgrid_Compressed
+H2Microgrid_nonCompressed
 SimCenter

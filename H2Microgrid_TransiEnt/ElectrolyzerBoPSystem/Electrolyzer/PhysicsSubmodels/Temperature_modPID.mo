@@ -1,5 +1,5 @@
 within H2Microgrid_TransiEnt.ElectrolyzerBoPSystem.Electrolyzer.PhysicsSubmodels;
-model Temperature_modPID "PEMElectrolyzer thermal model as implemented by Espinosa, 2018 MODIFIED PID"
+model Temperature_modPID "PEMElectrolyzer thermal model as implemented by Espinosa, 2018 - modified PID and modified pump heat equation"
     //The following must all be calculated in the Temperature model or else provided externally.
     //T_op, T_amb
 
@@ -139,7 +139,7 @@ equation
 
     Q_flow_convective = (T_op - T_amb)/R_th "convection heat transfer rate";
 
-    P_pump_diss = if i_el_stack > 0 then P_el_pump*eta_pumpmotor else 0;
+    P_pump_diss = if i_el_stack > 0 then P_el_pump*eta_pumpmotor - V_flow_water*Delta_p_pump else 0;
 
     c_p_m_H2 = 29.11 - 1.92e-3*T_op + 4.0e-6*T_op^2 - 8.7e-10*T_op^3;
     c_m_p_O2 = 25.48 + 1.52e-2*T_op - 7.16e-6*T_op^2 + 1.31e-9*T_op^3;

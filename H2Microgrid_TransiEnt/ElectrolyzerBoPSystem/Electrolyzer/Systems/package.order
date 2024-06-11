@@ -1,2 +1,3 @@
-SystemElectrolyzerL2_compStorage
-SystemElectrolyzerL2_nonCompStorage
+SystemElectrolyzerL1_nonCompressedStorage
+SystemElectrolyzerL2_CompressedStorage
+SystemElectrolyzerL2_nonCompressedStorage

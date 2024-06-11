@@ -41,29 +41,29 @@ record Base5kWElectrolyzerL2Specification "Record used for specification of an E
   parameter SI.Energy E_exc=52994 "Activation energy for anode reaction" annotation(Dialog(group="Fundamental Definitions"));
   parameter SI.ChemicalPotential E_pro=10542 "Temperature independent parameter for activation energy in proton transport" annotation(Dialog(group="Fundamental Definitions"));
   parameter SI.Area PEM_area=50e-4 "Active surface area of electrolyzer cell electrodes" annotation(Dialog(group="Fundamental Definitions"));
-  parameter SI.Current i_el_n=75 "Nominal current of electrolyzer" annotation(Dialog(group="Fundamental Definitions"));
-  parameter SI.ActivePower P_el_n=5.5e3 "Nominal power of the electrolyzer" annotation(Dialog(group="Fundamental Definitions"));
-  parameter SI.ActivePower P_el_max=2.0*P_el_n "Maximum power of the electrolyzer" annotation(Dialog(group="Fundamental Definitions"));
+  parameter SI.Current i_el_n=150 "Nominal current of electrolyzer" annotation(Dialog(group="Fundamental Definitions"));
+  parameter SI.ActivePower P_el_n=5e3 "Nominal power of the electrolyzer" annotation(Dialog(group="Fundamental Definitions"));
+  parameter SI.ActivePower P_el_max=1.0*P_el_n "Maximum power of the electrolyzer" annotation(Dialog(group="Fundamental Definitions"));
   parameter SI.ThermalResistance R_th=0.529056 "Thermal resistance of stack" annotation(Dialog(group="Fundamental Definitions"));
   parameter SI.HeatCapacity C_th=54038.66667 "Overall lumped thermal capacitance" annotation(Dialog(group="Fundamental Definitions"));
   parameter SI.CurrentDensity i_dens_0_an_std=1e-7 "Exchange current density at electrodes at T_std" annotation(Dialog(group="Fundamental Definitions"));
   parameter SI.Thickness t_mem=254e-6 "PE membrane thickness" annotation(Dialog(group="Fundamental Definitions"));
+  parameter SI.Resistance R_el=0.016 "electrical resistance of the stack";
   parameter SI.Conductivity mem_conductivity_ref=10.47 "S/m, Membrane conductivity value at T_std" annotation(Dialog(group="Fundamental Definitions"));
   parameter SI.Thickness t_el= 8e-6
                                    "PE electrical thickness - ref. Nafion 117 / Abdin 2015";
   parameter SI.Resistivity el_resistivity=10.6e-8 "Ohm.m, electrical resistivity reference value at T_std, Abdin 2015; typically [10.6 * 10e-6]S/cm, 283(Agbli 2011)";
 
-
-  parameter Real specificWaterConsumption=10 "Mass of water per mass of hydrogen" annotation(Dialog(group="Fundamental Definitions")); //Stolzenburg, K. et al.: Integration von Wind-Wasserstoff-Systemen in das Energiesystem: Abschlussbericht, 2014
-  parameter SI.Temperature T_out=273.15 + 40 "Hydrogen output temperature" annotation(Dialog(group="Fundamental Definitions"));
+  parameter Real specificWaterConsumption=11 "Mass of water per mass of hydrogen" annotation(Dialog(group="Fundamental Definitions")); //Stolzenburg, K. et al.: Integration von Wind-Wasserstoff-Systemen in das Energiesystem: Abschlussbericht, 2014
+  parameter SI.Temperature T_out=273.15 + 50 "Hydrogen output temperature" annotation(Dialog(group="Fundamental Definitions"));
   parameter SI.Power P_el_pump = 285.7 "pump el power consumption" annotation(Dialog(group="Cooling circuit"));
   parameter SI.Efficiency eta_pumpmotor=0.63 "pump's motor electric efficiency" annotation(Dialog(group="Cooling circuit"));
-  parameter SI.VolumeFlowRate V_flow_water= 0.000127
-                                                    "water flow rate in cooling loop" annotation(Dialog(group="Cooling circuit"));
-  parameter SI.PressureDifference Delta_p_pump=6.9*100000 "total pump head" annotation(Dialog(group="Cooling circuits"));
+  parameter SI.VolumeFlowRate V_flow_water= 0.00005 "water flow rate in cooling loop" annotation(Dialog(group="Cooling circuit"));
+  parameter SI.PressureDifference Delta_p_pump=9.2*100000 "total pump head" annotation(Dialog(group="Cooling circuits"));
   parameter SI.Temperature T_op_max=273.15 + 75 "max operating temp" annotation(Dialog(group="Cooling circuit"));
   parameter SI.Temperature T_cool_set=273.15 + 50 "Cooling trigger point" annotation(Dialog(group="Cooling circuit"));
-  parameter SI.HeatFlowRate Q_flow_cool_max=1550 "Maximum cooling power" annotation(Dialog(group="Cooling circuit"));
+  parameter SI.HeatFlowRate Q_flow_cool_max=1550 "Maximum cooling power - probably more as we have to add max 600 W of heat from ACDC supply to cool" annotation(Dialog(group="Cooling circuit"));
+
 
   annotation (Documentation(info="<html>
 <h4><span style=\"color: #008000\">1. Purpose of model</span></h4>
