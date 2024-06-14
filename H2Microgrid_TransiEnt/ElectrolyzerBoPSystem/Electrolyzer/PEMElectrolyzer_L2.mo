@@ -52,7 +52,7 @@ model PEMElectrolyzer_L2 "PEMElectrolyzer_L2 Proton exchange membrane electrolyz
   //Temperature parameters
 public
   inner parameter Modelica.Units.SI.Temperature T_amb=23 + 273.15 "K, ambient temperature" annotation (Dialog(group="Fundamental Definitions"));
-  parameter Modelica.Units.SI.Temperature T_op_start=T_std "initial operating temperature of PEM Electrolyzer" annotation (Dialog(group="Initialization"));
+  parameter Modelica.Units.SI.Temperature T_op_start=273.15 + 23.86 "initial operating temperature of PEM Electrolyzer" annotation (Dialog(group="Initialization"));
   parameter Modelica.Units.SI.Temperature T_op_n=273.15 + 50 "nominal operating temperature of PEM Electrolyzer";
 
   //Electrolyzer system specific parameters
@@ -233,8 +233,8 @@ public
   electrolyzerVoltage voltage(redeclare model PEMconductivity = TransiEnt.Producer.Gas.Electrolyzer.Base.Physics.Voltage.ConductivityModels.PEMconductivity3)
                               annotation (Placement(transformation(extent={{20,12},{34,26}})));
 
-  electrolyzerTemperature temperature(cooling_PID(controllerType=Modelica.Blocks.Types.SimpleController.PI, Tau_d=0.1))
-                                      annotation (Placement(transformation(extent={{22,-12},{36,2}})));
+  electrolyzerTemperature temperature(cooling_PID(controllerType=Modelica.Blocks.Types.SimpleController.PI,
+      y_max=Q_flow_cool_max))         annotation (Placement(transformation(extent={{22,-12},{36,2}})));
 
   electrolyzerPressures pressure annotation (Placement(transformation(extent={{58,12},{44,26}})));
 

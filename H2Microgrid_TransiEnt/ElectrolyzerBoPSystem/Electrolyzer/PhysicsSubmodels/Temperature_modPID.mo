@@ -51,11 +51,11 @@ model Temperature_modPID "PEMElectrolyzer thermal model as implemented by Espino
   outer parameter SI.Temperature T_std "STD temperature";
 
   //Temperature PID Controller Parameters
-  parameter SI.Time tau_i=0.1 "1/tau_i for cooling system PID integrator gain - init = 7.7407980342622659e-04";
-  parameter Real k_p=1 "gain, cooling system PID proportional control - init = 500";
-  parameter SI.Time tau_d=1e-2 "tau_d, for cooling system PID derivator gain";
+  parameter SI.Time tau_i=0.18 "1/tau_i for cooling system PID integrator gain - init = 7.7407980342622659e-04";
+  parameter Real k_p=900 "gain, cooling system PID proportional control - init = 500";
+  parameter SI.Time tau_d=1e-1 "tau_d, for cooling system PID derivator gain";
   parameter Real N_i=0.5 "gain of anti-windup compensation ";
-  parameter Real N_d=10 "gain, ideal derivative block ";
+  parameter Real N_d=1 "gain, ideal derivative block ";
 
   // _____________________________________________
   //
@@ -102,7 +102,7 @@ model Temperature_modPID "PEMElectrolyzer thermal model as implemented by Espino
   Modelica.Blocks.Sources.RealExpression PID_T_op(y=T_op) annotation (Placement(transformation(extent={{-52,-40},{-32,-20}})));
   Modelica.Blocks.Sources.BooleanExpression PID_T_control(y=cooling_control) annotation (Placement(transformation(extent={{-52,-26},{-32,-6}})));
   ClaRa.Components.Utilities.Blocks.LimPID cooling_PID(
-    y_max=6911,
+    y_max=3000,
     y_min=0,
     Ni=N_i,
     Nd=N_d,
@@ -112,7 +112,7 @@ model Temperature_modPID "PEMElectrolyzer thermal model as implemented by Espino
     Tau_i=tau_i,
     k=k_p,
     Tau_d=tau_d,
-    controllerType=Modelica.Blocks.Types.SimpleController.PID) annotation (Placement(transformation(extent={{-10,-14},{10,6}})));
+    controllerType=Modelica.Blocks.Types.SimpleController.PI)  annotation (Placement(transformation(extent={{-10,-14},{10,6}})));
 
 equation
   // _____________________________________________

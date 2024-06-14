@@ -31,10 +31,10 @@ record GinerELX5kW "DESL Giner Electrolyzer 5.5kW system specific parameters"
 
   extends H2Microgrid_TransiEnt.ElectrolyzerBoPSystem.Electrolyzer.Specifications.Base5kWElectrolyzerL2Specification(
     n_cells=20,
-    alpha_an=4.3,
+    alpha_an=2,
     E_exc=52994,
     E_pro=10542,
-    i_dens_0_an_std=5e-2,
+    i_dens_0_an_std=4.3e-3,
     mem_conductivity_ref=10.47,
     t_mem=254e-6,
     R_el=0.016,
@@ -47,13 +47,12 @@ record GinerELX5kW "DESL Giner Electrolyzer 5.5kW system specific parameters"
     C_th=54038.66667,
     P_el_max=1*P_el_n,
     P_el_pump = 285.7,
-    eta_pumpmotor=0.63,
+    eta_pumpmotor=0.51,
     V_flow_water=0.00005,
     Delta_p_pump=9.2*100000,
-    T_op_max=273.15 + 75,
-    T_cool_set=273.15 + 50,
-    Q_flow_cool_max=4000);
-
+    T_op_max=273.15 + 50,
+    T_cool_set=273.15 + 47,
+    Q_flow_cool_max=1600);
   annotation (Documentation(info="<html>
 <h4><span style=\"color: #008000\">1. Purpose of model</span></h4>
 <p>Record containing system specifications of an AREVA Inc. configuration of a Giner 46KW Electrolyzer system</p>

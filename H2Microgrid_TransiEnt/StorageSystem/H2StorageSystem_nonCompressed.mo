@@ -33,7 +33,7 @@ public
   parameter Modelica.Units.SI.Temperature T_out=273.15+40 "Hydrogen output temperature" annotation(Dialog(group="Fundamental Definitions"));
   parameter Modelica.Units.SI.Efficiency eta_n(
     min=0,
-    max=1)=0.655 "Nominal efficency refering to the GCV (min = 0, max = 1)" annotation (Dialog(tab="General", group="Electrolyzer"));
+    max=1)=0.743 "Nominal efficency refering to the GCV (min = 0, max = 1)" annotation (Dialog(tab="General", group="Electrolyzer"));
 
   TransiEnt.Basics.Interfaces.Gas.RealGasPortIn H2PortIn(Medium=medium) "inlet flow" annotation (Placement(transformation(extent={{-110,-10},{-90,10}})));
   TransiEnt.Basics.Interfaces.Gas.RealGasPortOut H2PortOut(Medium=medium) "outlet flow" annotation (Placement(transformation(extent={{90,-10},{110,10}})));

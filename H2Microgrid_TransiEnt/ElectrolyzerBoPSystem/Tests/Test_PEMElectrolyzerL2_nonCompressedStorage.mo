@@ -5,6 +5,11 @@ model Test_PEMElectrolyzerL2_nonCompressedStorage "Test of PEM Electrolyzer L2 c
   import TransiEnt;
   import Modelica.Units.SI;
 
+   // Import necessary packages for .csv reading
+  import Modelica.Utilities.Streams.readRealMatrix;
+  import Modelica.Utilities.Files.loadResource;
+
+
   // Medium declaration
   parameter TILMedia.VLEFluidTypes.BaseVLEFluid medium=simCenter.gasModel3;
   parameter TILMedia.VLEFluidTypes.BaseVLEFluid medium_coolant=simCenter.fluid1;
@@ -12,7 +17,7 @@ model Test_PEMElectrolyzerL2_nonCompressedStorage "Test of PEM Electrolyzer L2 c
   TransiEnt.Components.Boundaries.Electrical.ActivePower.Frequency ElectricGrid_0thOrder annotation (Placement(transformation(
         extent={{-10,-10},{10,10}},
         rotation=180,
-        origin={-64,0})));
+        origin={-64,-12})));
   inner TransiEnt.SimCenter simCenter annotation (Placement(transformation(extent={{14,74},{34,94}})));
   inner TransiEnt.ModelStatistics modelStatistics annotation (Placement(transformation(extent={{46,74},{66,94}})));
 
@@ -37,11 +42,8 @@ model Test_PEMElectrolyzerL2_nonCompressedStorage "Test of PEM Electrolyzer L2 c
     p_start=2000000) annotation (Placement(transformation(extent={{10,-70},{30,-50}})));
   Electrolyzer.Systems.SystemElectrolyzerL2_nonCompressedStorage ElectrolyzerSystem(
     electrolyzer(temperature(
-        k_p=0.5,
-        tau_i=5e-7,
-        tau_d=0.1,
-        N_d=0.6,
-        N_i=10,
+        k_p=900,
+        tau_i=0.18,
         PID_T_max(y=323.15))),
     electrolyzer(voltage(humidity_const=21)),
     electrolyzer(massFlow(eta_F=1)),
@@ -56,18 +58,19 @@ model Test_PEMElectrolyzerL2_nonCompressedStorage "Test of PEM Electrolyzer L2 c
     useHeatPort=true,
     useFluidCoolantPort=false,
     T_out_coolant_target=323.15,
-    externalMassFlowControl=false) annotation (Placement(transformation(extent={{-14,-14},{14,14}})));
+    externalMassFlowControl=false) annotation (Placement(transformation(extent={{-14,-26},{14,2}})));
+    //     electrolyzer(T_op_start=50+273.15), // we use this line when we use Pstat as power setpoints
   Modelica.Blocks.Sources.Ramp PowerRampOperating(
     offset=0,
     startTime=0,
     duration=13000,
     height=4.725e3)
-                  "Based on operating power curve- use P_el_set = P_el" annotation (Placement(transformation(extent={{-48,62},{-28,82}})));
+                  "Based on operating power curve- use P_el_set = P_el" annotation (Placement(transformation(extent={{-56,64},{-36,84}})));
   Modelica.Blocks.Sources.Ramp PowerRampCharacterization(
     offset=500,
     startTime=0,
     duration=13000,
-    height=4.1e3) "Based on characterization power curve - use P_el_set = P_el" annotation (Placement(transformation(extent={{-48,28},{-28,48}})));
+    height=4.1e3) "Based on characterization power curve - use P_el_set = P_el" annotation (Placement(transformation(extent={{-56,26},{-36,46}})));
   Modelica.Blocks.Sources.Ramp PowerRampTest(
     offset=0,
     startTime=200,
@@ -76,7 +79,49 @@ model Test_PEMElectrolyzerL2_nonCompressedStorage "Test of PEM Electrolyzer L2 c
                 "Random power curve - use P_el_set = P_el_tot" annotation (Placement(transformation(
         extent={{-10,-10},{10,10}},
         rotation=180,
-        origin={40,46})));
+        origin={52,54})));
+  Modelica.Blocks.Sources.Ramp PowerRampCharacterization1(
+    offset=3150,
+    startTime=0,
+    duration=4500,
+    height=1450)  "Based on characterization power curve - use P_el_set = P_el" annotation (Placement(transformation(extent={{-90,26},{-70,46}})));
+  Modelica.Blocks.Sources.Ramp PowerRampOperating1(
+    offset=1475,
+    startTime=100,
+    duration=9000,
+    height=3250)  "Based on operating power curve- use P_el_set = P_el" annotation (Placement(transformation(extent={{-90,64},{-70,84}})));
+
+
+    // Path to the CSV file
+  parameter String filePath = Modelica.Utilities.Files.loadResource("file:///C:/Users/alienor/Documents/hess/H2Microgrid_TransiEnt/Resources/Pdata.csv");
+
+  Modelica.Blocks.Sources.CombiTimeTable Pdata(
+    tableOnFile=true,
+    tableName="Pdata",
+    fileName=ModelicaServices.ExternalReferences.loadResource("modelica://H2Microgrid_TransiEnt/Resources/Pdata.txt"),
+    verboseRead=true,
+    columns={2,3,4},
+    smoothness=Modelica.Blocks.Types.Smoothness.LinearSegments,
+    timeScale=1) "Includes Pdata, Udata, Idata;  stop time is 23372" annotation (Placement(transformation(extent={{-26,26},{-6,46}})));
+  Modelica.Blocks.Sources.CombiTimeTable Pstat(
+    tableOnFile=true,
+    tableName="Pstat",
+    fileName=ModelicaServices.ExternalReferences.loadResource("modelica://H2Microgrid_TransiEnt/Resources/Pstat.txt"),
+    verboseRead=true,
+    columns={2,3,4},
+    smoothness=Modelica.Blocks.Types.Smoothness.LinearSegments) "Includes Pstat, Ustat, Istat; T_op_start must be 50 degC and stop time is 13680 sec" annotation (Placement(transformation(extent={{-26,64},{-6,84}})));
+  Modelica.Blocks.Sources.CombiTimeTable TempPressure(
+    tableOnFile=true,
+    tableName="TPdata",
+    fileName=ModelicaServices.ExternalReferences.loadResource("modelica://H2Microgrid_TransiEnt/Resources/TPdata.txt"),
+    verboseRead=true,
+    columns={2,3},
+    smoothness=Modelica.Blocks.Types.Smoothness.LinearSegments,
+    timeScale=1) "Includes experimental H2 output Temperature and Stack Pressure over Pdata;  stop time is 23372" annotation (Placement(transformation(extent={{-88,-80},{-68,-60}})));
+  Modelica.Blocks.Sources.CombiTimeTable StairSignal(table=[0,0; 499,0; 500,500; 999,500; 1000,1000; 1499,1000; 1500,1500; 1999,1500; 2000,2000; 2499,2000; 2500,2500; 2999,2500; 3000,3000; 3499,3000; 3500,3500; 3999,3500; 4000,4000; 4499,4000; 4500,4500; 4999,4500; 5000,5000; 5500,5000], tableOnFile=false) "create a stair-step signal for efficiency computation" annotation (Placement(transformation(
+        extent={{-10,-10},{10,10}},
+        rotation=180,
+        origin={52,22})));
 equation
   connect(MassflowRamp.y, H2massSink.m_flow) annotation (Line(points={{83,-28},{88,-28},{88,-66},{70,-66}}, color={0,0,127}));
   connect(H2StorageSystem.H2PortOut, H2massSink.gasPort) annotation (Line(
@@ -84,17 +129,17 @@ equation
       color={255,255,0},
       thickness=1.5));
   connect(ElectricGrid_0thOrder.epp, ElectrolyzerSystem.epp) annotation (Line(
-      points={{-54,0},{-14,0}},
+      points={{-54,-12},{-14,-12}},
       color={0,135,135},
       thickness=0.5));
   connect(ElectrolyzerSystem.gasPortOut, H2StorageSystem.H2PortIn) annotation (Line(
-      points={{0,-13.86},{0,-60},{10,-60}},
+      points={{0,-25.86},{0,-60},{10,-60}},
       color={255,255,0},
       thickness=1.5));
-  connect(PowerRampCharacterization.y, ElectrolyzerSystem.P_el_set) annotation (Line(points={{-27,38},{0,38},{0,14.56}}, color={0,0,127}));
+  connect(PowerRampTest.y, ElectrolyzerSystem.P_el_set) annotation (Line(points={{41,54},{20,54},{20,6},{0,6},{0,2.56}}, color={0,0,127}));
   annotation (Icon(coordinateSystem(preserveAspectRatio=false)), Diagram(coordinateSystem(preserveAspectRatio=false)),
     experiment(
-      StopTime=15000,
+      StopTime=10000,
       Interval=1,
       Tolerance=1e-06,
       __Dymola_Algorithm="Dassl"));
