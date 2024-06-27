@@ -50,6 +50,24 @@ model test_table
         extent={{-10,-10},{10,10}},
         rotation=180,
         origin={32,-10})));
+  Modelica.Blocks.Sources.CombiTimeTable Load(
+    tableOnFile=true,
+    tableName="Load",
+    fileName=ModelicaServices.ExternalReferences.loadResource("modelica://H2Microgrid_TransiEnt/Resources/Load.txt"),
+    verboseRead=true,
+    columns={2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21},
+    smoothness=Modelica.Blocks.Types.Smoothness.LinearSegments,
+    timeScale=1) "Includes 21 different buildig load profiles; unit is kW? ;  stop time is 28800" annotation (Placement(transformation(extent={{-78,34},{-58,54}})));
+  Modelica.Blocks.Sources.Ramp ramp(
+    height=-600,
+    duration=100,
+    offset=-200,
+    startTime=10) annotation (Placement(transformation(extent={{40,20},{60,40}})));
+  Modelica.Blocks.Sources.Ramp ramp1(
+    height=-300,
+    duration=100,
+    offset=-500,
+    startTime=10) annotation (Placement(transformation(extent={{76,-22},{96,-2}})));
   annotation (Icon(coordinateSystem(preserveAspectRatio=false)), Diagram(coordinateSystem(preserveAspectRatio=false)),
     experiment(
       StopTime=6000,

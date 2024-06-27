@@ -23,118 +23,126 @@ model SystemPEMFC "Fuel cell system, with power controller"
 //________________________________________________________________________________//
 
   inner TransiEnt.SimCenter simCenter annotation (Placement(transformation(extent={{70,-98},{90,-78}})));
-  TransiEnt.Components.Electrical.FuelCellSystems.FuelCell.PEM FC(
-    T_nom=75 + 273,
-    A_cell=0.0625,
-    i_0=0.08,
-    i_L=6e4,
-    Ri=6e-5,
-    cp=850,
-    ka=0.3,
-    i_Loss=0.2,
-    no_Cells=20,
-    usePowerPort=true,
-    T_stack(start=80 + 273),
-    v_n=0.733,
-    is_Shutdown(start=true),
-    redeclare TransiEnt.Components.Boundaries.Electrical.ApparentPower.PowerVoltage powerBoundary(Use_input_connector_v=false, v_boundary=PEM.v_n) "PV-Boundary for ApparentPowerPort",
-    redeclare TransiEnt.Basics.Interfaces.Electrical.ActivePowerPort epp)   annotation (Placement(transformation(extent={{-20,-28},{22,14}})));
-TransiEnt.Components.Electrical.FuelCellSystems.FuelCell.Controller.PowerController PowerController(k=1000) annotation (Placement(transformation(rotation=0, extent={{12,64},{-8,84}})));
+
+  parameter H2Microgrid_TransiEnt.FuelCellBoPSystem.FuelCell.Physics.Gas_VDIWA_H2_var Syngas=H2Microgrid_TransiEnt.FuelCellBoPSystem.FuelCell.Physics.Gas_VDIWA_H2_var() "Medium model H2" annotation (Dialog(group="Fundamental Definitions"));
+
+
+  parameter TransiEnt.Basics.Media.Gases.Gas_MoistAir Air=TransiEnt.Basics.Media.Gases.Gas_MoistAir() "Medium model of air" annotation (Dialog(group="Fundamental Definitions"));
+
+  Modelica.Blocks.Interfaces.RealOutput mflowH2_FC_set annotation (Placement(transformation(
+        extent={{-12,-12},{12,12}},
+        rotation=-90,
+        origin={-36,-110}), iconTransformation(
+        extent={{-12,-12},{12,12}},
+        rotation=-90,
+        origin={-36,-110})));
+  TransiEnt.Basics.Interfaces.Electrical.ElectricPowerIn P_el_set "Input for power production setpoint" annotation (Placement(transformation(
+        extent={{-10,-10},{10,10}},
+        rotation=-90,
+        origin={24,108})));
+  TransiEnt.Basics.Interfaces.Electrical.ElectricPowerOut P_FC_actual annotation (Placement(transformation(extent={{100,-46},{120,-26}})));
+TransiEnt.Components.Electrical.FuelCellSystems.FuelCell.Controller.PowerController PowerController(k=1, i_min=20)
+                                                                                                            annotation (Placement(transformation(rotation=0, extent={{-38,62},{-58,82}})));
+  ClaRa.Components.BoundaryConditions.BoundaryGas_Txim_flow AirSource(
+    variable_m_flow=true,
+    variable_xi=false,
+    m_flow_const=0.001,
+    T_const=25 + 273,
+    medium=FC.Air)    annotation (Placement(transformation(
+        extent={{6.5,-9},{-6.5,9}},
+        rotation=180,
+        origin={-43.5,-11})));
   ClaRa.Components.BoundaryConditions.BoundaryGas_pTxi AirSink(
     variable_p=false,
+    variable_T=false,
     variable_xi=false,
     p_const=1e5,
-    T_const=200 + 273.15,
+    T_const=25 + 273.15,
     medium=FC.Air)        annotation (Placement(transformation(
-        extent={{-6,-7},{6,7}},
+        extent={{-7,-8},{7,8}},
         rotation=180,
-        origin={56,-41})));
+        origin={57,-12})));
   ClaRa.Components.BoundaryConditions.BoundaryGas_pTxi SyngasSink(
     variable_p=false,
+    variable_T=false,
     variable_xi=false,
     p_const=1e5,
-    T_const=200 + 273.15,
-    medium=FC.Syngas) annotation (Placement(transformation(
+    medium=FC.Syngas,
+    T_const=25 + 273.15,
+    xi_const={0,0,0,0.005,0.99,0})
+                      annotation (Placement(transformation(
         extent={{-6,-9},{6,9}},
         rotation=180,
-        origin={56,45})));
-TransiEnt.Components.Electrical.FuelCellSystems.FuelCell.Controller.LambdaController LambdaHController(
-    T=0.01,
-    m_flow_rampup=0.00025,
-    k=0.002) annotation (Placement(transformation(extent={{20,-78},{0,-58}})));
+        origin={56,25})));
   ClaRa.Components.BoundaryConditions.BoundaryGas_Txim_flow SyngasSource(
     variable_T=false,
     m_flow_const=5.1e-2,
     variable_m_flow=true,
     variable_xi=false,
-    xi_const={0.11,0.04,0.13,0.25,0.04,0.12},
-    T_const=80 + 273.15,
-    medium=FC.Syngas) annotation (Placement(transformation(extent={{-56,-3},{-40,14}})));
-  TransiEnt.Basics.Interfaces.Gas.IdealGasTempPortOut drainh1 annotation (Placement(transformation(extent={{88,4},{108,24}})));
-  Modelica.Blocks.Interfaces.RealOutput mflowH2_FC_set annotation (Placement(transformation(
-        extent={{-11,-11},{11,11}},
-        rotation=-90,
-        origin={-19,-111}), iconTransformation(
-        extent={{-11,-11},{11,11}},
-        rotation=-90,
-        origin={-19,-111})));
-  TransiEnt.Basics.Interfaces.Electrical.ElectricPowerIn P_el_set "Input for power production setpoint" annotation (Placement(transformation(
+    T_const=40 + 273.15,
+    medium=FC.Syngas,
+    xi_const={0,0,0,0.005,0.99,0})
+                      annotation (Placement(transformation(extent={{-52,19},{-36,35}})));
+  PEMFC          FC(
+    Syngas=TransiEnt.Basics.Media.Gases.Gas_VDIWA_SG7_var(),
+    m=1,
+    cp=35000,
+    no_Cells=35,
+    T_nom=308.15,
+    T_stack_max=313.15,
+    T_cool_set=303.15,
+    T_stack(start=298.15),
+    usePowerPort=false,
+    useHeatPort=true)             annotation (Placement(transformation(extent={{-14,-10},{18,20}})));
+  Controller.LambdaController_PID lambdaHController_PID(lambda_target=1.5, m_flow_rampup=1e-6) annotation (Placement(transformation(
         extent={{-10,-10},{10,10}},
-        rotation=-90,
-        origin={24,108})));
-  replaceable TransiEnt.Basics.Interfaces.Electrical.ActivePowerPort epp if usePowerPort constrainedby TransiEnt.Basics.Interfaces.Electrical.PartialPowerPort "Choice of power port" annotation (choicesAllMatching=true, Dialog(tab="General", group="General"), Placement(transformation(extent={{-110,42},{-90,62}})));
-  ClaRa.Components.BoundaryConditions.BoundaryGas_Txim_flow AirSource(
-    variable_m_flow=false,
-    variable_xi=false,
-    m_flow_const=2.55e-7,
-    xi_const={0.01,0.7},
-    T_const=25 + 273,
-    medium=FC.Air)    annotation (Placement(transformation(
-        extent={{6.5,-9},{-6.5,9}},
         rotation=180,
-        origin={-53.5,-41})));
-  TransiEnt.Basics.Interfaces.Electrical.ElectricPowerOut P_FC_actual annotation (Placement(transformation(extent={{96,-62},{116,-42}})));
+        origin={-76,-50})));
+  Controller.LambdaController_PID lambdaOController_PID annotation (Placement(transformation(
+        extent={{-10,-10},{10,10}},
+        rotation=180,
+        origin={-22,-34})));
+  CoolingSystem.HeatPortCooling.CoolingModel coolingModel annotation (Placement(transformation(extent={{66,64},{86,84}})));
+  AirSupplySystem.AirCompressor airCompressor annotation (Placement(transformation(
+        extent={{-10,-9},{10,9}},
+        rotation=-90,
+        origin={-53,-68})));
 equation
 
-  connect(FC.lambda_H,LambdaHController. u1) annotation (Line(
-      points={{22,-23.8},{30,-23.8},{30,-62},{20,-62}},
-      color={0,0,127},
-      smooth=Smooth.None));
-  connect(FC.feedh, SyngasSource.gas_a) annotation (Line(
-      points={{-20,5.6},{-22,5.5},{-40,5.5}},
+  connect(FC.feedh,SyngasSource. gas_a) annotation (Line(
+      points={{-14,14},{-30,14},{-30,27},{-36,27}},
       color={255,170,85},
       thickness=0.5));
-  connect(FC.drainh, SyngasSink.gas_a) annotation (Line(
-      points={{22,5.6},{44,5.6},{44,45},{50,45}},
+  connect(FC.feeda,AirSource. gas_a) annotation (Line(
+      points={{-14,-4},{-32,-4},{-32,-11},{-37,-11}},
       color={255,170,85},
       thickness=0.5));
-  connect(FC.draina, AirSink.gas_a) annotation (Line(
-      points={{22,-19.6},{40,-19.6},{40,-41},{50,-41}},
+  connect(FC.drainh,SyngasSink. gas_a) annotation (Line(
+      points={{18,14},{38,14},{38,25},{50,25}},
       color={255,170,85},
       thickness=0.5));
-  connect(FC.feeda, AirSource.gas_a) annotation (Line(
-      points={{-20,-19.6},{-44,-19.6},{-44,-41},{-47,-41}},
+  connect(FC.draina,AirSink. gas_a) annotation (Line(
+      points={{18,-4},{34,-4},{34,-12},{50,-12}},
       color={255,170,85},
       thickness=0.5));
-  connect(PowerController.V_cell, FC.V_stack) annotation (Line(points={{11,68.6},{66,68.6},{66,-7},{22,-7}},
+  connect(PowerController.V_cell,FC. V_stack) annotation (Line(points={{-39,66.6},{28,66.6},{28,5},{18,5}},
                                                                                                     color={0,0,127}));
-  connect(PowerController.y, FC.I_load) annotation (Line(points={{-9,74},{-62,74},{-62,-8.26},{-16.22,-8.26}},             color={0,0,127}));
-
-  connect(FC.drainh, drainh1) annotation (Line(
-      points={{22,5.6},{82,5.6},{82,14},{98,14}},
-      color={255,170,85},
-      thickness=1.5));
-  connect(LambdaHController.y, mflowH2_FC_set) annotation (Line(points={{-0.8,-68},{-19,-68},{-19,-111}}, color={0,0,127}));
-  connect(LambdaHController.y, SyngasSource.m_flow) annotation (Line(points={{-0.8,-68},{-74,-68},{-74,10},{-60,10},{-60,10.6},{-56,10.6}}, color={0,0,127}));
-  connect(PowerController.deltaP, P_el_set) annotation (Line(points={{11,80},{24,80},{24,108}}, color={0,127,127}));
-  connect(epp, FC.epp) annotation (Line(
-      points={{-100,52},{1,52},{1,5.18}},
-      color={0,135,135},
-      thickness=0.5));
+  connect(PowerController.y,FC. I_load) annotation (Line(points={{-59,72},{-66,72},{-66,4},{-38,4},{-38,4.1},{-11.12,4.1}},color={0,0,127}));
+  connect(FC.lambda_H,lambdaHController_PID. u1) annotation (Line(points={{10.32,-10},{10.32,-46.4},{-65.8,-46.4}},
+                                                                                                              color={0,0,127}));
+  connect(lambdaHController_PID.y,SyngasSource. m_flow) annotation (Line(points={{-86.8,-50},{-92,-50},{-92,32},{-62,32},{-62,31.8},{-52,31.8}}, color={0,0,127}));
+  connect(FC.lambda_O,lambdaOController_PID. u1) annotation (Line(points={{-5.68,-10},{-5.68,-20},{-6,-20},{-6,-30},{-10,-30},{-10,-30.4},{-11.8,-30.4}},
+                                                                                                                                                      color={0,0,127}));
+  connect(FC.heat,coolingModel. heatPortCooling) annotation (Line(points={{18.16,0.35},{66,0.35},{66,64.8}},             color={191,0,0}));
+  connect(FC.temperatureOut,coolingModel. T_op) annotation (Line(points={{-5.04,0.5},{6,0.5},{6,52},{60,52},{60,80.6},{64.8,80.6}},         color={0,0,127}));
+  connect(lambdaOController_PID.y, airCompressor.AirMassFlowRateSetpoint) annotation (Line(points={{-32.8,-34},{-36,-34},{-36,-50},{-45.8,-50},{-45.8,-57}}, color={0,0,127}));
+  connect(lambdaOController_PID.y, AirSource.m_flow) annotation (Line(points={{-32.8,-34},{-60,-34},{-60,-16.4},{-50,-16.4}}, color={0,0,127}));
+  connect(P_el_set, PowerController.deltaP) annotation (Line(points={{24,108},{24,78},{-39,78}}, color={0,127,127}));
   connect(FC.P_el, P_FC_actual) annotation (Line(
-      points={{-7.4,-28},{-8,-28},{-8,-52},{106,-52}},
+      points={{18.96,-9.4},{18.96,-36},{110,-36}},
       color={0,135,135},
       pattern=LinePattern.Dash));
+  connect(lambdaOController_PID.y, mflowH2_FC_set) annotation (Line(points={{-32.8,-34},{-36,-34},{-36,-110}}, color={0,0,127}));
   annotation (
     Diagram(coordinateSystem(preserveAspectRatio=false, extent={{-100,-100},{100,100}})),
     experiment(StopTime=40),

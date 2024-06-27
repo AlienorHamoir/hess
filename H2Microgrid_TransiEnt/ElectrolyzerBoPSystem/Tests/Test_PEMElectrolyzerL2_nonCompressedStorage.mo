@@ -42,12 +42,13 @@ model Test_PEMElectrolyzerL2_nonCompressedStorage "Test of PEM Electrolyzer L2 c
     p_start=2000000) annotation (Placement(transformation(extent={{10,-70},{30,-50}})));
   Electrolyzer.Systems.SystemElectrolyzerL2_nonCompressedStorage ElectrolyzerSystem(
     electrolyzer(temperature(
-        k_p=900,
+        k_p=1000,
         tau_i=0.18,
-        PID_T_max(y=323.15))),
+        PID_T_max(y=328.15))),
     electrolyzer(voltage(humidity_const=21)),
     electrolyzer(massFlow(eta_F=1)),
     electrolyzer(pressure(p_mem_grad=17.1e5)),
+    electrolyzer(T_op_start=50+273.15),
     usePowerPort=true,
     medium=medium,
     medium_coolant=medium_coolant,
@@ -75,11 +76,10 @@ model Test_PEMElectrolyzerL2_nonCompressedStorage "Test of PEM Electrolyzer L2 c
     offset=0,
     startTime=200,
     duration=1000,
-    height=5.3e3)
-                "Random power curve - use P_el_set = P_el_tot" annotation (Placement(transformation(
+    height=5e3) "Random power curve - use P_el_set = P_el_tot" annotation (Placement(transformation(
         extent={{-10,-10},{10,10}},
         rotation=180,
-        origin={52,54})));
+        origin={52,52})));
   Modelica.Blocks.Sources.Ramp PowerRampCharacterization1(
     offset=3150,
     startTime=0,
@@ -102,14 +102,16 @@ model Test_PEMElectrolyzerL2_nonCompressedStorage "Test of PEM Electrolyzer L2 c
     verboseRead=true,
     columns={2,3,4},
     smoothness=Modelica.Blocks.Types.Smoothness.LinearSegments,
-    timeScale=1) "Includes Pdata, Udata, Idata;  stop time is 23372" annotation (Placement(transformation(extent={{-26,26},{-6,46}})));
+    timeScale=0.2) "Includes Pdata, Udata, Idata;  stop time is 4674 (timestep is 0.2 ms)"
+                                                                     annotation (Placement(transformation(extent={{-26,26},{-6,46}})));
   Modelica.Blocks.Sources.CombiTimeTable Pstat(
     tableOnFile=true,
     tableName="Pstat",
     fileName=ModelicaServices.ExternalReferences.loadResource("modelica://H2Microgrid_TransiEnt/Resources/Pstat.txt"),
     verboseRead=true,
     columns={2,3,4},
-    smoothness=Modelica.Blocks.Types.Smoothness.LinearSegments) "Includes Pstat, Ustat, Istat; T_op_start must be 50 degC and stop time is 13680 sec" annotation (Placement(transformation(extent={{-26,64},{-6,84}})));
+    smoothness=Modelica.Blocks.Types.Smoothness.LinearSegments,
+    timeScale=0.2) "Includes Pstat, Ustat, Istat; T_op_start must be 50 degC and stop time is 2280 sec (timestep is 0.2 ms)"                          annotation (Placement(transformation(extent={{-26,64},{-6,84}})));
   Modelica.Blocks.Sources.CombiTimeTable TempPressure(
     tableOnFile=true,
     tableName="TPdata",
@@ -136,10 +138,10 @@ equation
       points={{0,-25.86},{0,-60},{10,-60}},
       color={255,255,0},
       thickness=1.5));
-  connect(PowerRampTest.y, ElectrolyzerSystem.P_el_set) annotation (Line(points={{41,54},{20,54},{20,6},{0,6},{0,2.56}}, color={0,0,127}));
+  connect(PowerRampTest.y, ElectrolyzerSystem.P_el_set) annotation (Line(points={{41,52},{0,52},{0,2.56}}, color={0,0,127}));
   annotation (Icon(coordinateSystem(preserveAspectRatio=false)), Diagram(coordinateSystem(preserveAspectRatio=false)),
     experiment(
-      StopTime=10000,
+      StopTime=4200,
       Interval=1,
       Tolerance=1e-06,
       __Dymola_Algorithm="Dassl"));

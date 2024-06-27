@@ -15,7 +15,7 @@ model HESS_Compressed
   TransiEnt.Components.Boundaries.Gas.BoundaryRealGas_Txim_flow H2massSink(medium=medium, variable_m_flow=true) annotation (Placement(transformation(
         extent={{-10,-10},{10,10}},
         rotation=0,
-        origin={24,50})));
+        origin={24,46})));
   TransiEnt.Basics.Interfaces.Electrical.ElectricPowerOut P_FC "Actual FC electrical power production" annotation (Placement(transformation(extent={{96,72},{116,92}})));
   TransiEnt.Components.Boundaries.Electrical.ActivePower.Frequency ElectricGrid_0thOrder annotation (Placement(transformation(
         extent={{-10,-10},{10,10}},
@@ -28,19 +28,20 @@ equation
       color={255,255,0},
       thickness=1.5));
   connect(systemElectrolyzerL2_Simple_EnergyTot_Inv_Cooling.P_el_set, P_set_electrolyzer) annotation (Line(points={{-60.8,-60},{-110,-60}}, color={0,127,127}));
-  connect(h2StorageSystem_Compressed.socTank, socTankH2) annotation (Line(points={{61.2,15.8},{92,15.8},{92,0},{106,0}}, color={0,0,127}));
+  connect(h2StorageSystem_Compressed.socTank, socTankH2) annotation (Line(points={{61.2,13.4},{92,13.4},{92,0},{106,0}}, color={0,0,127}));
   connect(systemPEMFC.P_el_set, P_set_FC) annotation (Line(points={{-61.6,64.8},{-90,64.8},{-90,64},{-104,64}}, color={0,127,127}));
   connect(h2StorageSystem_Compressed.H2PortOut, H2massSink.gasPort) annotation (Line(
-      points={{40,19.4},{40,50},{34,50}},
+      points={{40,19.4},{40,46},{34,46}},
       color={255,255,0},
       thickness=1.5));
-  connect(systemPEMFC.mflowH2_FC_set, H2massSink.m_flow) annotation (Line(points={{-17.8,56.2},{-16,56},{12,56}}, color={0,0,127}));
+  connect(systemPEMFC.mflowH2_FC_set, H2massSink.m_flow) annotation (Line(points={{-18.2,51.8},{-18.2,52},{12,52}},
+                                                                                                                  color={0,0,127}));
   connect(h2StorageSystem_Compressed.P_comp, systemElectrolyzerL2_Simple_EnergyTot_Inv_Cooling.CompressorPower) annotation (Line(
-      points={{60.8,-25},{60.8,-26},{68,-26},{68,-90},{-28.4,-90},{-28.4,-81}},
+      points={{60.8,-20.8},{60.8,-26},{68,-26},{68,-90},{-28.4,-90},{-28.4,-81}},
       color={0,135,135},
       pattern=LinePattern.Dash));
   connect(systemPEMFC.P_FC_actual, P_FC) annotation (Line(
-      points={{-29.6,81.2},{106,81.2},{106,82}},
+      points={{-32.8,82},{106,82},{106,82}},
       color={0,135,135},
       pattern=LinePattern.Dash));
   connect(systemPEMFC.epp, ElectricGrid_0thOrder.epp) annotation (Line(
@@ -52,7 +53,7 @@ equation
       color={0,135,135},
       thickness=0.5));
   connect(systemElectrolyzerL2_Simple_EnergyTot_Inv_Cooling.electrolyzerPowerOut, P_electrolyzer) annotation (Line(
-      points={{-26,-39.6},{-8,-39.6},{-8,-68},{108,-68}},
+      points={{-26,-38.8},{-8,-38.8},{-8,-68},{108,-68}},
       color={0,135,135},
       pattern=LinePattern.Dash));
   annotation (Icon(coordinateSystem(preserveAspectRatio=false), graphics={Rectangle(

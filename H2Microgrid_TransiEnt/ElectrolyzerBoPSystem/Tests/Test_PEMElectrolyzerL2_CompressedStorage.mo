@@ -49,15 +49,6 @@ model Test_PEMElectrolyzerL2_CompressedStorage "Test of PEM Electrolyzer L2 conn
     electrolyzer(voltage(humidity_const=21)),
     electrolyzer(massFlow(eta_F=1)),
     electrolyzer(pressure(p_mem_grad=17.1e5))) annotation (Placement(transformation(extent={{-14,-14},{14,14}})));
-  Modelica.Blocks.Sources.Ramp PowerRampTest(
-    offset=500,
-    startTime=200,
-    duration=1000,
-    height=4.5e3)
-                "Random power curve - use P_el_set = P_el_tot" annotation (Placement(transformation(
-        extent={{-10,-10},{10,10}},
-        rotation=180,
-        origin={18,78})));
   Modelica.Blocks.Sources.CombiTimeTable Pdata(
     tableOnFile=true,
     tableName="Pdata",
@@ -65,14 +56,16 @@ model Test_PEMElectrolyzerL2_CompressedStorage "Test of PEM Electrolyzer L2 conn
     verboseRead=true,
     columns={2,3,4},
     smoothness=Modelica.Blocks.Types.Smoothness.LinearSegments,
-    timeScale=1) "Includes Pdata, Udata, Idata;  stop time is 23372" annotation (Placement(transformation(extent={{-52,28},{-32,48}})));
+    timeScale=0.2) "Includes Pdata, Udata, Idata;  stop time is 4674 (timestep is 0.2 ms)"
+                                                                     annotation (Placement(transformation(extent={{-52,28},{-32,48}})));
   Modelica.Blocks.Sources.CombiTimeTable Pstat(
     tableOnFile=true,
     tableName="Pstat",
     fileName=ModelicaServices.ExternalReferences.loadResource("modelica://H2Microgrid_TransiEnt/Resources/Pstat.txt"),
     verboseRead=true,
     columns={2,3,4},
-    smoothness=Modelica.Blocks.Types.Smoothness.LinearSegments) "Includes Pstat, Ustat, Istat; T_op_start must be 50 degC and stop time is 13680 sec" annotation (Placement(transformation(extent={{-52,66},{-32,86}})));
+    smoothness=Modelica.Blocks.Types.Smoothness.LinearSegments,
+    timeScale=0.2) "Includes Pstat, Ustat, Istat; T_op_start must be 50 degC and stop time is  2280 sec (timestep is 0.2 ms)"                         annotation (Placement(transformation(extent={{-52,66},{-32,86}})));
   Modelica.Blocks.Sources.CombiTimeTable TempPressure(
     tableOnFile=true,
     tableName="TPdata",
@@ -84,7 +77,15 @@ model Test_PEMElectrolyzerL2_CompressedStorage "Test of PEM Electrolyzer L2 conn
   Modelica.Blocks.Sources.CombiTimeTable StairSignal(table=[0,0; 499,0; 500,500; 999,500; 1000,1000; 1499,1000; 1500,1500; 1999,1500; 2000,2000; 2499,2000; 2500,2500; 2999,2500; 3000,3000; 3499,3000; 3500,3500; 3999,3500; 4000,4000; 4499,4000; 4500,4500; 4999,4500; 5000,5000; 5500,5000], tableOnFile=false) "create a stair-step signal for efficiency computation" annotation (Placement(transformation(
         extent={{-10,-10},{10,10}},
         rotation=180,
-        origin={20,38})));
+        origin={42,28})));
+  Modelica.Blocks.Sources.Ramp PowerRampTest(
+    offset=0,
+    startTime=200,
+    duration=1000,
+    height=5e3) "Random power curve - use P_el_set = P_el_tot" annotation (Placement(transformation(
+        extent={{-10,-10},{10,10}},
+        rotation=180,
+        origin={42,56})));
 equation
   connect(H2StorageSystem.H2PortOut, H2massSink.gasPort) annotation (Line(
       points={{33.8,-60},{48,-60}},
@@ -103,10 +104,10 @@ equation
       points={{20.4,-70.4},{20.4,-74},{-24,-74},{-24,-8.12},{-14.7,-8.12}},
       color={0,135,135},
       pattern=LinePattern.Dash));
-  connect(PowerRampTest.y, ElectrolyzerSystem.P_el_set) annotation (Line(points={{7,78},{0,78},{0,14.56}}, color={0,0,127}));
+  connect(PowerRampTest.y, ElectrolyzerSystem.P_el_set) annotation (Line(points={{31,56},{0,56},{0,14.56}}, color={0,0,127}));
   annotation (Icon(coordinateSystem(preserveAspectRatio=false)), Diagram(coordinateSystem(preserveAspectRatio=false)),
     experiment(
-      StopTime=23000,
+      StopTime=4600,
       Interval=1,
       __Dymola_Algorithm="Dassl"));
 end Test_PEMElectrolyzerL2_CompressedStorage;

@@ -74,7 +74,7 @@ end ElectrolyzerRecord;
     medium=medium,
     mass_H2(start=0.1),
     redeclare model electrolyzerVoltage = H2Microgrid_TransiEnt.ElectrolyzerBoPSystem.Electrolyzer.PhysicsSubmodels.V_cell,
-    redeclare model electrolyzerTemperature = H2Microgrid_TransiEnt.ElectrolyzerBoPSystem.Electrolyzer.PhysicsSubmodels.Temperature_modPID,
+    redeclare model electrolyzerTemperature = H2Microgrid_TransiEnt.ElectrolyzerBoPSystem.Electrolyzer.PhysicsSubmodels.Temperature_mod,
     redeclare model electrolyzerPressures = TransiEnt.Producer.Gas.Electrolyzer.Base.Physics.Pressures.Pressures1,
     redeclare model electrolyzerMassFlow = TransiEnt.Producer.Gas.Electrolyzer.Base.Physics.MassFlow.MassFlow2thOrderDynamics) annotation (Placement(transformation(extent={{-66,-18},{-26,18}})));
   Modelica.Blocks.Sources.Constant nulPower(k=0) annotation (Placement(transformation(extent={{-96,-76},{-82,-62}})));

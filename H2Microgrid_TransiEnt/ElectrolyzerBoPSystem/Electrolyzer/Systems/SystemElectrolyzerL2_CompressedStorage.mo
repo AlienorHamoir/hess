@@ -66,7 +66,7 @@ end ElectrolyzerRecord;
     medium=medium,
     eta_GCV_EL(start=0),
     redeclare model electrolyzerVoltage = H2Microgrid_TransiEnt.ElectrolyzerBoPSystem.Electrolyzer.PhysicsSubmodels.V_cell,
-    redeclare model electrolyzerTemperature = H2Microgrid_TransiEnt.ElectrolyzerBoPSystem.Electrolyzer.PhysicsSubmodels.Temperature_modPID,
+    redeclare model electrolyzerTemperature = H2Microgrid_TransiEnt.ElectrolyzerBoPSystem.Electrolyzer.PhysicsSubmodels.Temperature_mod,
     redeclare model electrolyzerPressures = TransiEnt.Producer.Gas.Electrolyzer.Base.Physics.Pressures.Pressures1,
     redeclare model electrolyzerMassFlow = TransiEnt.Producer.Gas.Electrolyzer.Base.Physics.MassFlow.MassFlow0thOrderDynamics) annotation (Placement(transformation(extent={{-66,-18},{-26,18}})));
   TransiEnt.Basics.Interfaces.Electrical.ElectricPowerIn CompressorPower "Electrical power from the storage compressor" annotation (Placement(transformation(extent={{-120,-72},{-90,-44}}), iconTransformation(extent={{-120,-72},{-90,-44}})));

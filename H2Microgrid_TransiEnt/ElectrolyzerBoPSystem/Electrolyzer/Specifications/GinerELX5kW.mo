@@ -50,8 +50,8 @@ record GinerELX5kW "DESL Giner Electrolyzer 5.5kW system specific parameters"
     eta_pumpmotor=0.51,
     V_flow_water=0.00005,
     Delta_p_pump=9.2*100000,
-    T_op_max=273.15 + 50,
-    T_cool_set=273.15 + 47,
+    T_op_max=273.15 + 55,
+    T_cool_set=273.15 + 50,
     Q_flow_cool_max=1600);
   annotation (Documentation(info="<html>
 <h4><span style=\"color: #008000\">1. Purpose of model</span></h4>

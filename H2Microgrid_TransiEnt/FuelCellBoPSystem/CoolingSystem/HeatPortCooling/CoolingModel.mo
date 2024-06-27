@@ -16,19 +16,19 @@ model CoolingModel
   Buildings.Fluid.MixingVolumes.MixingVolume heatexchanger(
     redeclare package Medium = Buildings.Media.Water,
     m_flow_nominal=2.76e-2,
-    V=0.001,
+    V=0.0004,
     nPorts=2) annotation (Placement(transformation(extent={{46,-54},{66,-74}})));
   Buildings.Fluid.Sources.Boundary_pT sink(redeclare package Medium = Buildings.Media.Water, nPorts=1)
     annotation (Placement(transformation(extent={{88,-10},{68,10}})));
   Buildings.Controls.Continuous.LimPID controller(
     controllerType=Modelica.Blocks.Types.SimpleController.PID,
-    k=22,
-    Ti=10,
-    Td=3,
+    k=10,
+    Ti=0.001,
+    Td=100,
     yMax=1,
     yMin=0,
-    Ni=0.95,
-    Nd=4.8,
+    Ni=0.5,
+    Nd=1,
     reverseActing=false)
     annotation (Placement(transformation(extent={{-78,56},{-58,76}})));
   Modelica.Blocks.Interfaces.RealInput T_op annotation (Placement(transformation(extent={{-132,46},{-92,86}})));
@@ -40,7 +40,7 @@ model CoolingModel
   Modelica.Thermal.HeatTransfer.Interfaces.HeatPort_a heatPortCooling "Heat port for heat exchange with the control volume" annotation (Placement(transformation(extent={{-110,-102},{-90,-82}}), iconTransformation(extent={{-110,-102},{-90,-82}})));
   Modelica.Thermal.HeatTransfer.Components.HeatCapacitor cellBuffer(
     C=100,
-    T(start=296.15, fixed=true),
+    T(start=298.15, fixed=true),
     der_T(start=0))             annotation (Placement(transformation(extent={{-28,-56},{-8,-36}})));
 equation
   connect(watertowater.ports[1], pipe.port_a) annotation (Line(points={{-42,0},{-30,0}},   color={0,127,255}));
@@ -56,7 +56,7 @@ equation
   connect(heatPortCooling, cellBuffer.port) annotation (Line(points={{-100,-92},{-18,-92},{-18,-56}}, color={191,0,0}));
   connect(cellBuffer.port, heatexchanger.heatPort) annotation (Line(points={{-18,-56},{-18,-64},{46,-64}}, color={191,0,0}));
   connect(fuelcellTemperature.T, controller.u_m) annotation (Line(points={{-68,-31},{-68,54}},                                                 color={0,0,127}));
-  connect(fuelcellTemperature.port, cellBuffer.port) annotation (Line(points={{-68,-52},{-68,-62},{-18,-62},{-18,-56}},           color={191,0,0}));
+  connect(fuelcellTemperature.port, cellBuffer.port) annotation (Line(points={{-68,-52},{-68,-64},{-18,-64},{-18,-56}},           color={191,0,0}));
   annotation (
     Icon(coordinateSystem(preserveAspectRatio=false)),
     Diagram(coordinateSystem(preserveAspectRatio=false), graphics={

@@ -91,7 +91,7 @@ public
       choice=true "yes",
       choice=false "no"));
 //  parameter Real eta_inv_n=0.956 "nominal efficiency of the inverter" annotation (Dialog(group="Fundamental Definitions")); // we neglect all losses relative to grid constraints, including inverter efficiency
-  parameter Real E_dry_spec=500*3600
+  parameter Real E_dry_spec=1400*3600
                                     "specific energy consumption of dryer in Ws/kg H2";
 
   // _____________________________________________
