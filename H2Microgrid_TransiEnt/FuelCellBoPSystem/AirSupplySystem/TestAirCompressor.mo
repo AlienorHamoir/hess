@@ -46,7 +46,7 @@ model TestAirCompressor "Example of a fuel cell in a domestic application that f
     duration=500,
     offset=0,
     startTime=10) annotation (Placement(transformation(extent={{-62,8},{-42,28}})));
-  AirSupplySystem.AirCompressor airCompressor annotation (Placement(transformation(extent={{6,6},{26,26}})));
+  StorageSystem.OLD.AirCompressor airCompressor annotation (Placement(transformation(extent={{6,6},{26,26}})));
   Modelica.Blocks.Sources.Step step(height=0.005, startTime=15) annotation (Placement(transformation(extent={{-54,-32},{-34,-12}})));
 equation
 

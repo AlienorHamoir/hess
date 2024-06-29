@@ -1,5 +1,5 @@
 within H2Microgrid_TransiEnt.FuelCellBoPSystem.FuelCell.Controller;
-model LambdaController_PID "PID Controller for Lambda in Fuel Cell Applications"
+model LambdaController_PID "PID Controller for Lambda in Fuel Cell Applications - it outputs the required air or hydrogen mass flow rate to meet OER/HER (oxygen/hydrogen excess ratio) target"
 
 //________________________________________________________________________________//
 // Component of the TransiEnt Library, version: 2.0.3                             //

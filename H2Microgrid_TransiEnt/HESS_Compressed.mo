@@ -34,13 +34,12 @@ equation
       points={{40,19.4},{40,46},{34,46}},
       color={255,255,0},
       thickness=1.5));
-  connect(systemPEMFC.mflowH2_FC_set, H2massSink.m_flow) annotation (Line(points={{-18.2,51.8},{-18.2,52},{12,52}},
-                                                                                                                  color={0,0,127}));
+  connect(systemPEMFC.mflowH2_FC, H2massSink.m_flow) annotation (Line(points={{-18.2,51.8},{-18.2,52},{12,52}}, color={0,0,127}));
   connect(h2StorageSystem_Compressed.P_comp, systemElectrolyzerL2_Simple_EnergyTot_Inv_Cooling.CompressorPower) annotation (Line(
       points={{60.8,-20.8},{60.8,-26},{68,-26},{68,-90},{-28.4,-90},{-28.4,-81}},
       color={0,135,135},
       pattern=LinePattern.Dash));
-  connect(systemPEMFC.P_FC_actual, P_FC) annotation (Line(
+  connect(systemPEMFC.P_FC_tot, P_FC) annotation (Line(
       points={{-32.8,82},{106,82},{106,82}},
       color={0,135,135},
       pattern=LinePattern.Dash));
@@ -52,7 +51,7 @@ equation
       points={{-40,-80},{-40,-88},{-68,-88},{-68,0},{-74,0}},
       color={0,135,135},
       thickness=0.5));
-  connect(systemElectrolyzerL2_Simple_EnergyTot_Inv_Cooling.electrolyzerPowerOut, P_electrolyzer) annotation (Line(
+  connect(systemElectrolyzerL2_Simple_EnergyTot_Inv_Cooling.P_electrolyzer_tot, P_electrolyzer) annotation (Line(
       points={{-26,-38.8},{-8,-38.8},{-8,-68},{108,-68}},
       color={0,135,135},
       pattern=LinePattern.Dash));

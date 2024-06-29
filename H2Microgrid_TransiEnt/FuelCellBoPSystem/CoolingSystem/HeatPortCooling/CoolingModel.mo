@@ -1,7 +1,12 @@
 within H2Microgrid_TransiEnt.FuelCellBoPSystem.CoolingSystem.HeatPortCooling;
 model CoolingModel
 
-  Buildings.Fluid.Movers.SpeedControlled_y pump(redeclare package Medium = Buildings.Media.Water, redeclare H2Microgrid_TransiEnt.FuelCellBoPSystem.CoolingSystem.HeatPortCooling.CoolingPumpDESL     per)
+
+  parameter Real k_p=10 "gain, cooling system PID proportional control - 1050 when opposite sign convention with PID";
+  parameter Modelica.Units.SI.Time tau_i=0.1 "1/tau_i for cooling system PID integrator gain";
+  parameter Real N_i=0.5 "gain of anti-windup compensation ";
+
+  Buildings.Fluid.Movers.SpeedControlled_y pump(redeclare package Medium = Buildings.Media.Water, redeclare Buildings.Fluid.Movers.Data.Pumps.Wilo.TopS40slash10 per)
     annotation (Placement(transformation(extent={{10,-12},{34,12}})));
   Buildings.Fluid.Sources.Boundary_pT watertowater(
     redeclare package Medium = Buildings.Media.Water,
@@ -10,24 +15,24 @@ model CoolingModel
     nPorts=1) annotation (Placement(transformation(extent={{-62,-10},{-42,10}})));
   Buildings.Fluid.FixedResistances.PressureDrop pipe(
     redeclare package Medium = Buildings.Media.Water,
-    m_flow_nominal=2.76e-2,
-    dp_nominal(displayUnit="bar") = 400000)
+    m_flow_nominal=3e-2,
+    dp_nominal(displayUnit="bar") = 100000)
     annotation (Placement(transformation(extent={{-30,-10},{-10,10}})));
   Buildings.Fluid.MixingVolumes.MixingVolume heatexchanger(
     redeclare package Medium = Buildings.Media.Water,
-    m_flow_nominal=2.76e-2,
-    V=0.0004,
+    m_flow_nominal=3e-2,
+    V=0.006,
     nPorts=2) annotation (Placement(transformation(extent={{46,-54},{66,-74}})));
   Buildings.Fluid.Sources.Boundary_pT sink(redeclare package Medium = Buildings.Media.Water, nPorts=1)
     annotation (Placement(transformation(extent={{88,-10},{68,10}})));
   Buildings.Controls.Continuous.LimPID controller(
-    controllerType=Modelica.Blocks.Types.SimpleController.PID,
-    k=10,
-    Ti=0.001,
-    Td=100,
+    controllerType=Modelica.Blocks.Types.SimpleController.PI,
+    k=k_p,
+    Ti=tau_i,
+    Td=0.01,
     yMax=1,
     yMin=0,
-    Ni=0.5,
+    Ni=N_i,
     Nd=1,
     reverseActing=false)
     annotation (Placement(transformation(extent={{-78,56},{-58,76}})));
@@ -39,8 +44,8 @@ model CoolingModel
   Modelica.Blocks.Interfaces.RealOutput P_coolingPump "Electrical power consumed" annotation (Placement(transformation(extent={{94,24},{114,44}})));
   Modelica.Thermal.HeatTransfer.Interfaces.HeatPort_a heatPortCooling "Heat port for heat exchange with the control volume" annotation (Placement(transformation(extent={{-110,-102},{-90,-82}}), iconTransformation(extent={{-110,-102},{-90,-82}})));
   Modelica.Thermal.HeatTransfer.Components.HeatCapacitor cellBuffer(
-    C=100,
-    T(start=298.15, fixed=true),
+    C=700,
+    T(start=296.65, fixed=true),
     der_T(start=0))             annotation (Placement(transformation(extent={{-28,-56},{-8,-36}})));
 equation
   connect(watertowater.ports[1], pipe.port_a) annotation (Line(points={{-42,0},{-30,0}},   color={0,127,255}));

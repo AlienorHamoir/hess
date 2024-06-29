@@ -395,7 +395,7 @@ equation
     i_dens_a = getInputs.i_dens_set;
   elseif whichInput == 3 then
     //set electric power
-    //     P_el_tot = getInputs.P_el_set;
+    //     P_el_tot = getInputs.P_el_set; // eventually, P_el_setpoint should take into account consumption of whole electrolyzer system
     P_el = getInputs.P_el_set;
   elseif whichInput == 4 then
     //set mass flow

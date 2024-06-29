@@ -24,8 +24,8 @@ model HESS_nonCompressed "HESS without compressed storage"
         origin={-40,-60})));
 equation
   connect(systemPEMFC.P_el_set, P_set_FC) annotation (Line(points={{-61.6,64.8},{-90,64.8},{-90,64},{-104,64}}, color={0,127,127}));
-  connect(systemPEMFC.mflowH2_FC_set, H2massSink.m_flow) annotation (Line(points={{-17.8,56.2},{-16,56},{12,56}}, color={0,0,127}));
-  connect(systemPEMFC.P_FC_actual, P_FC) annotation (Line(
+  connect(systemPEMFC.mflowH2_FC, H2massSink.m_flow) annotation (Line(points={{-17.8,56.2},{-16,56},{12,56}}, color={0,0,127}));
+  connect(systemPEMFC.P_FC_tot, P_FC) annotation (Line(
       points={{-29.6,81.2},{106,81.2},{106,82}},
       color={0,135,135},
       pattern=LinePattern.Dash));

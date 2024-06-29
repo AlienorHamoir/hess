@@ -42,19 +42,28 @@ model TestPEMFCSystem "Example of a fuel cell in a domestic application that fol
         //     xi_const={1,0},
 
   Modelica.Blocks.Sources.Ramp ramp(
-    height=4000,
-    duration=500,
+    height=4500,
+    duration=1000,
     offset=500,
     startTime=10) annotation (Placement(transformation(extent={{14,68},{34,88}})));
   FuelCell.SystemPEMFC systemPEMFC annotation (Placement(transformation(extent={{-26,-32},{26,20}})));
+  Modelica.Blocks.Sources.Ramp ramp1(
+    height=570,
+    duration=100,
+    offset=0,
+    startTime=0)  annotation (Placement(transformation(extent={{60,26},{80,46}})));
+  Modelica.Blocks.Sources.Step step(
+    height=520,
+    offset=50,
+    startTime=50) annotation (Placement(transformation(extent={{-84,26},{-64,46}})));
 equation
 
   connect(ramp.y, systemPEMFC.P_el_set) annotation (Line(points={{35,78},{40,78},{40,32},{6.24,32},{6.24,22.08}}, color={0,0,127}));
   annotation (
     Diagram(coordinateSystem(preserveAspectRatio=false, extent={{-100,-100},{100,100}})),
     experiment(
-      StopTime=6000,
-      Tolerance=1e-06,
+      StopTime=2000,
+      Interval=1,
       __Dymola_Algorithm="Dassl"),
     __Dymola_experimentSetupOutput,
     __Dymola_experimentFlags(

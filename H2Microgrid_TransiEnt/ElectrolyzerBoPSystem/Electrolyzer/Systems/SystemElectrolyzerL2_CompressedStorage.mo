@@ -70,7 +70,7 @@ end ElectrolyzerRecord;
     redeclare model electrolyzerPressures = TransiEnt.Producer.Gas.Electrolyzer.Base.Physics.Pressures.Pressures1,
     redeclare model electrolyzerMassFlow = TransiEnt.Producer.Gas.Electrolyzer.Base.Physics.MassFlow.MassFlow0thOrderDynamics) annotation (Placement(transformation(extent={{-66,-18},{-26,18}})));
   TransiEnt.Basics.Interfaces.Electrical.ElectricPowerIn CompressorPower "Electrical power from the storage compressor" annotation (Placement(transformation(extent={{-120,-72},{-90,-44}}), iconTransformation(extent={{-120,-72},{-90,-44}})));
-  TransiEnt.Basics.Interfaces.Electrical.ElectricPowerOut electrolyzerPowerOut annotation (Placement(transformation(extent={{94,-82},{118,-58}}), iconTransformation(extent={{94,-82},{118,-58}})));
+  TransiEnt.Basics.Interfaces.Electrical.ElectricPowerOut P_electrolyzer_tot annotation (Placement(transformation(extent={{94,-82},{118,-58}}), iconTransformation(extent={{94,-82},{118,-58}})));
   TransiEnt.Producer.Gas.Electrolyzer.Controller.MinMaxController minMaxController(
     P_el_n=P_el_n,
     P_el_max=P_el_max,
@@ -108,7 +108,7 @@ equation
       color={0,135,135},
       pattern=LinePattern.Dash));
   connect(minMaxController.P_el_set, P_el_set) annotation (Line(points={{-54,57},{-54,82},{0,82},{0,108}}, color={0,127,127}));
-  connect(electrolyzer.electrolyzerPowerOut, electrolyzerPowerOut) annotation (Line(
+  connect(electrolyzer.electrolyzerPowerOut, P_electrolyzer_tot) annotation (Line(
       points={{-57.2,-12.6},{-57.2,-70},{106,-70}},
       color={0,135,135},
       pattern=LinePattern.Dash));

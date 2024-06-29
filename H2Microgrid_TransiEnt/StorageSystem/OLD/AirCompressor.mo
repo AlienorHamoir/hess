@@ -1,6 +1,5 @@
-within H2Microgrid_TransiEnt.FuelCellBoPSystem.AirSupplySystem;
+within H2Microgrid_TransiEnt.StorageSystem.OLD;
 model AirCompressor "use of Modelica library"
-
 
   // Medium declaration
   replaceable package Medium = Buildings.Media.Air;
