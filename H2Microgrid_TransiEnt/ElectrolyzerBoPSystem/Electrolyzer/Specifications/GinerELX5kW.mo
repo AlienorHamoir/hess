@@ -55,7 +55,7 @@ record GinerELX5kW "DESL Giner Electrolyzer 5.5kW system specific parameters"
     Q_flow_cool_max=1600);
   annotation (Documentation(info="<html>
 <h4><span style=\"color: #008000\">1. Purpose of model</span></h4>
-<p>Record containing system specifications of an AREVA Inc. configuration of a Giner 46KW Electrolyzer system</p>
+<p>Record containing system specifications of a Giner configuration of a Giner 5kW Electrolyzer system</p>
 <h4><span style=\"color: #008000\">2. Level of detail, physical effects considered, and physical insight</span></h4>
 <p>(no remarks)</p>
 <h4><span style=\"color: #008000\">3. Limits of validity </span></h4>
@@ -71,6 +71,8 @@ record GinerELX5kW "DESL Giner Electrolyzer 5.5kW system specific parameters"
 <h4><span style=\"color: #008000\">8. Validation</span></h4>
 <p>(no remarks) </p>
 <h4><span style=\"color: #008000\">9. References</span></h4>
+<p>Source: modified from TransiEnt library original model</p>
+<p><br>Z. Abdin, E. MacA. Gray, and C.J. Webb. Modelling and simulation of a proton exchange membrane (PEM) electrolyzer cell. International Journal of Hydrogen Energy, 40(39):13243-13257, 2015. doi:10.1016/j.ijhydene.2015.07.129. </p>
 <p>Manuel Espinosa-L&oacute;pez, Philippe Baucour, Serge Besse, Christophe Darras, Raynal Glises, Philippe Poggi, Andr&eacute; Rakotondrainibe, and Pierre Serre-Combe. Modelling and experimental validation of a 46 kW PEM high pressure water electrolyser. Renewable Energy, 119, pp. 160-173, 2018. doi: 10.1016/J.RENENE.2017.11.081.</p>
 <h4><span style=\"color: #008000\">10. Version History</span></h4>
 <p>Created by John Webster (jcwebste@edu.uwaterloo.ca) October 2018.</p>

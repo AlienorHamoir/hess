@@ -63,5 +63,12 @@ HeatPort")}),
       StartTime=12960000,
       StopTime=13470000,
       Interval=1,
-      __Dymola_Algorithm="Dassl"));
+      __Dymola_Algorithm="Dassl"),
+    Documentation(info="<html>
+<p>Cooling system model: based on stack operating temperature and cooling flux from the cell, a PID actuates the valve opening, with neglictible power consumption. A valve is used in the DESL system.</p>
+<p>The input temperature of the water boundary is considered constant, we neglect the cooling of the external water circuit through a cooling tower with its environment.</p>
+<p><br>Model parameters are adapted for a 5kW Giner electrolyzer, based on [1] Z. Abdin, E. MacA. Gray, and C.J. Webb. Modelling and simulation of a proton exchange membrane (PEM) electrolyzer cell. International Journal of Hydrogen Energy, 40(39):13243-13257, 2015. doi:10.1016/j.ijhydene.2015.07.129. </p>
+<p><br>Tested in the check models &quot;H2Microgrid_TransiEnt.ElectrolyzerBoPSystem.CoolingSubsystem.Test_CoolingModel&quot;</p>
+<p><br>Model created by Ali&eacute;nor Hamoir in May 2024.</p>
+</html>"));
 end CoolingModel_Valve;

@@ -78,5 +78,8 @@ HeatPort")}),
       StartTime=12960000,
       StopTime=13470000,
       Interval=1,
-      __Dymola_Algorithm="Dassl"));
+      __Dymola_Algorithm="Dassl"),
+    Documentation(info="<html>
+<p>Testing of the pumped cooling system model.</p>
+</html>"));
 end Test_CoolingModel;

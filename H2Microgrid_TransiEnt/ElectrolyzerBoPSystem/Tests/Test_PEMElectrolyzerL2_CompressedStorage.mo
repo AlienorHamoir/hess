@@ -5,6 +5,8 @@ model Test_PEMElectrolyzerL2_CompressedStorage "Test of PEM Electrolyzer L2 conn
   import TransiEnt;
   import Modelica.Units.SI;
 
+  parameter String weather_file = Modelica.Utilities.Files.loadResource("modelica://H2Microgrid_TransiEnt/Resources/weather/USA_CA_Los.Angeles.Intl.AP.722950_TMY3.mos") "Path to weather file";
+
   // Medium declaration
   parameter TILMedia.VLEFluidTypes.BaseVLEFluid medium=simCenter.gasModel3;
   parameter TILMedia.VLEFluidTypes.BaseVLEFluid medium_coolant=simCenter.fluid1;
@@ -57,7 +59,9 @@ model Test_PEMElectrolyzerL2_CompressedStorage "Test of PEM Electrolyzer L2 conn
     columns={2,3,4},
     smoothness=Modelica.Blocks.Types.Smoothness.LinearSegments,
     timeScale=0.2) "Includes Pdata, Udata, Idata;  stop time is 4674 (timestep is 0.2 ms)"
-                                                                     annotation (Placement(transformation(extent={{-52,28},{-32,48}})));
+                                                                     annotation (Placement(transformation(extent={{-10,-10},{10,10}},
+        rotation=180,
+        origin={72,28})));
   Modelica.Blocks.Sources.CombiTimeTable Pstat(
     tableOnFile=true,
     tableName="Pstat",
@@ -65,7 +69,9 @@ model Test_PEMElectrolyzerL2_CompressedStorage "Test of PEM Electrolyzer L2 conn
     verboseRead=true,
     columns={2,3,4},
     smoothness=Modelica.Blocks.Types.Smoothness.LinearSegments,
-    timeScale=0.2) "Includes Pstat, Ustat, Istat; T_op_start must be 50 degC and stop time is  2280 sec (timestep is 0.2 ms)"                         annotation (Placement(transformation(extent={{-52,66},{-32,86}})));
+    timeScale=0.2) "Includes Pstat, Ustat, Istat; T_op_start must be 50 degC and stop time is  2280 sec (timestep is 0.2 ms)"                         annotation (Placement(transformation(extent={{-10,-10},{10,10}},
+        rotation=180,
+        origin={70,56})));
   Modelica.Blocks.Sources.CombiTimeTable TempPressure(
     tableOnFile=true,
     tableName="TPdata",
@@ -86,6 +92,17 @@ model Test_PEMElectrolyzerL2_CompressedStorage "Test of PEM Electrolyzer L2 conn
         extent={{-10,-10},{10,10}},
         rotation=180,
         origin={42,56})));
+  Buildings.BoundaryConditions.WeatherData.ReaderTMY3 weaDat(
+    relHum=0,
+    TDewPoi(displayUnit="K"),
+    filNam=weather_file,
+    pAtmSou=Buildings.BoundaryConditions.Types.DataSource.File,
+    calTSky=Buildings.BoundaryConditions.Types.SkyTemperatureCalculation.HorizontalRadiation,
+    computeWetBulbTemperature=false)
+    annotation (Placement(transformation(extent={{-88,40},{-68,60}})));
+  Buildings.BoundaryConditions.WeatherData.Bus
+      weaBus "Weather data bus" annotation (Placement(transformation(extent={{-66,36},{-40,64}}),
+                                 iconTransformation(extent={{-112,56},{-88,82}})));
 equation
   connect(H2StorageSystem.H2PortOut, H2massSink.gasPort) annotation (Line(
       points={{33.8,-60},{48,-60}},
@@ -101,10 +118,18 @@ equation
       color={255,255,0},
       thickness=1.5));
   connect(H2StorageSystem.P_comp, ElectrolyzerSystem.CompressorPower) annotation (Line(
-      points={{20.4,-70.4},{20.4,-74},{-24,-74},{-24,-8.12},{-14.7,-8.12}},
+      points={{20.4,-70.4},{20.4,-74},{-24,-74},{-24,-8.54},{-13.58,-8.54}},
       color={0,135,135},
       pattern=LinePattern.Dash));
   connect(PowerRampTest.y, ElectrolyzerSystem.P_el_set) annotation (Line(points={{31,56},{0,56},{0,14.56}}, color={0,0,127}));
+  connect(weaDat.weaBus, weaBus) annotation (Line(
+      points={{-68,50},{-53,50}},
+      color={255,204,51},
+      thickness=0.5));
+  connect(weaBus.TDryBul, ElectrolyzerSystem.T_environment) annotation (Line(
+      points={{-52.935,50.07},{11.62,50.07},{11.62,14.42}},
+      color={255,204,51},
+      thickness=0.5));
   annotation (Icon(coordinateSystem(preserveAspectRatio=false)), Diagram(coordinateSystem(preserveAspectRatio=false)),
     experiment(
       StopTime=4600,

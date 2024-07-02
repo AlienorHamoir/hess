@@ -8,12 +8,6 @@ model H2Microgrid_nonCompressed
   parameter String weather_file = "" "Path to weather file";
   // parameter String weather_file = Modelica.Utilities.Files.loadResource("modelica://Buildings/Resources/weatherdata/USA_CA_San.Francisco.Intl.AP.724940_TMY3.mos") "Path to weather file";
 
-  SCooDER.Components.Battery.Model.Battery
-                                   battery(
-    EMax=battery_scale*5*building_ft2*der_scale,
-    Pmax=battery_scale*5/2*building_ft2*der_scale,
-    SOC_start=0.1)
-    annotation (Placement(transformation(extent={{20,34},{60,74}})));
   Modelica.Blocks.Interfaces.RealInput P_set_battery(unit="W", start=0)
     annotation (Placement(transformation(
         origin={0,106},
@@ -28,20 +22,6 @@ model H2Microgrid_nonCompressed
   Modelica.Blocks.Interfaces.RealOutput P_electrolyzer "Electrolyzer and storage compressor AC power consumption [W]" annotation (Placement(transformation(extent={{94,-92},{114,-72}}), iconTransformation(extent={{94,-92},{114,-72}})));
   Modelica.Blocks.Interfaces.RealOutput P_fuelCell "Fuel cell AC power production  [W]" annotation (Placement(transformation(extent={{94,-40},{114,-20}}),iconTransformation(extent={{94,-40},{114,-20}})));
   Modelica.Blocks.Interfaces.RealOutput SOCtankH2 "State of Charge H2 tank  [-]" annotation (Placement(transformation(extent={{94,-64},{114,-44}}), iconTransformation(extent={{94,-64},{114,-44}})));
-  Modelica.Blocks.Interfaces.RealOutput P_load "Load AC power consumption [W]" annotation (Placement(transformation(
-        extent={{-10,-10},{10,10}},
-        rotation=180,
-        origin={-104,-70}), iconTransformation(
-        extent={{-10,-10},{10,10}},
-        rotation=90,
-        origin={70,100})));
-  Modelica.Blocks.Interfaces.RealOutput P_PV "PV AC power production [W]" annotation (Placement(transformation(
-        extent={{-10,-10},{10,10}},
-        rotation=180,
-        origin={-106,14}), iconTransformation(
-        extent={{-10,-10},{10,10}},
-        rotation=90,
-        origin={28,100})));
   Modelica.Blocks.Interfaces.RealInput P_set_electrolyzer(unit="W", start=0) annotation (Placement(transformation(
         origin={8,-102},
         extent={{10,-10},{-10,10}},
@@ -98,14 +78,26 @@ model H2Microgrid_nonCompressed
     smoothness=Modelica.Blocks.Types.Smoothness.LinearSegments,
     timeScale=1) "Includes 21 different building load profiles; unit is kW? ;  stop time is 28800" annotation (Placement(transformation(extent={{-84,-50},{-64,-30}})));
   Modelica.Blocks.Math.Gain kWtoW(k=1000) "Load profiles are given in kW, we exploit the microgrid in W" annotation (Placement(transformation(extent={{-52,-46},{-40,-34}})));
+  SCooDER.Components.Battery.Model.Battery
+                                   battery(
+    EMax=25000,
+    Pmax=25000,
+    SOC_start=0.5,
+    SOC_min=0.1,
+    SOC_max=0.9,
+    etaCha=0.98,
+    etaDis=0.98)
+    annotation (Placement(transformation(extent={{28,46},{68,86}})));
+  Modelica.Blocks.Sources.CombiTimeTable Load_DOE(
+    tableOnFile=true,
+    tableName="Load",
+    fileName=load_file,
+    verboseRead=true,
+    columns={2},
+    smoothness=Modelica.Blocks.Types.Smoothness.LinearSegments,
+    timeScale=1) "Load profiles from DOE" annotation (Placement(transformation(extent={{-88,-12},{-68,8}})));
 equation
-  connect(P_set_battery,battery. PCtrl)
-    annotation (Line(points={{0,106},{0,54},{16,54}},
-                                                 color={0,0,127}));
-  connect(battery.SOC, SOCbattery) annotation (Line(points={{62,70},{62,82},{104,82}},         color={0,0,127}));
-  connect(battery.P, P_battery) annotation (Line(points={{62,54},{106,54}},                 color={0,0,127}));
   connect(PowerTotal.y, PowerBalanceMicrogrid) annotation (Line(points={{8.8,0},{60,0},{60,6},{110,6}},   color={0,0,127}));
-  connect(pv_inv.y, P_PV) annotation (Line(points={{-24,33.6},{-24,14},{-106,14}}, color={0,0,127}));
   connect(P_set_fuelCell, hESS_nonCompressed.P_set_FC) annotation (Line(points={{-10,-102},{-10,-33.2},{19.2,-33.2}}, color={0,0,127}));
   connect(P_set_electrolyzer, hESS_nonCompressed.P_set_electrolyzer) annotation (Line(points={{8,-102},{8,-58},{18,-58}}, color={0,0,127}));
   connect(hESS_nonCompressed.P_FC, P_fuelCell) annotation (Line(
@@ -126,7 +118,6 @@ equation
       color={0,135,135},
       pattern=LinePattern.Dash));
   connect(pv_inv.y, PowerTotal.u[1]) annotation (Line(points={{-24,33.6},{-24,-0.64},{-9.6,-0.64}}, color={0,0,127}));
-  connect(battery.P, PowerTotal.u[2]) annotation (Line(points={{62,54},{74,54},{74,24},{-16,24},{-16,-0.32},{-9.6,-0.32}},                   color={0,0,127}));
   connect(GI_PV.y[1], Ppeak13kW.u) annotation (Line(points={{-79,72},{-74,72},{-74,80},{-69.2,80}}, color={0,0,127}));
   connect(GI_PV.y[1], Ppeak16kW.u) annotation (Line(points={{-79,72},{-74,72},{-74,62},{-69.2,62}}, color={0,0,127}));
   connect(GVI_PV.y[1], Ppeak12kW.u) annotation (Line(points={{-79,42},{-69.2,42}}, color={0,0,127}));
@@ -136,7 +127,10 @@ equation
   connect(PV_sum.y, pv_inv.u) annotation (Line(points={{-31.4,62},{-24,62},{-24,42.8}}, color={0,0,127}));
   connect(Load.y[1], kWtoW.u) annotation (Line(points={{-63,-40},{-53.2,-40}}, color={0,0,127}));
   connect(kWtoW.y, PowerTotal.u[3]) annotation (Line(points={{-39.4,-40},{-32,-40},{-32,0},{-9.6,0}}, color={0,0,127}));
-  connect(kWtoW.y, P_load) annotation (Line(points={{-39.4,-40},{-32,-40},{-32,-70},{-104,-70}}, color={0,0,127}));
+  connect(P_set_battery, battery.PCtrl) annotation (Line(points={{0,106},{0,66},{24,66}}, color={0,0,127}));
+  connect(battery.SOC, SOCbattery) annotation (Line(points={{70,82},{104,82}}, color={0,0,127}));
+  connect(battery.P, P_battery) annotation (Line(points={{70,66},{92,66},{92,54},{106,54}}, color={0,0,127}));
+  connect(battery.P, PowerTotal.u[2]) annotation (Line(points={{70,66},{92,66},{92,26},{-18,26},{-18,0},{-14,0},{-14,-0.32},{-9.6,-0.32}}, color={0,0,127}));
   annotation (Icon(coordinateSystem(preserveAspectRatio=false), graphics={Rectangle(
           extent={{-100,100},{100,-100}},
           lineColor={0,128,255},

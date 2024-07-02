@@ -172,7 +172,8 @@ public
         extent={{-20,-20},{20,20}},
         rotation=0,
         origin={-120,-76})));
-  TransiEnt.Basics.Interfaces.Electrical.ElectricPowerIn coolingPumpPowerIn annotation (Placement(transformation(
+  TransiEnt.Basics.Interfaces.Electrical.ElectricPowerIn coolingPumpPowerIn "Electrical power from the cooling system pump"
+                                                                            annotation (Placement(transformation(
         extent={{-20,-20},{20,20}},
         rotation=180,
         origin={120,14}), iconTransformation(
@@ -180,7 +181,8 @@ public
         rotation=180,
         origin={120,20})));
   Modelica.Blocks.Sources.RealExpression P_el_out(y=P_el_tot) annotation (Placement(transformation(extent={{-88,-58},{-68,-38}})));
-  TransiEnt.Basics.Interfaces.Electrical.ElectricPowerOut electrolyzerPowerOut annotation (Placement(transformation(extent={{-54,-58},{-34,-38}})));
+  TransiEnt.Basics.Interfaces.Electrical.ElectricPowerOut electrolyzerPowerOut "Net power consumed by the electrolyzer and its auxiliary systems"
+                                                                               annotation (Placement(transformation(extent={{-54,-58},{-34,-38}})));
 equation
   // _____________________________________________
   //
@@ -250,6 +252,7 @@ equation
 <p>This is a model for an electrolyzer with a replaceable efficiency curve and replaceable dynamic behavior. </p>
 <h4><span style=\"color: #008000\">2. Level of detail, physical effects considered, and physical insight</span></h4>
 <p>The efficiency curve, the dynamic behaviour and the wanted input (electric power or hydrogen mass flow) can be chosen. The water consumption is calculated using a constant factor. </p>
+<p>It has been modified from inital TransiEnt model so it is able to account for storage compressor power and cooling pump power from the cooling system if desired.</p>
 <h4><span style=\"color: #008000\">3. Limits of validity </span></h4>
 <p>(no remarks) </p>
 <h4><span style=\"color: #008000\">4. Interfaces</span></h4>
@@ -263,12 +266,13 @@ equation
 <p>The hydrogen mass flow or the electric power is calculated depending on the given input and chosen efficiency curve and dynamic behavior. </p>
 <p>Heat outcoupling is calculated via the efficiency curve and a simplified correlation for heat losses depending on the electrical power, the operating temperature and the ambient temperature. The default value for the temperature coefficient is based on [1].</p>
 <h4><span style=\"color: #008000\">7. Remarks for Usage</span></h4>
-<p>Via parameter &apos;useLeakageMassFlow&apos; a small mass flow of &apos;m_flow_small&apos; is always flowing out of gas port (to avoid Zero-Mass-Flow problems). </p>
+<p>Initial model contains parameter &apos;useLeakageMassFlow&apos;, leading to a small mass flow of &apos;m_flow_small&apos; is always flowing out of gas port (to avoid Zero-Mass-Flow problems). </p>
 <p>The model works with any fluids which contain hydrogen as the last component.</p>
 <h4><span style=\"color: #008000\">8. Validation</span></h4>
-<p>Tested in the check models &quot;TransiEnt.Producer.Gas.Electrolyzer.Check.TestPEMElectrolyzer_L1_Charline&quot; and &quot;TransiEnt.Producer.Gas.Electrolyzer.Check.TestPEMElectrolyzer_L1_Dynamics&quot;</p>
+<p>Initially tested in the check models &quot;TransiEnt.Producer.Gas.Electrolyzer.Check.TestPEMElectrolyzer_L1_Charline&quot; and &quot;TransiEnt.Producer.Gas.Electrolyzer.Check.TestPEMElectrolyzer_L1_Dynamics&quot;</p>
 <h4><span style=\"color: #008000\">9. References</span></h4>
-<p>[1] Espinosa-L&oacute;pez, M. et al., Modelling and experimental validation of a 46 kW PEM high pressure water electrolyzer, 2018</p>
+<p>Source: modified from TransiEnt library original model</p>
+<p><br>[1] Espinosa-L&oacute;pez, M. et al., Modelling and experimental validation of a 46 kW PEM high pressure water electrolyzer, 2018</p>
 <h4><span style=\"color: #008000\">10. Version History</span></h4>
 <p>Model created by Carsten Bode (c.bode@tuhh.de) in March 2017</p>
 <p><span style=\"font-family: MS Shell Dlg 2;\">Model generalized for different electrical power ports by Jan-Peter Heckel (jan.heckel@tuhh.de) in July 2018 </span></p>

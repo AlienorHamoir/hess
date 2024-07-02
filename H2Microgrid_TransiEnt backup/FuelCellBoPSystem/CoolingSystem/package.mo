@@ -1,3 +1,0 @@
-within H2Microgrid_TransiEnt.FuelCellBoPSystem;
-package CoolingSystem
-end CoolingSystem;

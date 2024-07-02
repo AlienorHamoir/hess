@@ -27,7 +27,8 @@ record CoolingPumpDESL "Pump data for a Tuthill D-series pump"
 defaultComponentPrefixes="parameter",
 defaultComponentName="per",
 Documentation(info="<html>
-<p>Data from: <a href=\"http://productfinder.wilo.com/en/COM/product/0000000e000379df0002003a/fc_product_datasheet\">http://productfinder.wilo.com/en/COM/product/0000000e000379df0002003a/fc_product_datasheet </a> -  Buildings.Fluid.Movers.Data.Pumps.Wilo.Stratos32slash1to12</p>
+<p>Data from: <a href=\"http://productfinder.wilo.com/en/COM/product/0000000e000379df0002003a/fc_product_datasheet\">http://productfinder.wilo.com/en/COM/product/0000000e000379df0002003a/fc_product_datasheet </a>- Buildings.Fluid.Movers.Data.Pumps.Wilo.Stratos32slash1to12</p>
+<p>Slightly adapted to fit closer the DESL pump (Tuthill CO. D-series and motor (TEC 0.1823TECAB34B) characteristics.</p>
 <p>See <span style=\"font-family: Arial;\">&nbsp;<a href=\"modelica://Buildings.Fluid.Movers.Data.Pumps.Wilo.Stratos25slash1to6\">Buildings.Fluid.Movers.Data.Pumps.Wilo.Stratos25slash1to6&nbsp;</a>for</span> more information about how the data is derived. </p>
 </html>",
   revisions="<html>

@@ -61,9 +61,8 @@ model PEMFC "Model of PEM Fuel Cell stack"
   parameter Modelica.Units.SI.Pressure p_Amb=1e5 "Pressure at the cathode";
 
   parameter TransiEnt.Basics.Media.Gases.Gas_VDIWA_SG7_var Syngas=TransiEnt.Basics.Media.Gases.Gas_VDIWA_SG7_var() "Medium model of Syngas" annotation (choicesAllMatching);
-  //   parameter H2Microgrid_TransiEnt.FuelCellBoPSystem.Gas_VDIWA_H2_var Syngas=H2Microgrid_TransiEnt.FuelCellBoPSystem.Gas_VDIWA_H2_var() "Medium model H2" annotation (choicesAllMatching);
 
-  parameter TransiEnt.Basics.Media.Gases.Gas_MoistAir Air=TransiEnt.Basics.Media.Gases.Gas_MoistAir() "Medium model of air" annotation (choicesAllMatching);
+  parameter TransiEnt.Basics.Media.Gases.Gas_MoistAir Air=TransiEnt.Basics.Media.Gases.Gas_MoistAir() "Medium model of air - Moist air is used which consists of N2, H2O and O2. O2 is used in FC" annotation (choicesAllMatching);
 
   parameter Real cp_tab[3,3] = [28.91404, -0.00084, 2.01e-6; 25.84512, 0.012987, -3.9e-6; 30.62644, 0.009621, 1.18e-6] "Empiric parameter for calculating the Gibbs free energy according to Barbir";
 
@@ -72,8 +71,6 @@ model PEMFC "Model of PEM Fuel Cell stack"
   parameter Modelica.Units.SI.Mass m=43 "Mass of the stack";
 
   parameter Modelica.Units.SI.SpecificHeatCapacity cp=35000/m "Specific heat capacity of the stack";
-
-//   parameter Real eta_Q = 0.7 "Efficiency of the heat transfer - not used";
 
   parameter Modelica.Units.SI.Temperature T_nom = 40 + 273.15 "Temperature in nominal point";
 
@@ -120,6 +117,7 @@ model PEMFC "Model of PEM Fuel Cell stack"
   Modelica.Units.SI.Voltage V_ohmic "Ohmic losses";
   Modelica.Units.SI.Voltage V_Nernst "Nernst voltage";
   Modelica.Units.SI.Voltage V_act "Activation voltage";
+  //   Modelica.Units.SI.Voltage V_a "Dynamic activation voltage - Xue 2004 model";
   Modelica.Units.SI.Voltage V_rev "Reversible electric potential";
 
   Modelica.Units.SI.Conductivity mem_conductivity "Conductivity of the PE membrane";
@@ -136,10 +134,8 @@ model PEMFC "Model of PEM Fuel Cell stack"
   Modelica.Units.SI.MassFlowRate m_dot_O2_react_stack "Required O2 mass flow rate of one cell";
   Modelica.Units.SI.MassFlowRate m_dot_H2O_gen_stack "Generated H2O mass flow rate of one cell";
   Modelica.Units.SI.MassFlowRate m_dot_air_react_stack "Required air mass flow rate of one cell";
-  //Modelica.SIunits.MassFlowRate m_dot_H2_in_stack "Wasserstoffmassenstrom in das Stack";
   Modelica.Units.SI.MolarMass M_H2=syng.M_i[5] "Molar mass H2";
   Modelica.Units.SI.MolarMass M_O2=air.M_i[3] "Molar mass O2";
-  //   Modelica.SIunits.MolarMass M_air = air.M "Molar mass air";
   Modelica.Units.SI.MassFraction xi_O2 "Mass fraction of O2 in the air";
 
   Modelica.Units.SI.SpecificEnthalpy h_hein=syng.h;
@@ -156,10 +152,13 @@ model PEMFC "Model of PEM Fuel Cell stack"
   Modelica.Units.SI.HeatFlowRate Q_flow_el "W, heat generated in FC from hydrogen reaction for electricity production";
 
 
-  Modelica.Units.SI.Current I "Electric current through the stack";
+  Modelica.Units.SI.Current I(start=1) "Electric current through the stack";
   Modelica.Units.SI.Current I_is "Theoretical??? electric current through the stack";
   Modelica.Units.SI.CurrentDensity i_cell "Current density";
   Modelica.Units.SI.Resistance Ri "Internal resistance in Ohm - intially Ri = - 1.667e-4*T_stack + 0.2289";
+  // If use of dynamic activation overvoltage
+   // Modelica.Units.SI.Resistance Ra "Activation resistance in Ohm";
+
 
   // for heating up states:
   Boolean is_Shutdown(start=false) "true, if load current is indicating to shut the stack down";
@@ -237,7 +236,7 @@ model PEMFC "Model of PEM Fuel Cell stack"
     T=T_air_ein,
     p=p_Kathode,
     xi=inStream(feeda.xi_outflow),
-    gasType = Air) "Moist air is used which consists of N2, H2O and O2. This is why the component O2 can be used from it!"
+    gasType = Air)
     annotation (Placement(transformation(extent={{62,24},{86,54}})));
 
     TILMedia.Gas_pT synga(
@@ -252,7 +251,7 @@ model PEMFC "Model of PEM Fuel Cell stack"
     T=T_stack,
     p=p_Amb,
     xi=draina.xi_outflow,
-    gasType = Air) "Moist air is used which consists of N2, H2O and O2. This is why the component O2 can be used from it!"
+    gasType = Air)
     annotation (Placement(transformation(extent={{64,-72},{88,-42}})));
 
   replaceable TransiEnt.Components.Boundaries.Electrical.ActivePower.Power powerBoundary
@@ -307,19 +306,22 @@ equation
   // Current and voltage equations
   // Equations from Fuel cell technology by N. Sammes, p. 228
   // Equations from System level lumped-parameter dynamic modeling of PEM fuel cell, X. Xue (2004) and Amphlett (1996)
-  // coefficients come from Amphlett (1996), A model predicting transient responses of PEMFC
+  // Activation voltage coefficients come from Amphlett (1996), A model predicting transient responses of PEMFC
 
   V_rev = 1.229 - 8.5e-4*(T_stack - T_amb);
   V_Nernst = ( Modelica.Constants.R * T_stack) / (z * Modelica.Constants.F) * log(P_H2 * sqrt(P_O2));
-  V_act = -0.9514 + 0.00312*T_stack + 7.4e-5*T_stack*log(I+1e-6) - 1.87e-4*T_stack* log(xi_O2); // xi_O2 is a mass fraction, but interior of log () must be in mol/cm3 - we multiply xi_O2 by O2 density (0.001225 g/cm3) divided by O2 molecular weight (32 g/mol) - less coherent results with that
   V_ohmic = - I*t_mem / (mem_conductivity * A_cell);
-  mem_conductivity = (0.00514*lambda - 0.00326)*exp(1268*(1/298.15 - 1/T_stack))*10e2;
-
-//   V_ohmic = - I * Ri;
+  //   V_ohmic = - I * Ri; // results in a negative voltage at high power setpoints
+  mem_conductivity = (0.00514*lambda - 0.00326)*exp(1268*(1/298.15 - 1/T_stack))*10e2; // Springer, 1991 "Polymer Electrolyte Fuel Cell Model"
   Ri = 0.016046 - 3.4715e-5*T_stack + 7.9565e-5*I;
 
   E_cell = V_rev + V_Nernst + V_act + V_ohmic;
   E_stack = E_cell * no_Cells;
+
+// If use of dynamic activation overvoltage
+//   E_cell = V_rev + V_Nernst + V_a + V_ohmic;
+//   der(V_a) = 2 * I - 2 * V_a * Ra;
+//   Ra = - V_act * I;
 
 
   I_is = 2*feedh.m_flow*inStream(feedh.xi_outflow[5])*Modelica.Constants.F / (M_H2*no_Cells);
@@ -335,23 +337,28 @@ equation
   m_dot_air_react_stack = m_dot_O2_react_stack / xi_O2;
 
 
-  // Shutting down model
+ // Shutting down model
   is_Shutdown = I_load < I_shutdown;
 
   if is_Shutdown then
     // Load current below mimimum value = signal to shut down!
     I = 0;
-    V_stack = 0;
+    V_stack = 54;  // in Xue (2004), V_cell tends towards 36.75 V for I = 0. Based on results from these simulations, highest reached voltage at 5000 W (OCV approximation) is closer to 54 V. We will only see the OCV when P_el = 0 and I = 0. Allowed power setpoints are either 0 or greater than 500 Wm and computed by MPC
+    V_act = 0;
     lambda_H = -1; // signal to lambda h controller that we are in shut down mode!
-    lambda_O = 0;
+    lambda_O = -1;
   else
     // Normal operating point: Reaction is running
     //     I = min(I_load,I_is);
     I = I_load;
     V_stack = E_stack;
+    //     V_act = -0.9514 + 0.00312*T_stack + 7.4e-5*T_stack*log(I) - 1.87e-4*T_stack* log(P_O2*1.97e5*exp(398.15/T_stack)); // Amphlett 1995
+    V_act = -0.9514 + 0.00312*T_stack + 7.4e-5*T_stack*log(I) - 1.87e-4*T_stack* log(xi_O2); // xi_O2 is a mass fraction, but interior of log () must be in mol/cm3 - we multiply xi_O2 by O2 density (0.001225 g/cm3) divided by O2 molecular weight (32 g/mol) - less coherent results with that
     lambda_H = (feedh.m_flow*inStream(feedh.xi_outflow[5]))/m_dot_H2_react_stack;
     lambda_O = (feeda.m_flow*(1-inStream(feeda.xi_outflow[1])-inStream(feeda.xi_outflow[2])))/m_dot_O2_react_stack;
   end if;
+
+
 
   // temperature design flow direction
   T_syng_ein = inStream(feedh.T_outflow);

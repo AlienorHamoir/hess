@@ -10,7 +10,7 @@ model CoolingModel
     annotation (Placement(transformation(extent={{10,-12},{34,12}})));
   Buildings.Fluid.Sources.Boundary_pT watertowater(
     redeclare package Medium = Buildings.Media.Water,
-    use_T_in=false,
+    use_T_in=true,
     T=292.15,
     nPorts=1) annotation (Placement(transformation(extent={{-62,-10},{-42,10}})));
   Buildings.Fluid.FixedResistances.PressureDrop pipe(
@@ -47,6 +47,7 @@ model CoolingModel
     C=700,
     T(start=296.65, fixed=true),
     der_T(start=0))             annotation (Placement(transformation(extent={{-28,-56},{-8,-36}})));
+  Modelica.Blocks.Interfaces.RealInput T_environment "Prescribed boundary temperature from weather file" annotation (Placement(transformation(extent={{-130,-20},{-90,20}})));
 equation
   connect(watertowater.ports[1], pipe.port_a) annotation (Line(points={{-42,0},{-30,0}},   color={0,127,255}));
   connect(controller.y,pump. y)
@@ -62,6 +63,7 @@ equation
   connect(cellBuffer.port, heatexchanger.heatPort) annotation (Line(points={{-18,-56},{-18,-64},{46,-64}}, color={191,0,0}));
   connect(fuelcellTemperature.T, controller.u_m) annotation (Line(points={{-68,-31},{-68,54}},                                                 color={0,0,127}));
   connect(fuelcellTemperature.port, cellBuffer.port) annotation (Line(points={{-68,-52},{-68,-64},{-18,-64},{-18,-56}},           color={191,0,0}));
+  connect(T_environment, watertowater.T_in) annotation (Line(points={{-110,0},{-74,0},{-74,4},{-64,4}}, color={0,0,127}));
   annotation (
     Icon(coordinateSystem(preserveAspectRatio=false)),
     Diagram(coordinateSystem(preserveAspectRatio=false), graphics={

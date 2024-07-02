@@ -25,8 +25,6 @@ model TestAirCompressor "Example of a fuel cell in a domestic application that f
   extends TransiEnt.Basics.Icons.Checkmodel;
   inner TransiEnt.SimCenter simCenter annotation (Placement(transformation(extent={{-90,80},{-70,100}})));
 
-  parameter H2Microgrid_TransiEnt.FuelCellBoPSystem.FuelCell.Physics.Gas_VDIWA_H2_var Syngas=H2Microgrid_TransiEnt.FuelCellBoPSystem.FuelCell.Physics.Gas_VDIWA_H2_var() "Medium model H2" annotation (Dialog(group="Fundamental Definitions"));
-
   parameter TransiEnt.Basics.Media.Gases.Gas_MoistAir Air=TransiEnt.Basics.Media.Gases.Gas_MoistAir() "Medium model of air" annotation (choicesAllMatching);
 
   Modelica.Thermal.FluidHeatFlow.Examples.Utilities.DoubleRamp Load(

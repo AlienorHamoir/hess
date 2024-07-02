@@ -34,10 +34,10 @@ model PowerController "Controller for power and current output in Fuel Cell appl
   //             Visible Parameters
   // _____________________________________________
 
-  parameter Modelica.Units.SI.Current i_max=120 "Maximum current value";
-  parameter Modelica.Units.SI.Current i_rampup=10 "Maximum current value";
+  parameter Modelica.Units.SI.Current i_max=90 "Maximum current value";
+  parameter Modelica.Units.SI.Current i_rampup=10 "Rampup current value";
   parameter Real k = 1 "Proportional controller gain";
-  parameter Modelica.Units.SI.Power P_min=10 "Lower power Limit";
+  parameter Modelica.Units.SI.Power P_min=367.5 "Lower power Limit"; // computed from I_shutdown = 10 A and V_shutdown = 36.75 V
 
   // _____________________________________________
   //
@@ -83,7 +83,7 @@ model PowerController "Controller for power and current output in Fuel Cell appl
   Modelica.Blocks.Logical.GreaterThreshold VoltageThreshold(threshold=0) annotation (Placement(transformation(
         extent={{-10,-10},{10,10}},
         rotation=90,
-        origin={-70,-42})));
+        origin={-74,-18})));
 
   Modelica.Blocks.Logical.Switch VoltageSwitch annotation (Placement(transformation(
         extent={{-10,-10},{10,10}},
@@ -135,10 +135,10 @@ equation
                                                                                                           color={255,0,255}));
   connect(VoltageSwitch.u1, PowerbyVoltage_divison.y) annotation (Line(points={{38,44},{22,44},{22,-24},{24,-24},{24,-38},{12,-38}}, color={0,0,127}));
   connect(PowerSwitch.y, VoltageSwitch.u3) annotation (Line(points={{17,60},{30,60},{30,28},{38,28}}, color={0,0,127}));
-  connect(VoltageThreshold.y, VoltageSwitch.u2) annotation (Line(points={{-70,-31},{-70,10},{26,10},{26,36},{38,36}},                   color={255,0,255}));
+  connect(VoltageThreshold.y, VoltageSwitch.u2) annotation (Line(points={{-74,-7},{-74,-4},{-44,-4},{-44,2},{28,2},{28,36},{38,36}},    color={255,0,255}));
   connect(V_stack, preventDivisionByZero.u) annotation (Line(points={{-100,-66},{-76,-66},{-76,-65},{-51.8,-65}},
                                                                                               color={0,127,127}));
-  connect(V_stack, VoltageThreshold.u) annotation (Line(points={{-100,-66},{-70,-66},{-70,-54}}, color={0,127,127}));
+  connect(V_stack, VoltageThreshold.u) annotation (Line(points={{-100,-66},{-74,-66},{-74,-30}}, color={0,127,127}));
   connect(P, PowerThreshold.u) annotation (Line(points={{-100,74},{-56,74},{-56,50},{-45.6,50}},
                                                                                                color={0,127,127}));
   connect(nulCurrent.y, PowerSwitch.u3) annotation (Line(points={{-21.2,26},{-16,26},{-16,52},{-6,52}}, color={0,0,127}));

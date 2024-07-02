@@ -116,5 +116,11 @@ equation
           textColor={255,255,255},
           textStyle={TextStyle.Bold},
           textString="Electrolyzer
-L1")}),                                     Diagram(coordinateSystem(preserveAspectRatio=false)));
+L1")}),                                     Diagram(coordinateSystem(preserveAspectRatio=false)),
+    Documentation(info="<html>
+<p><span style=\"font-family: Arial;\">Electrolyzer system with L1 simplified electrolyzer model. No BoP is accounted for. All models are found in H2Microgrid_TransiEnt and are based on existing TransiEnt models.</span></p>
+<p><span style=\"font-family: Arial;\">The electrolyzer system also contains a power controller found in TransiEnt library.</span></p>
+<p><br>Tested in the check models &quot;H2Microgrid_TransiEnt.ElectrolyzerBoPSystem.Tests.Test_PEMElectrolyzerL1_nonCompressedStorage&quot;</p>
+<p><br>Simplified feed-in station model, without connection to a natural gas grid</p>
+</html>"));
 end SystemElectrolyzerL1_nonCompressedStorage;

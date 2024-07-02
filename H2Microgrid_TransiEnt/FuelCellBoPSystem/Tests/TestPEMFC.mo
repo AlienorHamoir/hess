@@ -80,10 +80,10 @@ model TestPEMFC "Example of a fuel cell in a domestic application that follows l
     useHeatPort=true,
     I(start=10))                  annotation (Placement(transformation(extent={{-10,-26},{22,4}})));
   Modelica.Blocks.Sources.Ramp ramp(
-    height=80,
-    duration=4000,
+    height=90,
+    duration=400,
     offset=10,
-    startTime=10) annotation (Placement(transformation(extent={{-6,72},{14,92}})));
+    startTime=10) annotation (Placement(transformation(extent={{-16,58},{4,78}})));
   FuelCell.Controller.LambdaController_PID lambdaHController_PID(lambda_target=1.5, m_flow_rampup=1e-6) annotation (Placement(transformation(
         extent={{-10,-10},{10,10}},
         rotation=180,
@@ -105,15 +105,16 @@ model TestPEMFC "Example of a fuel cell in a domestic application that follows l
                  annotation (Placement(transformation(extent={{-46,68},{-26,88}})));
   AirSupplySystem.AirCompressorSystemModel airCompressorSystemModel annotation (Placement(transformation(extent={{-26,-90},{-6,-70}})));
   Modelica.Blocks.Sources.Ramp ramp1(
-    height=70,
-    duration=1,
+    height=4000,
+    duration=1000,
     offset=500,
     startTime=10) annotation (Placement(transformation(extent={{-94,42},{-74,62}})));
-  Modelica.Blocks.Sources.Constant const(k=400) annotation (Placement(transformation(extent={{28,68},{48,88}})));
-TransiEnt.Components.Electrical.FuelCellSystems.FuelCell.Controller.PowerController PowerController(
-    k=1,
-    i_min=0,
-    preventDivisionByZero(uMax=100, uMin=1))                                                                annotation (Placement(transformation(rotation=0, extent={{-36,36},{-56,56}})));
+  Modelica.Blocks.Sources.Constant const(k=600) annotation (Placement(transformation(extent={{28,68},{48,88}})));
+  FuelCell.Controller.PowerConverter powerConverter(i_max=150) annotation (Placement(transformation(extent={{-52,26},{-32,46}})));
+  Modelica.Blocks.Sources.Step step(
+    height=1000,
+    offset=0,
+    startTime=1000) annotation (Placement(transformation(extent={{-118,14},{-98,34}})));
 equation
 
   connect(FC.feedh, SyngasSource.gas_a) annotation (Line(
@@ -141,16 +142,16 @@ equation
   connect(FC.temperatureOut, coolingModel.T_op) annotation (Line(points={{-1.04,-15.5},{10,-15.5},{10,36},{64,36},{64,64.6},{68.8,64.6}},   color={0,0,127}));
   connect(lambdaOController_PID.y, AirSource.m_flow) annotation (Line(points={{-28.8,-50},{-52,-50},{-52,-32.4},{-46,-32.4}}, color={0,0,127}));
   connect(lambdaOController_PID.y, airCompressorSystemModel.AirMassFlowRateSetpoint) annotation (Line(points={{-28.8,-50},{-34,-50},{-34,-73.6},{-26.8,-73.6}}, color={0,0,127}));
-  connect(FC.V_stack, PowerController.V_cell) annotation (Line(
-      points={{22,-11},{22,-12},{30,-12},{30,40.6},{-37,40.6}},
+  connect(FC.V_stack, powerConverter.V_stack) annotation (Line(
+      points={{22,-11},{22,-12},{30,-12},{30,50},{-58,50},{-58,30.6},{-51,30.6}},
       color={0,135,135},
       pattern=LinePattern.Dash));
-  connect(PowerController.y, FC.I_load) annotation (Line(points={{-57,46},{-62,46},{-62,-11.9},{-7.12,-11.9}}, color={0,0,127}));
-  connect(const.y, PowerController.deltaP) annotation (Line(points={{49,78},{54,78},{54,52},{-37,52}}, color={0,0,127}));
+  connect(powerConverter.y, FC.I_load) annotation (Line(points={{-31,36},{-22,36},{-22,-11.9},{-7.12,-11.9}}, color={0,0,127}));
+  connect(ramp1.y, powerConverter.P) annotation (Line(points={{-73,52},{-56,52},{-56,42},{-51,42}}, color={0,0,127}));
   annotation (
     Diagram(coordinateSystem(preserveAspectRatio=false, extent={{-100,-100},{100,100}})),
     experiment(
-      StopTime=5000,
+      StopTime=2000,
       Interval=1,
       __Dymola_Algorithm="Dassl"),
     __Dymola_experimentSetupOutput,

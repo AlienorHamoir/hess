@@ -7,7 +7,8 @@ model SystemElectrolyzerL2_nonCompressedStorage
         origin={400, 400},
         extent={{-10, -10}, {10, 10}},
         rotation=0))),
-    break m_flow_feedIn);
+    break m_flow_feedIn,
+    break epp);
 
      // Change these values to your desired position
                                           // Change the size if needed
@@ -52,24 +53,17 @@ model ElectrolyzerRecord
     input SI.Efficiency eta_GCV "Electroyzer efficiency based on GCV";
 end ElectrolyzerRecord;
 
-  TransiEnt.Basics.Interfaces.General.MassFlowRateOut H2massFlowRateOutElectrolyzer annotation (Placement(transformation(
-        extent={{-11,-11},{11,11}},
-        rotation=0,
-        origin={105,65}), iconTransformation(
-        extent={{-12,-12},{12,12}},
-        rotation=0,
-        origin={106,-16})));
   PEMElectrolyzer_L2 electrolyzer(
     useFluidCoolantPort=false,
     useHeatPort=true,
     externalMassFlowControl=false,
     useVariableCoolantOutputTemperature=false,
     T_out_coolant_target=T_out_coolant_target,
-    usePowerPort=true,
+    usePowerPort=false,
     P_el_n=P_el_n,
     P_el_max=P_el_max,
     integrateH2Flow=true,
-    integrateElPower=true,
+    integrateElPower=false,
     T_out=T_out,
     medium=medium,
     mass_H2(start=0.1),
@@ -87,6 +81,13 @@ end ElectrolyzerRecord;
         origin={-54,46})));
   TransiEnt.Basics.Interfaces.Electrical.ElectricPowerOut electrolyzerPowerOut annotation (Placement(transformation(extent={{94,-86},{114,-66}})));
   CoolingSubystem.HeatPortCooling.CoolingModel_Valve coolingModel_Valve annotation (Placement(transformation(extent={{36,-38},{70,-12}})));
+  Modelica.Blocks.Interfaces.RealInput T_environment "Prescribed boundary temperature from weather file" annotation (Placement(transformation(
+        extent={{-20,-20},{20,20}},
+        rotation=-90,
+        origin={80,108}), iconTransformation(
+        extent={{-14.6963,37.304},{11.3045,11.3041}},
+        rotation=-90,
+        origin={58.696,101.304})));
 protected
   TransiEnt.Components.Sensors.RealGas.MassFlowSensor massflowSensor_ely(medium=medium, xiNumber=0)         annotation (Placement(transformation(
         extent={{7,6},{-7,-6}},
@@ -94,17 +95,11 @@ protected
         origin={-2,6})));
 
 equation
-  connect(massflowSensor_ely.m_flow, H2massFlowRateOutElectrolyzer) annotation (Line(points={{5.7,6},{88,6},{88,65},{105,65}},
-                                                                                                                        color={0,0,127}));
 
   connect(gasPortOut, massflowSensor_ely.gasPortOut) annotation (Line(
       points={{5,-94},{6,-94},{6,-4},{5,-4},{5,0}},
       color={255,255,0},
       thickness=1.5));
-  connect(epp, electrolyzer.epp) annotation (Line(
-      points={{-100,0},{-66,0}},
-      color={0,135,135},
-      thickness=0.5));
   connect(electrolyzer.gasPortOut, massflowSensor_ely.gasPortIn) annotation (Line(
       points={{-26,0},{-9,0}},
       color={255,255,0},
@@ -120,7 +115,7 @@ equation
       color={0,135,135},
       pattern=LinePattern.Dash));
   connect(nulPower.y, electrolyzer.coolingPumpPowerIn) annotation (Line(points={{-81.3,-69},{-81.3,-70},{-78,-70},{-78,-52},{-16,-52},{-16,-4},{-14,-4},{-14,3.6},{-22,3.6}}, color={0,0,127}));
-  connect(coolingModel_Valve.T_op, electrolyzer.temperatureOut) annotation (Line(points={{33.96,-16.42},{-14,-16.42},{-14,-16},{-80,-16},{-80,-5.76},{-57.2,-5.76}}, color={0,0,127}));
+  connect(coolingModel_Valve.T_op, electrolyzer.temperatureOut) annotation (Line(points={{33.96,-16.42},{-14,-16.42},{-14,-20},{-80,-20},{-80,-5.76},{-57.2,-5.76}}, color={0,0,127}));
   connect(electrolyzer.heat, coolingModel_Valve.heatPortCooling) annotation (Line(points={{-26,-11.88},{24,-11.88},{24,-36.96},{36,-36.96}}, color={191,0,0}));
   annotation (Icon(coordinateSystem(preserveAspectRatio=false), graphics={Rectangle(
           extent={{-100,100},{100,-100}},
@@ -131,5 +126,12 @@ equation
           textColor={255,255,255},
           textStyle={TextStyle.Bold},
           textString="Electrolyzer
-L2")}),                                     Diagram(coordinateSystem(preserveAspectRatio=false)));
+L2")}),                                     Diagram(coordinateSystem(preserveAspectRatio=false)),
+    Documentation(info="<html>
+<p><span style=\"font-family: Arial;\">Electrolyzer system with L2 electrolyzer model and its accounted BoP, consisting of a cooling model with a pump. All models are found in H2Microgrid_TransiEnt and are based on existing TransiEnt models.</span></p>
+<p><span style=\"font-family: Arial;\">This mode is meatnt to be used with a low-pressure storage and the compressor power is considered as nul in the electrolyzer model.</span></p>
+<p><span style=\"font-family: Arial;\">The electrolyzer system also contains a power controller found in TransiEnt library.</span></p>
+<p><br>Tested in the check models &quot;H2Microgrid_TransiEnt.ElectrolyzerBoPSystem.Tests.Test_PEMElectrolyzerL2_nonCompressedStorage&quot;</p>
+<p><br>Simplified feed-in station model, without connection to a natural gas grid</p>
+</html>"));
 end SystemElectrolyzerL2_nonCompressedStorage;

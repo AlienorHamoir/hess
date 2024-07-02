@@ -88,8 +88,10 @@ equation
       points={{-11,30},{10,30},{10,8},{34,8}},
       color={0,0,127},
       smooth=Smooth.None));
-  connect(const.y, sum1.u[1]) annotation (Line(points={{-59,-56},{-56,-56},{-56,-48},{-56,-41},{-40,-41}}, color={0,0,127}));
-  connect(u1, sum1.u[2]) annotation (Line(points={{-100,60},{-78,60},{-54,60},{-54,-39},{-40,-39}}, color={0,0,127}));
+  connect(const.y, sum1.u[1]) annotation (Line(points={{-59,-56},{-56,-56},{-56,-48},{-56,-40.5},{-40,-40.5}},
+                                                                                                           color={0,0,127}));
+  connect(u1, sum1.u[2]) annotation (Line(points={{-100,60},{-78,60},{-54,60},{-54,-39.5},{-40,-39.5}},
+                                                                                                    color={0,0,127}));
   connect(sum1.y, switch1.u1) annotation (Line(points={{-17,-40},{10,-40},{10,-44},{10,-4},{10,-8},{34,-8}}, color={0,0,127}));
   annotation (Diagram(graphics,
                       coordinateSystem(preserveAspectRatio=false, extent={{-100,

@@ -25,30 +25,27 @@ public
 
   replaceable parameter TILMedia.VLEFluidTypes.BaseVLEFluid medium=simCenter.gasModel3 "Hydrogen model to be used" annotation (Dialog(tab="General", group="General"));
 
-  parameter Boolean start_pressure=true "true if a start pressure is defined, false if a start mass is defined" annotation (Dialog(tab="Storage"));
-  parameter Boolean includeHeatTransfer=false "false for neglecting heat transfer" annotation (Dialog(tab="Storage"));
-  parameter Modelica.Units.SI.Volume V_geo=1.6 "m3, Geometric volume of storage" annotation (Dialog(tab="Storage"));
-  parameter Modelica.Units.SI.Height height=3.779*V_geo^(1/3) "Height of storage" annotation (Dialog(tab="Storage"));
-  parameter Modelica.Units.SI.CoefficientOfHeatTransfer alpha_nom=4 "Heat transfer coefficient inside the storage cylinder" annotation (Dialog(tab="Storage"));
-  parameter Modelica.Units.SI.Mass m_start=1 "Stored gas mass at t=0" annotation (Dialog(tab="Storage"));
-  parameter Modelica.Units.SI.Pressure p_start=simCenter.p_amb_const + simCenter.p_eff_2   "Pressure in storage at t=0" annotation (Dialog(tab="Storage")); // p_start = 17 bar
-  parameter Modelica.Units.SI.ThermodynamicTemperature T_start=T_out "Temperature of gas in storage at t=0" annotation (Dialog(tab="Storage"));
-  parameter Modelica.Units.SI.Pressure p_out = 30e5;
-  parameter Modelica.Units.SI.Pressure p_maxLow=p_maxHigh - 1e5 "Lower limit of the maximum pressure in storage" annotation (Dialog(tab="Storage", group="Control"));
-  parameter Modelica.Units.SI.Pressure p_maxHigh=350e5 "Upper limit of the maximum pressure in storage" annotation (Dialog(tab="Storage", group="Control"));
+  parameter Boolean start_pressure=true "true if a start pressure is defined, false if a start mass is defined" annotation (Dialog(tab="General", group="Storage"));
+  parameter Boolean includeHeatTransfer=false "false for neglecting heat transfer" annotation (Dialog(tab="General", group="Storage"));
+  parameter Modelica.Units.SI.Volume V_geo=1.6 "m3, Geometric volume of storage" annotation (Dialog(tab="General", group="Storage"));
+  parameter Modelica.Units.SI.Height height=3.779*V_geo^(1/3) "Height of storage" annotation (Dialog(tab="General", group="Storage"));
+  parameter Modelica.Units.SI.CoefficientOfHeatTransfer alpha_nom=4 "Heat transfer coefficient inside the storage cylinder" annotation (Dialog(tab="General", group="Storage"));
+  parameter Modelica.Units.SI.Mass m_start=1 "Stored gas mass at t=0" annotation (Dialog(tab="General", group="Storage"));
+  parameter Modelica.Units.SI.Pressure p_start=simCenter.p_amb_const + simCenter.p_eff_2   "Pressure in storage at t=0" annotation (Dialog(tab="General", group="Storage")); // p_start = 17 bar
+  parameter Modelica.Units.SI.ThermodynamicTemperature T_start=T_out "Temperature of gas in storage at t=0" annotation (Dialog(tab="General", group="Storage"));
+  parameter Modelica.Units.SI.Pressure p_out = 30e5 "Output pressure of hydrogen from electrolyzer" annotation (Dialog(tab="General", group="Electrolyzer"));
+  parameter Modelica.Units.SI.Pressure p_maxLow=p_maxHigh - 1e5 "Lower limit of the maximum pressure in storage" annotation (Dialog(tab="General", group="Control"));
+  parameter Modelica.Units.SI.Pressure p_maxHigh=350e5 "Upper limit of the maximum pressure in storage" annotation (Dialog(tab="General", group="Control"));
 
 
- parameter Modelica.Units.SI.Temperature T_out=273.15+40 "Hydrogen output temperature" annotation(Dialog(group="Fundamental Definitions"));
-
-
+  parameter Modelica.Units.SI.Temperature T_out=273.15+40 "Hydrogen output temperature" annotation(Dialog(tab="General", group="Electrolyzer"));
   parameter Modelica.Units.SI.Efficiency eta_mech_compressor(
     min=0,
-    max=1)=0.9 "Compressor mechanical efficiency coefficient (min = 0, max = 1)" annotation (Dialog(tab="General", group="Electrolyzer"));
+    max=1)=0.9 "Compressor mechanical efficiency coefficient (min = 0, max = 1)" annotation (Dialog(tab="General", group="Compressor"));
   parameter Modelica.Units.SI.Efficiency eta_el_compressor(
     min=0,
-    max=1)=0.9 "Compressor motor electrical efficiency coefficient (min = 0, max = 1)" annotation (Dialog(tab="General", group="Electrolyzer"));
-  parameter Modelica.Units.SI.Power P_el_n_compressor=62.72 "W, compressor nominal electrical power";
-
+    max=1)=0.9 "Compressor motor electrical efficiency coefficient (min = 0, max = 1)" annotation (Dialog(tab="General", group="Compressor"));
+  parameter Modelica.Units.SI.Power P_el_n_compressor=62.72 "W, compressor nominal electrical power" annotation (Dialog(tab="General", group="Compressor"));
   parameter Modelica.Units.SI.Efficiency eta_n(
     min=0,
     max=1)=0.743 "Nominal efficency refering to the GCV (min = 0, max = 1)" annotation (Dialog(tab="General", group="Electrolyzer"));

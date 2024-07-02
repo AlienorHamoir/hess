@@ -1,5 +1,8 @@
 within H2Microgrid_TransiEnt.FuelCellBoPSystem.Tests;
 model TestPowerController
+
+    extends TransiEnt.Basics.Icons.Checkmodel;
+
   Modelica.Blocks.Sources.Constant Voltage(k=0) annotation (Placement(transformation(extent={{-86,-60},{-66,-40}})));
   Modelica.Blocks.Sources.Constant Power(k=500) annotation (Placement(transformation(extent={{-86,46},{-66,66}})));
   FuelCell.Controller.PowerController powerController annotation (Placement(transformation(extent={{22,-8},{42,12}})));

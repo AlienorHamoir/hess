@@ -69,7 +69,7 @@ record Base5kWElectrolyzerL2Specification "Record used for specification of an E
 <h4><span style=\"color: #008000\">1. Purpose of model</span></h4>
 <p>Partial record for electrolyzer system specific data.</p>
 <h4><span style=\"color: #008000\">2. Level of detail, physical effects considered, and physical insight</span></h4>
-<p>(no remarks)</p>
+<p>Parameters adapted based on data for 5 kW Giner electrolyzer. </p>
 <h4><span style=\"color: #008000\">3. Limits of validity </span></h4>
 <p>(no remarks)</p>
 <h4><span style=\"color: #008000\">4. Interfaces</span></h4>
@@ -83,8 +83,9 @@ record Base5kWElectrolyzerL2Specification "Record used for specification of an E
 <h4><span style=\"color: #008000\">8. Validation</span></h4>
 <p>(no validation or testing necessary)</p>
 <h4><span style=\"color: #008000\">9. References</span></h4>
-<p>(no remarks)</p>
+<p>Source: modified from TransiEnt library original model</p>
+<p><br>Z. Abdin, E. MacA. Gray, and C.J. Webb. Modelling and simulation of a proton exchange membrane (PEM) electrolyzer cell. International Journal of Hydrogen Energy, 40(39):13243-13257, 2015. doi:10.1016/j.ijhydene.2015.07.129. </p>
 <h4><span style=\"color: #008000\">10. Version History</span></h4>
-<p>Adopted from BaseCHPRecord. Created by John Webster (jcwebste@edu.uwaterloo.ca) Oct. 2018</p>
+<p>Adopted from BaseCHPRecord. Initially created by John Webster (jcwebste@edu.uwaterloo.ca) Oct. 2018</p>
 </html>"));
 end Base5kWElectrolyzerL2Specification;
