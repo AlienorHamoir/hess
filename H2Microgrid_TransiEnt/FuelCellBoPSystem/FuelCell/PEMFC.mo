@@ -2,7 +2,7 @@ within H2Microgrid_TransiEnt.FuelCellBoPSystem.FuelCell;
 model PEMFC "Model of PEM Fuel Cell stack"
 
 //________________________________________________________________________________//
-// Component of the TransiEnt Library, version: 2.0.3                             //
+// Adapted from PEMFC component of the TransiEnt Library, version: 2.0.3                             //
 //                                                                                //
 // Licensed by Hamburg University of Technology under the 3-BSD-clause.           //
 // Copyright 2021, Hamburg University of Technology.                              //
@@ -105,7 +105,7 @@ model PEMFC "Model of PEM Fuel Cell stack"
   // _____________________________________________
 
   Modelica.Units.SI.Temperature T_cell=T_stack "Temperature of one cell";
-  Modelica.Units.SI.Temperature T_stack(start=23.5 + 273.15) "Temperature of the stack" annotation (Dialog(group="Initialization", showStartAttribute=true));
+  Modelica.Units.SI.Temperature T_stack(start=T_amb, fixed=true) "Temperature of the stack" annotation (Dialog(group="Initialization", showStartAttribute=true));
   Modelica.Units.SI.Temperature T_syng_ein "Temperature of the syngas";
   Modelica.Units.SI.Temperature T_air_ein "Temperature of the air";
 
@@ -353,7 +353,7 @@ equation
     I = I_load;
     V_stack = E_stack;
     //     V_act = -0.9514 + 0.00312*T_stack + 7.4e-5*T_stack*log(I) - 1.87e-4*T_stack* log(P_O2*1.97e5*exp(398.15/T_stack)); // Amphlett 1995
-    V_act = -0.9514 + 0.00312*T_stack + 7.4e-5*T_stack*log(I) - 1.87e-4*T_stack* log(xi_O2); // xi_O2 is a mass fraction, but interior of log () must be in mol/cm3 - we multiply xi_O2 by O2 density (0.001225 g/cm3) divided by O2 molecular weight (32 g/mol) - less coherent results with that
+    V_act = -0.9514 + 0.00312*T_stack + 7.4e-5*T_stack*log(I) - 1.87e-4*T_stack* log(xi_O2); // Xue 2004 - xi_O2 is a mass fraction, but interior of log () must be in mol/cm3 - we multiply xi_O2 by O2 density (0.001225 g/cm3) divided by O2 molecular weight (32 g/mol) - less coherent results with that
     lambda_H = (feedh.m_flow*inStream(feedh.xi_outflow[5]))/m_dot_H2_react_stack;
     lambda_O = (feeda.m_flow*(1-inStream(feeda.xi_outflow[1])-inStream(feeda.xi_outflow[2])))/m_dot_O2_react_stack;
   end if;
@@ -481,28 +481,49 @@ equation
           preserveAspectRatio=false, extent={{-100,-100},{100,100}})),
                 Documentation(info="<html>
 <h4><span style=\"color: #008000\">1. Purpose of model</span></h4>
-<p>Model of PEM cell stack.</p>
+<p>Model of low temperature PEM fuel cell stack.</p>
 <h4><span style=\"color: #008000\">2. Level of detail, physical effects considered, and physical insight</span></h4>
-<p>(no remarks)</p>
+<p>Dynamic temperature and mass flows models. </p>
+<p>Quasi-steady electrochemical model: voltage dependency on temperature, with Nernst, ohmic, reversible and activation voltages contribution.</p>
+<p>Steady pressure model.</p>
+<p>From initial model, following modifications have been made:</p>
+<ul>
+<li>high temperature fuel cell adpated to a low temperature fuel cell: adapted eergy balance and temperature model, cooling PID added to allow connection with a cooling system (based on electrolyzer L2 model &quot;H2Microgrid_TransiEnt.ElectrolyzerBoPSystem.Electrolyzer.PEMElectrolyzer_L2&quot;)</li>
+<li>voltage equations have been adapted to better coincides with litterature and possibility of calibration with experimental parameters</li>
+<li>syngas composition has been adapted (in PEMFC system) to correspond to pure H2</li>
+<li>air and hydrogen mass balance has been corrected: to allow for a varying air intake and adapted syngas-to-H2 composition</li>
+</ul>
 <h4><span style=\"color: #008000\">3. Limits of validity </span></h4>
-<p>(no remarks)</p>
+<p>Model parameters are adapted to a Ballard Mark V 35-cell 5 kW PEM fuel cell stack [1] [2] [3], and fine-tuned with simulation results.</p>
+<p>A distinction is made between shutdow and normal operating point modes.</p>
+<p>Temperature range of 20-80 &deg;C.</p>
 <h4><span style=\"color: #008000\">4. Interfaces</span></h4>
 <p>Type of electrical power port can be chosen</p>
 <h4><span style=\"color: #008000\">5. Nomenclature</span></h4>
 <p>(no remarks)</p>
 <h4><span style=\"color: #008000\">6. Governing Equations</span></h4>
-<p>(no remarks)</p>
+<p>current and voltage equations</p>
+<p>reaction mass flows equations </p>
+<p>temperature design flow direction and contra design flow direction</p>
+<p>energy balance</p>
+<p>mass balance and mass fractions (design and opposite flow direction) </p>
+<p>impulse equations (pressure conservation)</p>
 <h4><span style=\"color: #008000\">7. Remarks for Usage</span></h4>
-<p><span style=\"font-family: MS Shell Dlg 2;\">With the choice of the boundary the the model can be used as PQ or PU bus.</span></p>
+<p><span style=\"font-family: MS Shell Dlg 2;\">With the choice of the boundary the model can be used as PQ or PU bus.</span></p>
 <h4><span style=\"color: #008000\">8. Validation</span></h4>
-<p><span style=\"font-family: MS Shell Dlg 2;\">Validation has been done as part of the master thesis [1] </span></p>
+<p><span style=\"font-family: MS Shell Dlg 2;\">Initial model validation has been done as part of the master thesis [4] </span></p>
+<p><span style=\"font-family: MS Shell Dlg 2;\">No experimental validation has been done on the adapted model.</span></p>
 <p><b><span style=\"font-family: MS Shell Dlg 2; color: #008000;\">9. References</span></b></p>
-<p><span style=\"font-family: MS Shell Dlg 2;\">[1] </span>Modellierung und Simulation von erdgasbetriebenen Brennstoffzellen-Blockheizkraftwerken zur Heimenergieversorgung</p>
-<p>Master thesis, Simon Weilbach (2014) </p>
+<p>Source: initial model PEMFC from TransiEnt library &quot;TransiEnt.Components.Electrical.FuelCellSystems.FuelCell.PEM&quot;</p>
+<p>[1] X. Xue, J. Tang, A. Smirnova et al. System level lumped-parameter dyamic modeling of PEM fuel cell. Journal of Power Sources, 133(2): 188-204. doi: 10.1016/j.jpowsour.2003.12.064.</p>
+<p>[2] J.C. Amphlett, R.F. Mann, B.A. Peppley, P.R. Roberge, A. Rodrigues. A model predicting transient responses of proton exchange membrane fuel cells. (1996) Journal of Power Sources, 61 (1-2): 183-188. doi: 10.1016/S0378-7753(96)02360-9. </p>
+<p>[3] Barbir. Fuel cell technology: Reaching towards commercialization. Engineering Materials and Processes.</p>
+<p>[4] Master thesis, Simon Weilbach (2014). Modellierung und Simulation von erdgasbetriebenen Brennstoffzellen-Blockheizkraftwerken zur Heimenergieversorgung</p>
 <h4><span style=\"color: #008000\">10. Version History</span></h4>
 <p>Model created by Simon Weilbach (simon.weilbach@tuhh.de) <span style=\"font-family: MS Shell Dlg 2;\">in October 2014</span></p>
 <p><span style=\"font-family: MS Shell Dlg 2;\">Model revised by Pascal Dubucq (dubucq@tuhh.de) in October 2015</span></p>
 <p><span style=\"font-family: MS Shell Dlg 2;\">Quality check (Code conventions) by Rebekka Denninger in October 2016</span></p>
 <p><span style=\"font-family: MS Shell Dlg 2;\">Model generalized for different electrical power ports by Jan-Peter Heckel (jan.heckel@tuhh.de) in July 2018 </span></p>
+<p><span style=\"font-family: MS Shell Dlg 2;\">Model adapted for a low-temperature PEM fuel cell by Ali&eacute;nor Hamoir in June 2024</span></p>
 </html>"));
 end PEMFC;

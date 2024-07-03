@@ -1,5 +1,5 @@
-within H2Microgrid_TransiEnt;
-model HESS_Compressed
+within H2Microgrid_TransiEnt.HESS;
+model HESS_Compressed "HESS with high-pressure compressed storage system"
 
   parameter TILMedia.VLEFluidTypes.BaseVLEFluid medium=simCenter.gasModel3;
 
@@ -22,11 +22,13 @@ inner TransiEnt.SimCenter simCenter annotation (Placement(transformation(extent=
         extent={{-9,-8},{9,8}},
         rotation=0,
         origin={27,44})));
-  TransiEnt.Basics.Interfaces.Electrical.ElectricPowerOut P_HESS "Actual HESS electrical power production" annotation (Placement(transformation(extent={{96,52},{116,72}})));
+  TransiEnt.Basics.Interfaces.Electrical.ElectricPowerOut P_HESS "Actual HESS electrical power balance (consumed - produced)"
+                                                                                                           annotation (Placement(transformation(extent={{96,52},{116,72}})));
   Modelica.Blocks.Math.Add add annotation (Placement(transformation(extent={{62,52},{82,72}})));
   Modelica.Blocks.Sources.RealExpression P_FC(y=P_FC_set) "Applied FC system electrical setpoint" annotation (Placement(transformation(extent={{-76,54},{-56,74}})));
   Modelica.Blocks.Sources.RealExpression P_EL(y=P_EL_set) "Applied electrolyzer system electrical setpoint" annotation (Placement(transformation(extent={{-74,-70},{-54,-50}})));
   Modelica.Blocks.Interfaces.RealInput T_environment "Prescribed boundary temperature from weather file" annotation (Placement(transformation(extent={{-130,10},{-90,50}})));
+  inner TransiEnt.ModelStatistics modelStatistics annotation (Placement(transformation(extent={{-52,-100},{-32,-80}})));
 equation
 
   if P_set_HESS >= 0 then
@@ -49,7 +51,7 @@ equation
       thickness=1.5));
   connect(systemPEMFC.mflowH2_FC, H2massSink.m_flow) annotation (Line(points={{2,48.8},{16.2,48.8}},        color={0,0,127}));
   connect(h2StorageSystem_Compressed.P_comp, systemElectrolyzer.CompressorPower) annotation (Line(
-      points={{62.8,-20.8},{70,-20.8},{70,-88},{-7.8,-88},{-7.8,-79.4}},
+      points={{62.8,-20.8},{70,-20.8},{70,-88},{-7.8,-88},{-7.8,-80.6}},
       color={0,135,135},
       pattern=LinePattern.Dash));
   connect(systemPEMFC.P_FC_tot, add.u1) annotation (Line(
@@ -61,10 +63,11 @@ equation
       color={0,135,135},
       pattern=LinePattern.Dash));
   connect(add.y, P_HESS) annotation (Line(points={{83,62},{106,62}}, color={0,0,127}));
-  connect(P_FC.y, systemPEMFC.P_el_set) annotation (Line(points={{-55,64},{-54,64.8},{-41.6,64.8}}, color={0,0,127}));
+  connect(P_FC.y, systemPEMFC.P_el_set) annotation (Line(points={{-55,64},{-54,60},{-41.6,60}},     color={0,0,127}));
   connect(P_EL.y, systemElectrolyzer.P_el_set) annotation (Line(points={{-53,-60},{-40.8,-60}},                     color={0,0,127}));
   connect(systemElectrolyzer.T_environment, T_environment) annotation (Line(points={{-40.6,-43.4},{-80,-43.4},{-80,30},{-110,30}}, color={0,0,127}));
-  connect(T_environment, systemPEMFC.T_environment) annotation (Line(points={{-110,30},{-80,30},{-80,76},{-42,76}}, color={0,0,127}));
+  connect(T_environment, systemPEMFC.T_environment) annotation (Line(points={{-110,30},{-80,30},{-80,77.6},{-41.6,77.6}},
+                                                                                                                    color={0,0,127}));
   annotation (Icon(coordinateSystem(preserveAspectRatio=false), graphics={Rectangle(
           extent={{-100,100},{100,-100}},
           lineColor={0,0,0},
@@ -73,5 +76,23 @@ equation
           extent={{-90,42},{90,-36}},
           textColor={0,0,0},
           textString="HESS
-350 bar")}),                                                     Diagram(coordinateSystem(preserveAspectRatio=false)));
+350 bar")}),                                                     Diagram(coordinateSystem(preserveAspectRatio=false)),
+    Documentation(info="<html>
+<h4>1. Purpose of model</h4>
+<p>Hydrogen Energy Storage System for microgrid applications, containing a fuel cell system, an electrolyzer system and high-pressure compressed storage system.</p>
+<h4>2. Level of detail, physical effects considered, and physical insight</h4>
+<p>HESS power setpoints maagement betwee fuel cell ad electrolyzer systems.</p>
+<p>Link between fuel cell system (ideal gas) and storage system (real gas).</p>
+<h4>3. Limits of validity </h4>
+<h4>4. Interfaces</h4>
+<h4>5. Nomenclature</h4>
+<p>(no remarks)</p>
+<h4>6. Governing Equations</h4>
+<h4>7. Remarks for Usage</h4>
+<h4>8. Validation</h4>
+<p>Tested in &quot;H2Microgrid_TransiEnt.HESS.TestHESS&quot;</p>
+<h4>9. References</h4>
+<h4>10. Version History</h4>
+<p>Model created by Ali&eacute;nor Hamoir in June 2024</p>
+</html>"));
 end HESS_Compressed;

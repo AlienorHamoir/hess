@@ -1,6 +1,4 @@
-Cooling_Modelica
-Cooling_VirtualFCS
-innerCooling_Modelica
-CoolingModel
+CoolingModel_Valve
+CoolingModel_Pump
 Test_CoolingModel
 CoolingPumpDESL

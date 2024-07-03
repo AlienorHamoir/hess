@@ -80,7 +80,7 @@ end ElectrolyzerRecord;
         rotation=-90,
         origin={-54,46})));
   TransiEnt.Basics.Interfaces.Electrical.ElectricPowerOut electrolyzerPowerOut annotation (Placement(transformation(extent={{94,-86},{114,-66}})));
-  CoolingSubystem.HeatPortCooling.CoolingModel_Valve coolingModel_Valve annotation (Placement(transformation(extent={{36,-38},{70,-12}})));
+  CoolingSystem.HeatPortCooling.CoolingModel_Valve coolingModel_Valve annotation (Placement(transformation(extent={{36,-38},{70,-12}})));
   Modelica.Blocks.Interfaces.RealInput T_environment "Prescribed boundary temperature from weather file" annotation (Placement(transformation(
         extent={{-20,-20},{20,20}},
         rotation=-90,

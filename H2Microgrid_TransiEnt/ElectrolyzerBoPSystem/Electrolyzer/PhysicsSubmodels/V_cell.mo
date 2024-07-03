@@ -60,6 +60,9 @@ model V_cell "PEM cell voltage as modeled by Abdin, 2015 where R_el is not negle
   parameter Real z=2 "Stoichiometric coefficient for transferred electrons; = 2 for electrolysis";
   parameter Real PaToAtm=1/101325 "conversion factor for partial pressures";
 
+  parameter Real tolerance = 1e-8; // Define a small tolerance value
+
+
   // _____________________________________________
   //
   //              Variables
@@ -139,11 +142,16 @@ equation
   V_ohmic = (R_mem+R_el)*i_dens_a;
 
   //Overall cell voltage
-  if not i_dens_a == 0 then
+   if abs(i_dens_a) > 0 then
     V_cell = V_rev + V_nernst + V_activation + V_ohmic + V_conc;
   else
     V_cell = 0;
   end if;
+//   if not i_dens_a == 0 then
+//     V_cell = V_rev + V_nernst + V_activation + V_ohmic + V_conc;
+//   else
+//     V_cell = 0;
+//   end if;
 
   annotation (
     defaultConnectionStructurallyInconsistent=true,

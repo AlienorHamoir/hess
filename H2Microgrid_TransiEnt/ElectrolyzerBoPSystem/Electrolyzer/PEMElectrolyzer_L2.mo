@@ -52,7 +52,7 @@ model PEMElectrolyzer_L2 "PEMElectrolyzer_L2 Proton exchange membrane electrolyz
   //Temperature parameters
 public
   inner parameter Modelica.Units.SI.Temperature T_amb=23 + 273.15 "K, ambient temperature" annotation (Dialog(group="Fundamental Definitions"));
-  parameter Modelica.Units.SI.Temperature T_op_start=273.15 + 23.86 "initial operating temperature of PEM Electrolyzer" annotation (Dialog(group="Initialization"));
+  parameter Modelica.Units.SI.Temperature T_op_start=273.15 + 23.5 "initial operating temperature of PEM Electrolyzer" annotation (Dialog(group="Initialization"));
   parameter Modelica.Units.SI.Temperature T_op_n=273.15 + 50 "nominal operating temperature of PEM Electrolyzer";
 
   //Electrolyzer system specific parameters

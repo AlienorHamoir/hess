@@ -1,5 +1,5 @@
 within H2Microgrid_TransiEnt.FuelCellBoPSystem.FuelCell.Controller;
-model LambdaController_PID "PID Controller for Lambda in Fuel Cell Applications - it outputs the required air or hydrogen mass flow rate to meet OER/HER (oxygen/hydrogen excess ratio) target"
+model LambdaController_PID "PID Controller for Lambda in Fuel Cell Applications"
 
 //________________________________________________________________________________//
 // Component of the TransiEnt Library, version: 2.0.3                             //
@@ -90,8 +90,8 @@ equation
                 Documentation(info="<html>
 <h4><span style=\"color: #008000\">1. Purpose of model</span></h4>
 <p>Controller for Lambda in Fuel Cell Applications.</p>
+<p>It outputs the required air or hydrogen mass flow rate to meet OER/HER (oxygen/hydrogen excess ratio) target</p>
 <h4><span style=\"color: #008000\">2. Level of detail, physical effects considered, and physical insight</span></h4>
-<p>(no remarks)</p>
 <h4><span style=\"color: #008000\">3. Limits of validity </span></h4>
 <p>(no remarks)</p>
 <h4><span style=\"color: #008000\">4. Interfaces</span></h4>
@@ -108,8 +108,6 @@ equation
 <h4><span style=\"color: #008000\">9. References</span></h4>
 <p>(no remarks)</p>
 <h4><span style=\"color: #008000\">10. Version History</span></h4>
-<p>Model created by Simon Weilbach (simon.weilbach@tuhh.de) on 01.10.2014</p>
-<p>Model revised by Pascal Dubucq (dubucq@tuhh.de) on 01.10.2015</p>
-<p>Quality check (Code conventions) by Rebekka Denninger on 01.10.2016</p>
+<p>Model created by Ali&eacute;nor Hamoir in June 2024</p>
 </html>"));
 end LambdaController_PID;

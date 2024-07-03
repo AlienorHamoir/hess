@@ -282,9 +282,10 @@ equation
           thickness=0.5)}),
           Documentation(info="<html>
 <h4><span style=\"color: #008000\">1. Purpose of model</span></h4>
-<p>This model combines a valve with a compressor delivering a certain pressure difference. Depending on the sign of the pressure difference the compressor or the valve is used. The type of compressor can be chosen.</p>
+<p>This model combines a valve with a compressor delivering a certain pressure difference and a certain mass flow rate. Depending on the sign of the pressure difference the compressor or the valve is used. The type of compressor can be chosen.</p>
 <h4><span style=\"color: #008000\">2. Level of detail, physical effects considered, and physical insight</span></h4>
 <p>When the pressure difference changes sign, the change of the device is executed without any time delay or time dependent behaviour. </p>
+<p>From initial model, a motor port has been added for assesment of compressor power consumption. The medium has been changed to pure hydrogen.</p>
 <h4><span style=\"color: #008000\">3. Limits of validity </span></h4>
 <p>Only valid for negligible time delays and time dependencies in turn-on and shut-down behaviour of the components. </p>
 <h4><span style=\"color: #008000\">4. Interfaces</span></h4>
@@ -300,10 +301,11 @@ equation
 <h4><span style=\"color: #008000\">8. Validation</span></h4>
 <p>(no remarks) </p>
 <h4><span style=\"color: #008000\">9. References</span></h4>
-<p>(no remarks) </p>
+<p>Source: TransiEnt library</p>
 <h4><span style=\"color: #008000\">10. Version History</span></h4>
 <p>Model created by Carsten Bode (c.bode@tuhh.de) on Feb 10 2017</p>
 <p>Modified by Lisa Andresen (andresen@tuhh.de) on Feb 16 2017 (changed output from m_flowDesired to dp_desired)</p>
 <p>Model revised by Carsten Bode (c.bode@tuhh.de) in Apr 2018 (fixed for update to ClaRa 1.3.0)</p>
+<p>Model revised by Ali&eacute;nor Hamoir in June 2024.</p>
 </html>"));
 end ValveAndCompressor_dp;

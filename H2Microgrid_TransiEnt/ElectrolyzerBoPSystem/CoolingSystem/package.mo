@@ -1,3 +1,3 @@
 within H2Microgrid_TransiEnt.ElectrolyzerBoPSystem;
-package CoolingSubystem
-end CoolingSubystem;
+package CoolingSystem
+end CoolingSystem;

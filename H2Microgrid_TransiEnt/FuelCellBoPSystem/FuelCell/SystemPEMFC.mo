@@ -1,28 +1,6 @@
 within H2Microgrid_TransiEnt.FuelCellBoPSystem.FuelCell;
-model SystemPEMFC "Fuel cell system, with power controller"
+model SystemPEMFC "Fuel cell system, with auxiliaries and power controller"
 
-//________________________________________________________________________________//
-// Component of the TransiEnt Library, version: 2.0.3                             //
-//                                                                                //
-// Licensed by Hamburg University of Technology under the 3-BSD-clause.           //
-// Copyright 2021, Hamburg University of Technology.                              //
-//________________________________________________________________________________//
-//                                                                                //
-// TransiEnt.EE, ResiliEntEE, IntegraNet and IntegraNet II are research projects  //
-// supported by the German Federal Ministry of Economics and Energy               //
-// (FKZ 03ET4003, 03ET4048, 0324027 and 03EI1008).                                //
-// The TransiEnt Library research team consists of the following project partners://
-// Institute of Engineering Thermodynamics (Hamburg University of Technology),    //
-// Institute of Energy Systems (Hamburg University of Technology),                //
-// Institute of Electrical Power and Energy Technology                            //
-// (Hamburg University of Technology)                                             //
-// Fraunhofer Institute for Environmental, Safety, and Energy Technology UMSICHT, //
-// Gas- und WÃ¤rme-Institut Essen                                                  //
-// and                                                                            //
-// XRG Simulation GmbH (Hamburg, Germany).                                        //
-//________________________________________________________________________________//
-
-  inner TransiEnt.SimCenter simCenter annotation (Placement(transformation(extent={{74,-98},{94,-78}})));
 
   parameter TransiEnt.Basics.Media.Gases.Gas_VDIWA_SG7_var Syngas=TransiEnt.Basics.Media.Gases.Gas_VDIWA_SG7_var() "Medium model H2" annotation (Dialog(group="Fundamental Definitions"));
   parameter TransiEnt.Basics.Media.Gases.Gas_MoistAir Air=TransiEnt.Basics.Media.Gases.Gas_MoistAir() "Medium model of air" annotation (Dialog(group="Fundamental Definitions"));
@@ -51,7 +29,10 @@ model SystemPEMFC "Fuel cell system, with power controller"
   TransiEnt.Basics.Interfaces.Electrical.ElectricPowerIn P_el_set "Input for FC system power production setpoint" annotation (Placement(transformation(
         extent={{-10,-10},{10,10}},
         rotation=-90,
-        origin={24,108})));
+        origin={24,108}), iconTransformation(
+        extent={{-10,-10},{10,10}},
+        rotation=-90,
+        origin={0,108})));
   TransiEnt.Basics.Interfaces.Electrical.ElectricPowerOut P_FC_tot annotation (Placement(transformation(extent={{92,-52},{116,-28}}), iconTransformation(extent={{92,-52},{116,-28}})));
   ClaRa.Components.BoundaryConditions.BoundaryGas_Txim_flow AirSource(
     variable_m_flow=true,
@@ -114,7 +95,7 @@ model SystemPEMFC "Fuel cell system, with power controller"
         origin={-22,-42})));
   CoolingSystem.HeatPortCooling.CoolingModel coolingModel(k_p=1000, tau_i=0.5)
                                                           annotation (Placement(transformation(extent={{44,40},{64,60}})));
-  AirSupplySystem.AirCompressorSystemModel AirCompressorSystem annotation (Placement(transformation(extent={{28,-84},{48,-64}})));
+  AirSupplySystem.AirCompressorSystem AirCompressorSystem annotation (Placement(transformation(extent={{28,-84},{48,-64}})));
   Modelica.Blocks.Sources.RealExpression P_el_out(y=P_el_sys) annotation (Placement(transformation(extent={{66,-50},{86,-30}})));
 
   Controller.PowerController powerController(i_max=120, P_min=500) annotation (Placement(transformation(
@@ -131,7 +112,11 @@ model SystemPEMFC "Fuel cell system, with power controller"
   Modelica.Blocks.Interfaces.RealInput T_environment "Prescribed boundary temperature from weather file" annotation (Placement(transformation(
         extent={{-20,-20},{20,20}},
         rotation=-90,
-        origin={80,110})));
+        origin={80,110}), iconTransformation(
+        extent={{-10,30},{10,10}},
+        rotation=-90,
+        origin={68,108})));
+  inner TransiEnt.SimCenter simCenter annotation (Placement(transformation(extent={{66,-96},{86,-76}})));
 equation
 
   P_el_tot = FC.P_el + AirCompressorSystem.P_airCompressor + coolingModel.P_coolingPump;
@@ -181,9 +166,9 @@ equation
   connect(lambdaHController_PID.y,SyngasSource. m_flow) annotation (Line(points={{-86.8,-58},{-92,-58},{-92,24},{-62,24},{-62,23.8},{-52,23.8}}, color={0,0,127}));
   connect(FC.lambda_O,lambdaOController_PID. u1) annotation (Line(points={{-5.68,-18},{-5.68,-28},{-6,-28},{-6,-38},{-10,-38},{-10,-38.4},{-11.8,-38.4}},
                                                                                                                                                       color={0,0,127}));
-  connect(FC.heat,coolingModel. heatPortCooling) annotation (Line(points={{18.16,-7.65},{66,-7.65},{66,36},{44,36},{44,40.8}},
+  connect(FC.heat,coolingModel. heatPortCooling) annotation (Line(points={{18.16,-7.65},{66,-7.65},{66,36},{44,36},{44,42.2}},
                                                                                                                          color={191,0,0}));
-  connect(FC.temperatureOut,coolingModel. T_op) annotation (Line(points={{-5.04,-7.5},{-22,-7.5},{-22,20},{36,20},{36,56.6},{42.8,56.6}},   color={0,0,127}));
+  connect(FC.temperatureOut,coolingModel. T_op) annotation (Line(points={{-5.04,-7.5},{-22,-7.5},{-22,20},{36,20},{36,56},{44,56}},         color={0,0,127}));
   connect(lambdaOController_PID.y,AirSource. m_flow) annotation (Line(points={{-32.8,-42},{-56,-42},{-56,-24.4},{-50,-24.4}}, color={0,0,127}));
   connect(lambdaOController_PID.y, AirCompressorSystem.AirMassFlowRateSetpoint) annotation (Line(points={{-32.8,-42},{-36,-42},{-36,-67.6},{27.2,-67.6}}, color={0,0,127}));
   connect(lambdaHController_PID.y, mflowH2_FC) annotation (Line(points={{-86.8,-58},{-92,-58},{-92,-92},{-56,-92},{-56,-110}}, color={0,0,127}));
@@ -195,12 +180,12 @@ equation
   connect(powerController.y, FC.I_load) annotation (Line(points={{-63,68},{-68,68},{-68,-3.9},{-11.12,-3.9}}, color={0,0,127}));
   connect(P_el_set, SumPower.u3) annotation (Line(points={{24,108},{24,86},{2,86}}, color={0,127,127}));
   connect(SumPower.y, powerController.P) annotation (Line(points={{-21,78},{-32,78},{-32,62},{-43,62}}, color={0,0,127}));
-  connect(coolingModel.P_coolingPump, SumPower.u2) annotation (Line(points={{64.4,53.4},{68,53.4},{68,74},{28,74},{28,78},{2,78}}, color={0,0,127}));
+  connect(coolingModel.P_coolingPump, SumPower.u2) annotation (Line(points={{64,54},{68,54},{68,74},{28,74},{28,78},{2,78}},       color={0,0,127}));
   connect(AirCompressorSystem.P_airCompressor, SumPower.u1) annotation (Line(
       points={{48.6,-74.8},{56,-74.8},{56,-32},{44,-32},{44,22},{10,22},{10,70},{2,70}},
       color={0,135,135},
       pattern=LinePattern.Dash));
-  connect(coolingModel.T_environment, T_environment) annotation (Line(points={{43,50},{34,50},{34,86},{80,86},{80,110}}, color={0,0,127}));
+  connect(coolingModel.T_environment, T_environment) annotation (Line(points={{44,50},{34,50},{34,86},{80,86},{80,110}}, color={0,0,127}));
   annotation (
     Diagram(coordinateSystem(preserveAspectRatio=false, extent={{-100,-100},{100,100}})),
     experiment(StopTime=40),
@@ -215,11 +200,10 @@ equation
       OutputFlatModelica=false),
     Documentation(info="<html>
 <h4><span style=\"color: #008000\">1. Purpose of model</span></h4>
-<p>Test environment for the PEM model</p>
+<p>PEMFC system model, with OER and HER controllers, power controller, air compressor system and cooling system models</p>
 <h4><span style=\"color: #008000\">2. Level of detail, physical effects considered, and physical insight</span></h4>
-<p>(Purely technical component without physical modeling.)</p>
-<p>Modifications:</p>
-<p>(1) added NCv and GCV efficiencies equations</p>
+<p> Efficiency equations</p>
+<p>Power setpoint managemet</p>
 <h4><span style=\"color: #008000\">3. Limits of validity </span></h4>
 <p>(Purely technical component without physical modeling.)</p>
 <h4><span style=\"color: #008000\">4. Interfaces</span></h4>
@@ -227,7 +211,7 @@ equation
 <h4><span style=\"color: #008000\">5. Nomenclature</span></h4>
 <p>(no elements)</p>
 <h4><span style=\"color: #008000\">6. Governing Equations</span></h4>
-<p>(no equations)</p>
+<p>NCV and GCV efficiencies equations </p>
 <h4><span style=\"color: #008000\">7. Remarks for Usage</span></h4>
 <p>(no remarks)</p>
 <h4><span style=\"color: #008000\">8. Validation</span></h4>
@@ -235,6 +219,7 @@ equation
 <h4><span style=\"color: #008000\">9. References</span></h4>
 <p>(no remarks)</p>
 <h4><span style=\"color: #008000\">10. Version History</span></h4>
+<p>Created by Ali&eacute;nor Hamoir in June 2024</p>
 </html>"),
     Icon(graphics={                                                       Rectangle(
           extent={{-100,100},{102,-100}},

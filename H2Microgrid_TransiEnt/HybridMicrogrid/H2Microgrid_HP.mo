@@ -1,14 +1,14 @@
-within H2Microgrid_TransiEnt;
-model H2Microgrid_Compressed
+within H2Microgrid_TransiEnt.HybridMicrogrid;
+model H2Microgrid_HP "Hybrid microgrid with high-pressure compressed storage"
 
   parameter Real building_scale = 1 "Building scale";
   parameter Real der_scale = 1 "DER scale";
   parameter Real battery_scale = 1 "Bettery scale";
   parameter Real building_ft2 = 50e3 "Building ft2 scale";
   parameter String weather_file = Modelica.Utilities.Files.loadResource("modelica://H2Microgrid_TransiEnt/Resources/weather/USA_CA_Los.Angeles.Intl.AP.722950_TMY3.mos") "Path to weather file";
-  parameter String load_file = Modelica.Utilities.Files.loadResource("modelica://H2Microgrid_TransiEnt/Resources/loads/USA_CA_Los.Angeles.Intl.AP.722950_TMY3.mos") "Path to weather file";
+//   parameter String load_file = Modelica.Utilities.Files.loadResource("modelica://H2Microgrid_TransiEnt/Resources/loads/USA_CA_Los.Angeles.Intl.AP.722950_TMY3.mos") "Path to weather file";
 
-  HESS_Compressed hESS annotation (Placement(transformation(extent={{22,-64},{62,-24}})));
+  HESS.HESS_Compressed hESS annotation (Placement(transformation(extent={{22,-64},{62,-24}})));
   Buildings.BoundaryConditions.WeatherData.ReaderTMY3 weaDat(
     relHum=0,
     TDewPoi(displayUnit="K"),
@@ -66,8 +66,8 @@ model H2Microgrid_Compressed
         origin={-24,38})));
   Buildings.BoundaryConditions.WeatherData.Bus
       weaBus "Weather data bus" annotation (Placement(transformation(extent={{-38,-52},{-12,-24}}),
-                                 iconTransformation(extent={{-8,20},{16,46}})));
-  Modelica.Blocks.Sources.Constant const annotation (Placement(transformation(extent={{-90,-36},{-70,-16}})));
+                                 iconTransformation(extent={{-14,-70},{10,-44}})));
+  Modelica.Blocks.Sources.Constant Load(k=0) annotation (Placement(transformation(extent={{-90,-36},{-70,-16}})));
 equation
   connect(pv.weaBus,weaDat. weaBus) annotation (Line(
       points={{-58,72.2},{-58,72},{-70,72}},
@@ -104,7 +104,7 @@ equation
       points={{63.2,-31.6},{66,-31.6},{66,-12},{-18,-12},{-18,0.6},{-7.6,0.6}},
       color={0,135,135},
       pattern=LinePattern.Dash));
-  connect(const.y, PowerTotal.u[3]) annotation (Line(points={{-69,-26},{-44,-26},{-44,0.2},{-7.6,0.2}}, color={0,0,127}));
+  connect(Load.y, PowerTotal.u[3]) annotation (Line(points={{-69,-26},{-44,-26},{-44,0.2},{-7.6,0.2}}, color={0,0,127}));
   annotation (Icon(coordinateSystem(preserveAspectRatio=false), graphics={Rectangle(
           extent={{-100,100},{100,-100}},
           lineColor={0,128,255},
@@ -114,5 +114,25 @@ equation
           textColor={102,44,145},
           fontName="Arial Black",
           textStyle={TextStyle.Bold},
-          textString="H2 Grid")}), Diagram(coordinateSystem(preserveAspectRatio=false)));
-end H2Microgrid_Compressed;
+          textString="H2 Grid
+HP")}),                            Diagram(coordinateSystem(preserveAspectRatio=false)),
+    Documentation(info="<html>
+<h4>1. Purpose of model</h4>
+<p>Hybrid microgrid, containing a HESS with compressed storage, a BESS, PV generation and buildings loads inputs.</p>
+<p>Meant to be later connected to a MPC as an FMU.</p>
+<h4>2. Level of detail, physical effects considered, and physical insight</h4>
+<p>PV and BESS models from SCooDER library. The BESS model is a simplified battery model.</p>
+<p>Parameters and data are coming from the DOE or from the DESL setup.</p>
+<h4>3. Limits of validity </h4>
+<h4>4. Interfaces</h4>
+<h4>5. Nomenclature</h4>
+<p>(no remarks)</p>
+<h4>6. Governing Equations</h4>
+<h4>7. Remarks for Usage</h4>
+<h4>8. Validation</h4>
+<p>Tested in &quot;H2Microgrid_TransiEnt.HybridMicrogrid.TestMicrogrid&quot;</p>
+<h4>9. References</h4>
+<h4>10. Version History</h4>
+<p>Model created by Ali&eacute;nor Hamoir in June 2024</p>
+</html>"));
+end H2Microgrid_HP;

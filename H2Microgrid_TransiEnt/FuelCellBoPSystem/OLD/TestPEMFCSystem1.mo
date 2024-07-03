@@ -92,7 +92,7 @@ TransiEnt.Components.Electrical.FuelCellSystems.FuelCell.Controller.PowerControl
     medium=TransiEnt.Basics.Media.Gases.VLE_VDIWA_H2(),
     variable_m_flow=true,
     T_const=313.15) annotation (Placement(transformation(extent={{-80,-30},{-66,-16}})));
-  AirSupplySystem.AirCompressorSystemModel airCompressorSystemModel annotation (Placement(transformation(
+  AirSupplySystem.AirCompressorSystem airCompressorSystemModel annotation (Placement(transformation(
         extent={{-15,-9},{15,9}},
         rotation=0,
         origin={47,-77})));

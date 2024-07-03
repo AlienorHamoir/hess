@@ -37,7 +37,7 @@ public
         extent={{-10,10},{10,-10}},
         rotation=180,
         origin={52,20})));
-  inner TransiEnt.ModelStatistics modelStatistics annotation (Placement(transformation(extent={{-96,-82},{-76,-62}})));
+  inner TransiEnt.ModelStatistics modelStatistics annotation (Placement(transformation(extent={{-88,-82},{-68,-62}})));
   H2StorageSystem_Compressed h2StorageSystem_Compressed(medium=medium) annotation (Placement(transformation(extent={{-4,12},{16,32}})));
 equation
   connect(source.m_flow, ramp2.y) annotation (Line(points={{-48,26},{-50,26},{-50,50},{-63,50}},       color={0,0,127}));
@@ -49,5 +49,8 @@ equation
       points={{6,31.8},{36,31.8},{36,20},{42,20}},
       color={255,255,0},
       thickness=1.5));
-  annotation (Icon(coordinateSystem(preserveAspectRatio=false)), Diagram(coordinateSystem(preserveAspectRatio=false)));
+  annotation (Icon(coordinateSystem(preserveAspectRatio=false)), Diagram(coordinateSystem(preserveAspectRatio=false)),
+    Documentation(info="<html>
+<p>Testing of storage system for HESS applications</p>
+</html>"));
 end TestStorage_CompSystem;

@@ -1,6 +1,6 @@
 within H2Microgrid_TransiEnt.StorageSystem;
 block TankSOC "Block that computes the SOC of a tank based on current pressure"
-  parameter Modelica.Units.SI.Pressure maxPressure = 30e5 "Maximum pressure the tank can withstand";
+  parameter Modelica.Units.SI.Pressure maxPressure = 30e5 "Maximum pressure the tank can withstand" annotation (Dialog(group="Replaceable Components"));
 
   Modelica.Blocks.Interfaces.RealOutput tankSOC
     annotation (Placement(transformation(extent={{96,-10},{116,10}})));
@@ -12,5 +12,7 @@ equation
           extent={{-52,20},{50,-22}},
           textColor={102,44,145},
           textString="TankSOC"), Rectangle(extent={{-56,18},{56,-18}},
-            lineColor={102,44,145})}));
+            lineColor={102,44,145})}), Documentation(info="<html>
+<p>Model created by Ali&eacute;nor Hamoir in May 2024.</p>
+</html>"));
 end TankSOC;

@@ -155,8 +155,14 @@ equation
                 Documentation(info="<html>
 <h4><span style=\"color: #008000\">1. Purpose of model</span></h4>
 <p>Controller for power output in Fuel Cell applications</p>
+<p>Based on input power setpoint and stack voltage, the current setpoint for the fuel cell is calculated. </p>
 <h4><span style=\"color: #008000\">2. Level of detail, physical effects considered, and physical insight</span></h4>
-<p>(no remarks)</p>
+<p>It has been adapted from the initial model by differentiating several cases:</p>
+<ol>
+<li>If stack voltage is larger than 0, I = P / V</li>
+<li>If power setpoint is smaller than minimum allowed power and stack voltage is smaller or equal to 0, the current is 0</li>
+<li>If power setpoint is larger than minimum allowed power and stack voltage is smaller or equal to 0, the current equals rampup current</li>
+</ol>
 <h4><span style=\"color: #008000\">3. Limits of validity </span></h4>
 <p>(no remarks)</p>
 <h4><span style=\"color: #008000\">4. Interfaces</span></h4>
@@ -166,9 +172,9 @@ equation
 <h4><span style=\"color: #008000\">5. Nomenclature</span></h4>
 <p>(no remarks)</p>
 <h4><span style=\"color: #008000\">6. Governing Equations</span></h4>
-<p>(no remarks)</p>
+<p>I = P / V</p>
 <h4><span style=\"color: #008000\">7. Remarks for Usage</span></h4>
-<p>(no remarks)</p>
+<p>Adapt current, voltage and power operating ranges and characteristics</p>
 <h4><span style=\"color: #008000\">8. Validation</span></h4>
 <p>(no remarks)</p>
 <h4><span style=\"color: #008000\">9. References</span></h4>
@@ -177,5 +183,6 @@ equation
 <p>Model created by Simon Weilbach (simon.weilbach@tuhh.de) on 01.10.2014</p>
 <p>Model revised by Pascal Dubucq (dubucq@tuhh.de) on 01.10.2015</p>
 <p>Quality check (Code conventions) by Rebekka Denninger on 01.10.2016</p>
+<p>Model adapted by Ali&eacute;nor Hamoir in June 2024</p>
 </html>"));
 end PowerController;

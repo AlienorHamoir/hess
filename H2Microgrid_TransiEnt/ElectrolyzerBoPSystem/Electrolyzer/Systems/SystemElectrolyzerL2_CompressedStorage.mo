@@ -71,7 +71,7 @@ end ElectrolyzerRecord;
         extent={{-10,-10},{10,10}},
         rotation=-90,
         origin={-54,46})));
-  CoolingSubystem.HeatPortCooling.CoolingModel_Pump coolingModel_Pump annotation (Placement(transformation(extent={{18,26},{38,46}})));
+  CoolingSystem.HeatPortCooling.CoolingModel_Pump coolingModel_Pump annotation (Placement(transformation(extent={{18,26},{38,46}})));
   Modelica.Blocks.Interfaces.RealInput T_environment "Prescribed boundary temperature from weather file" annotation (Placement(transformation(
         extent={{-20,-20},{20,20}},
         rotation=-90,

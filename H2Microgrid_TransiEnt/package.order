@@ -1,10 +1,5 @@
 ElectrolyzerBoPSystem
 FuelCellBoPSystem
 StorageSystem
-HESS_Compressed
-HESS_nonCompressed
-H2Microgrid_Compressed
-H2Microgrid_nonCompressed
-TestHESS
-TestMicrogrid
-SimCenter
+HESS
+HybridMicrogrid

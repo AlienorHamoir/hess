@@ -1,5 +1,5 @@
 within H2Microgrid_TransiEnt.StorageSystem;
-model H2StorageSystem_Compressed "High-pressure storage at 350 bar"
+model H2StorageSystem_Compressed "High-pressure compressed storage"
 protected
   TransiEnt.Components.Gas.Compressor.Controller.ControllerCompressor_dp controlCompressor(
     p_paramBefore=true,
@@ -21,7 +21,7 @@ public
     eta_ely=eta_n) annotation (Placement(transformation(
         extent={{15.5,-17.5},{-15.5,17.5}},
         rotation=90,
-        origin={-5.5,0.5})));
+        origin={-3.5,0.5})));
 
   replaceable parameter TILMedia.VLEFluidTypes.BaseVLEFluid medium=simCenter.gasModel3 "Hydrogen model to be used" annotation (Dialog(tab="General", group="General"));
 
@@ -31,7 +31,7 @@ public
   parameter Modelica.Units.SI.Height height=3.779*V_geo^(1/3) "Height of storage" annotation (Dialog(tab="General", group="Storage"));
   parameter Modelica.Units.SI.CoefficientOfHeatTransfer alpha_nom=4 "Heat transfer coefficient inside the storage cylinder" annotation (Dialog(tab="General", group="Storage"));
   parameter Modelica.Units.SI.Mass m_start=1 "Stored gas mass at t=0" annotation (Dialog(tab="General", group="Storage"));
-  parameter Modelica.Units.SI.Pressure p_start=simCenter.p_amb_const + simCenter.p_eff_2   "Pressure in storage at t=0" annotation (Dialog(tab="General", group="Storage")); // p_start = 17 bar
+  parameter Modelica.Units.SI.Pressure p_start=15e5   "Pressure in storage at t=0" annotation (Dialog(tab="General", group="Storage"));
   parameter Modelica.Units.SI.ThermodynamicTemperature T_start=T_out "Temperature of gas in storage at t=0" annotation (Dialog(tab="General", group="Storage"));
   parameter Modelica.Units.SI.Pressure p_out = 30e5 "Output pressure of hydrogen from electrolyzer" annotation (Dialog(tab="General", group="Electrolyzer"));
   parameter Modelica.Units.SI.Pressure p_maxLow=p_maxHigh - 1e5 "Lower limit of the maximum pressure in storage" annotation (Dialog(tab="General", group="Control"));
@@ -103,14 +103,21 @@ public
                                                    slackBoundary annotation (Placement(transformation(extent={{32,-60},{52,-40}})));
   TransiEnt.Components.Sensors.ElectricPowerComplex electricPowerComplex annotation (Placement(transformation(extent={{-6,-60},{14,-40}})));
   TransiEnt.Basics.Interfaces.Electrical.ElectricPowerOut P_comp "Compressor active Power" annotation (Placement(transformation(extent={{94,-46},{114,-26}})));
-  ValveAndCompressor_dp valveAndCompressor_dp(medium=medium, redeclare model Compressor = TransiEnt.Components.Gas.Compressor.CompressorRealGasIsentropicEff_L1_simple) annotation (Placement(transformation(extent={{-78,-14},{-48,16}})));
+  ValveAndCompressor_dp ValveAndCompressor(
+    medium=medium,
+    p_startSplit=simCenter.p_amb_const,
+    p_startJunction=simCenter.p_amb_const,
+    T_startSplit=T_start,
+    T_startJunction=T_start,
+    redeclare model Compressor = TransiEnt.Components.Gas.Compressor.CompressorRealGasIsentropicEff_L1_simple) annotation (Placement(transformation(extent={{-78,-14},{-48,16}})));
+  inner TransiEnt.ModelStatistics modelStatistics annotation (Placement(transformation(extent={{30,-96},{50,-76}})));
 equation
   connect(tankSOC.tankSOC, socTank) annotation (Line(points={{62.6,78},{106,78}}, color={0,0,127}));
-  connect(H2storage.p_gas, controlCompressor.p_afterCompIn) annotation (Line(points={{-5.5,8.25},{-5.5,56},{-54,56}},
+  connect(H2storage.p_gas, controlCompressor.p_afterCompIn) annotation (Line(points={{-3.5,8.25},{-3.5,56},{-54,56}},
                                                                                                                  color={0,0,127}));
-  connect(H2storage.p_gas, tankSOC.currentTankPressure) annotation (Line(points={{-5.5,8.25},{-5.5,56},{32,56},{32,78},{36,78},{36,77.8},{41.8,77.8}},
+  connect(H2storage.p_gas, tankSOC.currentTankPressure) annotation (Line(points={{-3.5,8.25},{-3.5,56},{32,56},{32,78},{36,78},{36,77.8},{41.8,77.8}},
                                                                                                                   color={0,0,127}));
-  connect(H2storage.p_gas, pressureTank) annotation (Line(points={{-5.5,8.25},{-5.5,56},{32,56},{32,40},{106,40}},
+  connect(H2storage.p_gas, pressureTank) annotation (Line(points={{-3.5,8.25},{-3.5,56},{32,56},{32,40},{106,40}},
                                                                                               color={0,0,127}));
   connect(motorComplex.epp, electricPowerComplex.epp_IN) annotation (Line(
       points={{-25.9,-50.1},{-24,-50},{-5.2,-50}},
@@ -121,20 +128,20 @@ equation
       color={28,108,200},
       thickness=0.5));
   connect(H2storage.gasPortOut, H2PortOut) annotation (Line(
-      points={{5.525,0.5},{5.525,0},{12,0},{12,80},{0,80},{0,98}},
+      points={{7.525,0.5},{7.525,0},{12,0},{12,80},{0,80},{0,98}},
       color={255,255,0},
       thickness=1.5));
   connect(pressureTank, pressureTank) annotation (Line(points={{106,40},{106,40}}, color={0,0,127}));
-  connect(valveAndCompressor_dp.gasPortIn, H2PortIn) annotation (Line(
+  connect(ValveAndCompressor.gasPortIn, H2PortIn) annotation (Line(
       points={{-78,1},{-94,1},{-94,-84},{1,-84},{1,-101}},
       color={255,255,0},
       thickness=1.5));
-  connect(valveAndCompressor_dp.gasPortOut, H2storage.gasPortIn) annotation (Line(
-      points={{-48,1},{-32,1},{-32,0.5},{-14.075,0.5}},
+  connect(ValveAndCompressor.gasPortOut, H2storage.gasPortIn) annotation (Line(
+      points={{-48,1},{-32,1},{-32,0.5},{-12.075,0.5}},
       color={255,255,0},
       thickness=1.5));
-  connect(valveAndCompressor_dp.dp_desired, controlCompressor.Delta_p) annotation (Line(points={{-63,16},{-64,16},{-64,45}}, color={0,0,127}));
-  connect(valveAndCompressor_dp.mpp2, motorComplex.mpp) annotation (Line(points={{-53.1,-13.4},{-53.1,-50},{-46,-50}}, color={95,95,95}));
+  connect(ValveAndCompressor.dp_desired, controlCompressor.Delta_p) annotation (Line(points={{-63,16},{-64,16},{-64,45}}, color={0,0,127}));
+  connect(ValveAndCompressor.mpp2, motorComplex.mpp) annotation (Line(points={{-53.1,-13.4},{-53.1,-50},{-46,-50}}, color={95,95,95}));
   connect(electricPowerComplex.P, P_comp) annotation (Line(
       points={{-1,-41.4},{-2,-41.4},{-2,-36},{104,-36}},
       color={0,135,135},
@@ -156,5 +163,24 @@ equation
           lineColor={28,108,200},
           fillColor={28,108,200},
           fillPattern=FillPattern.Solid),
-        Line(points={{60,68},{60,-72}}, color={28,108,200})}), Diagram(coordinateSystem(preserveAspectRatio=false)));
+        Line(points={{60,68},{60,-72}}, color={28,108,200})}), Diagram(coordinateSystem(preserveAspectRatio=false)),
+    Documentation(info="<html>
+<h4>1. Purpose of model</h4>
+<p>High-pressure storage system fo HESS applications (storing hydrogen between an electrolyzer and a fuel cell). </p>
+<p>Contains the model of a simple gas storage volume for constant composition, a compressor and valve model, as well as a compressor and valve controller. Compressor power is computed via the motor.</p>
+<p>Tank state of charge (SOC) is also computed through a small model.</p>
+<h4>2. Level of detail, physical effects considered, and physical insight</h4>
+<h4>3. Limits of validity </h4>
+<h4>4. Interfaces</h4>
+<h4>5. Nomenclature</h4>
+<p>(no remarks)</p>
+<h4>6. Governing Equations</h4>
+<h4>7. Remarks for Usage</h4>
+<h4>8. Validation</h4>
+<p>Tested in &quot;H2Microgrid_TransiEnt.StorageSystem.TestStorage_CompSystem&quot;</p>
+<h4>9. References</h4>
+<p>Source: initial storage model in feed-in station from TransiEnt library &quot;TransiEnt.Producer.Gas.Electrolyzer.Systems.FeedInStation_Storage&quot;</p>
+<h4>10. Version History</h4>
+<p>Model created for HESS applications by Ali&eacute;nor Hamoir in June 2024</p>
+</html>"));
 end H2StorageSystem_Compressed;

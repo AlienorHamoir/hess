@@ -113,5 +113,23 @@ equation
           lineColor={28,108,200},
           fillColor={28,108,200},
           fillPattern=FillPattern.Solid),
-        Line(points={{66,72},{66,-68}}, color={28,108,200})}), Diagram(coordinateSystem(preserveAspectRatio=false)));
+        Line(points={{66,72},{66,-68}}, color={28,108,200})}), Diagram(coordinateSystem(preserveAspectRatio=false)),
+    Documentation(info="<html>
+<h4>1. Purpose of model</h4>
+<p>Low-pressure storage system fo HESS applications (storing hydrogen between an electrolyzer and a fuel cell). </p>
+<p>Contains the model of a simple gas storage volume for constant composition. Pressure storage is limited by hydrogen output pressure from the electrolyzer.</p>
+<p>Tank SOC is computed.</p>
+<p><br><h4>2. Level of detail, physical effects considered, and physical insight</h4></p>
+<h4>3. Limits of validity </h4>
+<h4>4. Interfaces</h4>
+<h4>5. Nomenclature</h4>
+<p>(no remarks)</p>
+<h4>6. Governing Equations</h4>
+<h4>7. Remarks for Usage</h4>
+<h4>8. Validation</h4>
+<h4>9. References</h4>
+<p>Source: initial storage model in feed-in station from TransiEnt library &quot;TransiEnt.Producer.Gas.Electrolyzer.Systems.FeedInStation_Storage&quot;</p>
+<h4>10. Version History</h4>
+<p>Model created for HESS applications by Ali&eacute;nor Hamoir in June 2024</p>
+</html>"));
 end H2StorageSystem_nonCompressed;

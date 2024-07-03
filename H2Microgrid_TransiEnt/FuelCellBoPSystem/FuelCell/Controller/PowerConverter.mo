@@ -120,6 +120,7 @@ equation
                 Documentation(info="<html>
 <h4><span style=\"color: #008000\">1. Purpose of model</span></h4>
 <p>Controller for power output in Fuel Cell applications</p>
+<p>Basic model that divides input power by input voltage, to obtain a current setpoint. </p>
 <h4><span style=\"color: #008000\">2. Level of detail, physical effects considered, and physical insight</span></h4>
 <p>(no remarks)</p>
 <h4><span style=\"color: #008000\">3. Limits of validity </span></h4>
@@ -131,16 +132,14 @@ equation
 <h4><span style=\"color: #008000\">5. Nomenclature</span></h4>
 <p>(no remarks)</p>
 <h4><span style=\"color: #008000\">6. Governing Equations</span></h4>
-<p>(no remarks)</p>
+<p>I = P / V</p>
 <h4><span style=\"color: #008000\">7. Remarks for Usage</span></h4>
-<p>(no remarks)</p>
+<p>Current operating range must be adapted for the application. It works if a superior controller only delivers power setpoint </p>
 <h4><span style=\"color: #008000\">8. Validation</span></h4>
 <p>(no remarks)</p>
 <h4><span style=\"color: #008000\">9. References</span></h4>
 <p>(no remarks)</p>
 <h4><span style=\"color: #008000\">10. Version History</span></h4>
-<p>Model created by Simon Weilbach (simon.weilbach@tuhh.de) on 01.10.2014</p>
-<p>Model revised by Pascal Dubucq (dubucq@tuhh.de) on 01.10.2015</p>
-<p>Quality check (Code conventions) by Rebekka Denninger on 01.10.2016</p>
+<p>Model created by Ali&eacute;nor Hamoir in June 2024</p>
 </html>"));
 end PowerConverter;

@@ -109,14 +109,14 @@ equation
 <h4><span style=\"color: #008000\">5. Nomenclature</span></h4>
 <p>(no elements)</p>
 <h4><span style=\"color: #008000\">6. Governing Equations</span></h4>
-<p>(no remarks) </p>
+<p>Characteristics equations modified from initial TransiEnt model</p>
 <h4><span style=\"color: #008000\">7. Remarks for Usage</span></h4>
 <p>(no remarks)</p>
 <h4><span style=\"color: #008000\">8. Validation</span></h4>
 <p>(no remarks) </p>
 <h4><span style=\"color: #008000\">9. References</span></h4>
-<p>(no remarks) </p>
+<p>Source: TransiEnt library</p>
 <h4><span style=\"color: #008000\">10. Version History</span></h4>
-<p>(no remarks)</p>
+<p>Model revised by Ali&eacute;nor Hamoir in June 2024.</p>
 </html>"));
 end ControllerValveAndCompressor_dp;
