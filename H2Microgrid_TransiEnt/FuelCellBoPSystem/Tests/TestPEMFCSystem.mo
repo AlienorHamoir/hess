@@ -42,6 +42,10 @@ model TestPEMFCSystem "Example of a fuel cell system with its cooling and air co
     height_2=-3500,
     duration_2=1) annotation (Placement(transformation(extent={{-90,-82},{-70,-62}})));
   Modelica.Blocks.Sources.Constant PowerSet(k=600) annotation (Placement(transformation(extent={{-88,34},{-68,54}})));
+  Modelica.Blocks.Sources.CombiTimeTable StairSignal(table=[0,0; 499,0; 500,500; 999,500; 1000,1000; 1499,1000; 1500,1500; 1999,1500; 2000,2000; 2499,2000; 2500,2500; 2999,2500; 3000,3000; 3499,3000; 3500,3500; 3999,3500; 4000,4000; 4499,4000; 4500,4500; 4999,4500; 5000,5000; 5500,5000], tableOnFile=false) "create a stair-step signal for efficiency computation" annotation (Placement(transformation(
+        extent={{-10,-10},{10,10}},
+        rotation=180,
+        origin={74,-26})));
 equation
 
   connect(weaDat.weaBus, weaBus) annotation (Line(
@@ -50,11 +54,11 @@ equation
       thickness=0.5));
   connect(systemPEMFC.T_environment, weaBus.TDryBul) annotation (Line(points={{22.88,22.08},{22.88,40},{21.065,40},{21.065,58.07}},
                                                                                                                         color={0,0,127}));
-  connect(Load.y, systemPEMFC.P_el_set) annotation (Line(points={{-69,-72},{-30,-72},{-30,32},{0,32},{0,22.08}}, color={0,0,127}));
+  connect(StairSignal.y[1], systemPEMFC.P_el_set) annotation (Line(points={{63,-26},{36,-26},{36,32},{0,32},{0,22.08}}, color={0,0,127}));
   annotation (
     Diagram(coordinateSystem(preserveAspectRatio=false, extent={{-100,-100},{100,100}})),
     experiment(
-      StopTime=2000,
+      StopTime=6000,
       Interval=1,
       Tolerance=1e-06,
       __Dymola_Algorithm="Dassl"),

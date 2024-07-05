@@ -449,9 +449,9 @@ equation
     eta_GCV_sys = H_flow_H2_GCV /P_el_tot;
     eta_NCV_sys = H_flow_H2_NCV  /P_el_tot;
   else
-    eta_GCV_EL = 1;
+    eta_GCV_EL = 0;
     eta_NCV_EL = eta_GCV_EL;
-    eta_GCV_sys = 1;
+    eta_GCV_sys = 0;
     eta_NCV_sys = eta_GCV_sys;
   end if;
 

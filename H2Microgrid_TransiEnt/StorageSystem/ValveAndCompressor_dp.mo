@@ -218,7 +218,7 @@ protected
   TransiEnt.Components.Gas.VolumesValvesFittings.Fittings.RealGasJunction_L2 split(
     medium=medium,
     volume=volumeSplit,
-    initOption=initOptionSplit,
+    initOption=0,
     p_start=p_startSplit,
     h_start=h_startSplit,
     xi_start=xi_startSplit,

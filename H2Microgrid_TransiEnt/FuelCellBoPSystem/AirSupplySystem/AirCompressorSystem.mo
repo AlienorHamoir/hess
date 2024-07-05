@@ -29,7 +29,7 @@ model AirCompressorSystem "Air compressor system model"
     xi_const={0,0,0,0.77,0,0.001,0,0.22,0})                                                                             annotation (Placement(transformation(extent={{-88,4},{-68,24}})));
   TransiEnt.Components.Boundaries.Gas.BoundaryRealGas_pTxi boundary_pTxi1(
     medium=medium,
-    p_const=1000000,
+    p_const=243180,
     T_const=296.65,
     xi_const={0,0,0,0.77,0,0.001,0,0.22,0})                                                                             annotation (Placement(transformation(extent={{-10,-10},{10,10}},
         rotation=180,

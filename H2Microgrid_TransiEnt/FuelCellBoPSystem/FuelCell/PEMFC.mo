@@ -126,7 +126,7 @@ model PEMFC "Model of PEM Fuel Cell stack"
   Real db= cp_tab[3,2] - cp_tab[1,2] - 0.5* cp_tab[2,2] "Empiric parameter for calculating Gibbs free energy according to Barbir";
   Real dc= cp_tab[3,3] - cp_tab[1,3] - 0.5* cp_tab[2,3] "Empiric parameter for calculating Gibbs free energy according to Barbir";
 
-  Real Delta_H_T = -241.98*1000 + da*(T_cell-298.15) + db * ((T_cell^2) - 298.15^2)/2 + dc * ((T_cell^3) - 298.15^3)/3 "Empiric equation for calculating the enthalpy of formation according to Barbir";
+  Real Delta_H_T = -241.98*1000 + da*(T_cell-298.65) + db * ((T_cell^2) - 298.65^2)/2 + dc * ((T_cell^3) - (298.65^3))/3 "Empiric equation for calculating the enthalpy of formation according to Barbir";
   Real Delta_S_T = -0.0444*1000 + da*log(T_cell/298.15) + db * (T_cell - 298.15) + dc * ((T_cell^2) - 298.15^2)/2 "Empiric equation for calculating the entropy according to Barbir";
 
   Modelica.Units.SI.MolarFlowRate N_dot_e "Molar flow rate of the electrons";
@@ -312,7 +312,7 @@ equation
   V_Nernst = ( Modelica.Constants.R * T_stack) / (z * Modelica.Constants.F) * log(P_H2 * sqrt(P_O2));
   V_ohmic = - I*t_mem / (mem_conductivity * A_cell);
   //   V_ohmic = - I * Ri; // results in a negative voltage at high power setpoints
-  mem_conductivity = (0.00514*lambda - 0.00326)*exp(1268*(1/298.15 - 1/T_stack))*10e2; // Springer, 1991 "Polymer Electrolyte Fuel Cell Model"
+  mem_conductivity = (0.00514*lambda - 0.00326)*exp(1268*(1/298.65 - 1/T_stack))*10e2; // Springer, 1991 "Polymer Electrolyte Fuel Cell Model"
   Ri = 0.016046 - 3.4715e-5*T_stack + 7.9565e-5*I;
 
   E_cell = V_rev + V_Nernst + V_act + V_ohmic;
@@ -349,7 +349,7 @@ equation
     lambda_O = -1;
   else
     // Normal operating point: Reaction is running
-    //     I = min(I_load,I_is);
+//     I = min(I_load,I_is);
     I = I_load;
     V_stack = E_stack;
     //     V_act = -0.9514 + 0.00312*T_stack + 7.4e-5*T_stack*log(I) - 1.87e-4*T_stack* log(P_O2*1.97e5*exp(398.15/T_stack)); // Amphlett 1995
@@ -366,9 +366,13 @@ equation
   drainh.T_outflow = synga.T;
   draina.T_outflow = aira.T;
 
-  // contra design flow direction
-  feeda.T_outflow = aira.T;
-  feedh.T_outflow = aira.T;
+  feeda.T_outflow = air.T;
+  feedh.T_outflow = syng.T;
+
+  // contra design flow direction - why???
+//   feeda.T_outflow = aira.T;
+//   feedh.T_outflow = aira.T;
+
 
   // Energy balance
   cooling_control = T_stack > T_cool_set;
@@ -393,7 +397,7 @@ equation
   feedh.m_flow - m_dot_H2_react_stack = - drainh.m_flow;
 
   // mass fractions (design flow direction)
-  -1*draina.m_flow*draina.xi_outflow[1] = feeda.m_flow*inStream(feeda.xi_outflow[1]) + m_dot_H2O_gen_stack/no_Cells;  //Water mass flow rate of cell stack because of the inserted mass and the reaction
+  -1*draina.m_flow*draina.xi_outflow[1] - 1*drainh.m_flow*drainh.xi_outflow[4] = feeda.m_flow*inStream(feeda.xi_outflow[1]) + feedh.m_flow*inStream(feedh.xi_outflow[4]) + m_dot_H2O_gen_stack/no_Cells;  //Water mass flow rate of cell stack because of the inserted mass and the reaction
   -1*draina.m_flow*draina.xi_outflow[2] = feeda.m_flow*inStream(feeda.xi_outflow[2]);  //Nitrogen mass flow rate of the cell stack - if balanced for H2O and N, balanced for O2
   -1*drainh.m_flow*drainh.xi_outflow[1] = feedh.m_flow*inStream(feedh.xi_outflow[1]);
   -1*drainh.m_flow*drainh.xi_outflow[2] = feedh.m_flow*inStream(feedh.xi_outflow[2]);

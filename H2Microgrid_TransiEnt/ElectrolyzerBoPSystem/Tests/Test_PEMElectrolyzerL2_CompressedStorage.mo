@@ -118,7 +118,7 @@ equation
       color={255,255,0},
       thickness=1.5));
   connect(H2StorageSystem.P_comp, ElectrolyzerSystem.CompressorPower) annotation (Line(
-      points={{20.4,-70.4},{20.4,-74},{-24,-74},{-24,-8.54},{-13.58,-8.54}},
+      points={{20.4,-70.4},{20.4,-74},{-24,-74},{-24,-8.54},{-14.42,-8.54}},
       color={0,135,135},
       pattern=LinePattern.Dash));
   connect(PowerRampTest.y, ElectrolyzerSystem.P_el_set) annotation (Line(points={{31,56},{0,56},{0,14.56}}, color={0,0,127}));
