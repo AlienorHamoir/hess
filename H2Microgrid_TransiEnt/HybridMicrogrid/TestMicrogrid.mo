@@ -19,8 +19,8 @@ equation
     Icon(coordinateSystem(preserveAspectRatio=false)),
     Diagram(coordinateSystem(preserveAspectRatio=false)),
     experiment(
-      StartTime=10000,
-      StopTime=70000,
+      StartTime=20000,
+      StopTime=40000,
       Interval=1,
       __Dymola_Algorithm="Dassl"),
     Documentation(info="<html>
