@@ -23,7 +23,6 @@ model TestAirCompressor "Example of a fuel cell in a domestic application that f
 //________________________________________________________________________________//
 
   extends TransiEnt.Basics.Icons.Checkmodel;
-  inner TransiEnt.SimCenter simCenter annotation (Placement(transformation(extent={{-90,80},{-70,100}})));
 
   parameter TransiEnt.Basics.Media.Gases.Gas_MoistAir Air=TransiEnt.Basics.Media.Gases.Gas_MoistAir() "Medium model of air" annotation (choicesAllMatching);
 
@@ -35,7 +34,7 @@ model TestAirCompressor "Example of a fuel cell in a domestic application that f
     offset=1000,
     height_1=200,
     height_2=-400)
-                 annotation (Placement(transformation(extent={{-42,70},{-22,90}})));
+                 annotation (Placement(transformation(extent={{-54,38},{-34,58}})));
 //     xi_const={0.01,0.7},
         //     xi_const={1,0},
 
@@ -43,7 +42,7 @@ model TestAirCompressor "Example of a fuel cell in a domestic application that f
     height=0.4000,
     duration=500,
     offset=0,
-    startTime=10) annotation (Placement(transformation(extent={{-62,8},{-42,28}})));
+    startTime=10) annotation (Placement(transformation(extent={{-54,6},{-34,26}})));
   StorageSystem.OLD.AirCompressor airCompressor annotation (Placement(transformation(extent={{6,6},{26,26}})));
   Modelica.Blocks.Sources.Step step(height=0.005, startTime=15) annotation (Placement(transformation(extent={{-54,-32},{-34,-12}})));
 equation

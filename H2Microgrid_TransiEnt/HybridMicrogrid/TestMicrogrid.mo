@@ -2,7 +2,6 @@ within H2Microgrid_TransiEnt.HybridMicrogrid;
 model TestMicrogrid "Testing of hybrid microgrid"
 
     extends TransiEnt.Basics.Icons.Checkmodel;
-      parameter String weather_file = Modelica.Utilities.Files.loadResource("modelica://H2Microgrid_TransiEnt/Resources/weather/USA_CA_Los.Angeles.Intl.AP.722950_TMY3.mos") "Path to weather file";
 
   H2Microgrid_HP Microgrid_HP annotation (Placement(transformation(extent={{-22,-10},{34,38}})));
   Modelica.Blocks.Sources.Sine BESScommand(
@@ -20,7 +19,8 @@ equation
     Icon(coordinateSystem(preserveAspectRatio=false)),
     Diagram(coordinateSystem(preserveAspectRatio=false)),
     experiment(
-      StopTime=28000,
+      StartTime=10000,
+      StopTime=70000,
       Interval=1,
       __Dymola_Algorithm="Dassl"),
     Documentation(info="<html>

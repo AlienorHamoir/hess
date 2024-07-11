@@ -95,7 +95,6 @@ public
 //       otherCosts=storage.summary.costs.otherCosts,
 //       revenues=storage.summary.costs.revenues));
 
-  inner TransiEnt.SimCenter simCenter annotation (Placement(transformation(extent={{64,-94},{84,-74}})));
   TransiEnt.Components.Electrical.Machines.MotorComplex
                                    motorComplex(cosphi=1, eta=eta_el_compressor)
                                                           annotation (Placement(transformation(extent={{-46,-60},{-26,-40}})));
@@ -111,6 +110,7 @@ public
     T_startJunction=T_start,
     redeclare model Compressor = TransiEnt.Components.Gas.Compressor.CompressorRealGasIsentropicEff_L1_simple) annotation (Placement(transformation(extent={{-78,-14},{-48,16}})));
   inner TransiEnt.ModelStatistics modelStatistics annotation (Placement(transformation(extent={{30,-96},{50,-76}})));
+  inner TransiEnt.SimCenter simCenter annotation (Placement(transformation(extent={{66,-98},{86,-78}})));
 equation
   connect(tankSOC.tankSOC, socTank) annotation (Line(points={{62.6,78},{106,78}}, color={0,0,127}));
   connect(H2storage.p_gas, controlCompressor.p_afterCompIn) annotation (Line(points={{-3.5,8.25},{-3.5,56},{-54,56}},

@@ -79,7 +79,6 @@ public
 //       otherCosts=storage.summary.costs.otherCosts,
 //       revenues=storage.summary.costs.revenues));
 
-  inner TransiEnt.SimCenter simCenter annotation (Placement(transformation(extent={{64,-94},{84,-74}})));
 equation
   connect(storage.gasPortOut, H2PortOut) annotation (Line(
       points={{9.45,1},{9.45,0},{100,0}},

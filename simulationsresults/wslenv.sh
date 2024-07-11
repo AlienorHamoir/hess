@@ -1,0 +1,8 @@
+DYMOLA="C:/Program Files/Dymola 2024x" 
+export DYMOLACL="" 
+export DYMOLALINK="" 
+export DYMOLAPATHLAST="" 
+DYMOLAINC="C:/Program Files/Dymola 2024x/Modelica/Buildings 11.0.0/Resources/C-Sources;C:/Program Files/Dymola 2024x/Modelica/Library/Modelica 4.0.0/Resources/C-Sources" 
+DYMOLASRC="" 
+DYMOLALIB="C:/Program Files/Dymola 2024x/Modelica/Library/Modelica 4.0.0/Resources/Library/linux64;C:/Program Files/Dymola 2024x/Modelica/TILMedia 1.8.1 ClaRa/Resources/Library/linux64" 
+export DYNUSECLANG="0" 

@@ -3,7 +3,6 @@ model TestPEMFCSystem "Example of a fuel cell system with its cooling and air co
 
 
   extends TransiEnt.Basics.Icons.Checkmodel;
-  inner TransiEnt.SimCenter simCenter annotation (Placement(transformation(extent={{-90,80},{-70,100}})));
 
   parameter String weather_file = Modelica.Utilities.Files.loadResource("modelica://H2Microgrid_TransiEnt/Resources/weather/USA_CA_Los.Angeles.Intl.AP.722950_TMY3.mos") "Path to weather file";
   parameter TransiEnt.Basics.Media.Gases.Gas_MoistAir Air=TransiEnt.Basics.Media.Gases.Gas_MoistAir() "Medium model of air" annotation (choicesAllMatching);
@@ -11,7 +10,9 @@ model TestPEMFCSystem "Example of a fuel cell system with its cooling and air co
 //     xi_const={0.01,0.7},
         //     xi_const={1,0},
 
-  FuelCell.SystemPEMFC systemPEMFC(lambdaOController_PID(m_flow_rampup=1e-8))
+  FuelCell.SystemPEMFC systemPEMFC(lambdaOController_PID(m_flow_rampup=1e-8),
+    coolingModel(tau_i=0.01),
+    lambdaHController_PID(tau_i=0.01, k_p=1))
                                    annotation (Placement(transformation(extent={{-26,-32},{26,20}})));
   Buildings.BoundaryConditions.WeatherData.ReaderTMY3 weaDat(
     relHum=0,
@@ -22,11 +23,11 @@ model TestPEMFCSystem "Example of a fuel cell system with its cooling and air co
     computeWetBulbTemperature=false)
     annotation (Placement(transformation(extent={{-20,48},{0,68}})));
   Buildings.BoundaryConditions.WeatherData.Bus
-      weaBus "Weather data bus" annotation (Placement(transformation(extent={{8,44},{34,72}}),
+      weaBus "Weather data bus" annotation (Placement(transformation(extent={{10,44},{36,72}}),
                                  iconTransformation(extent={{-112,56},{-88,82}})));
   Modelica.Blocks.Sources.Ramp PowerRamp(
-    height=4000,
-    duration=1000,
+    height=4500,
+    duration=4000,
     offset=500,
     startTime=10) annotation (Placement(transformation(extent={{-88,-44},{-68,-24}})));
   Modelica.Blocks.Sources.Step PowerStep(
@@ -46,15 +47,16 @@ model TestPEMFCSystem "Example of a fuel cell system with its cooling and air co
         extent={{-10,-10},{10,10}},
         rotation=180,
         origin={74,-26})));
+  inner TransiEnt.SimCenter simCenter annotation (Placement(transformation(extent={{-78,74},{-58,94}})));
 equation
 
   connect(weaDat.weaBus, weaBus) annotation (Line(
-      points={{0,58},{21,58}},
+      points={{0,58},{23,58}},
       color={255,204,51},
       thickness=0.5));
-  connect(systemPEMFC.T_environment, weaBus.TDryBul) annotation (Line(points={{22.88,22.08},{22.88,40},{21.065,40},{21.065,58.07}},
+  connect(systemPEMFC.T_environment, weaBus.TDryBul) annotation (Line(points={{22.88,22.08},{22.88,40},{23.065,40},{23.065,58.07}},
                                                                                                                         color={0,0,127}));
-  connect(StairSignal.y[1], systemPEMFC.P_el_set) annotation (Line(points={{63,-26},{36,-26},{36,32},{0,32},{0,22.08}}, color={0,0,127}));
+  connect(PowerRamp.y, systemPEMFC.P_el_set) annotation (Line(points={{-67,-34},{-32,-34},{-32,32},{0,32},{0,22.08}}, color={0,0,127}));
   annotation (
     Diagram(coordinateSystem(preserveAspectRatio=false, extent={{-100,-100},{100,100}})),
     experiment(

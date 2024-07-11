@@ -34,12 +34,12 @@ model AirCompressorSystem "Air compressor system model"
     xi_const={0,0,0,0.77,0,0.001,0,0.22,0})                                                                             annotation (Placement(transformation(extent={{-10,-10},{10,10}},
         rotation=180,
         origin={28,14})));
-  inner TransiEnt.SimCenter simCenter annotation (Placement(transformation(extent={{50,-90},{70,-70}})));
   TransiEnt.Basics.Interfaces.General.MassFlowRateIn AirMassFlowRateSetpoint annotation (Placement(transformation(
         extent={{-20,-20},{20,20}},
         rotation=0,
         origin={-108,64})));
   TransiEnt.Basics.Interfaces.Electrical.ElectricPowerOut P_airCompressor "Active Power for the air compressor" annotation (Placement(transformation(extent={{96,-18},{116,2}})));
+  inner TransiEnt.SimCenter simCenter annotation (Placement(transformation(extent={{-72,-86},{-52,-66}})));
 equation
   connect(motorComplex.epp, electricPowerComplex.epp_IN) annotation (Line(
       points={{2.1,-28.1},{2.1,-28},{16.8,-28}},

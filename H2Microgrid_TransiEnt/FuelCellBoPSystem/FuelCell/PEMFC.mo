@@ -153,7 +153,7 @@ model PEMFC "Model of PEM Fuel Cell stack"
 
 
   Modelica.Units.SI.Current I(start=1) "Electric current through the stack";
-  Modelica.Units.SI.Current I_is "Theoretical??? electric current through the stack";
+  Modelica.Units.SI.Current I_is(start=1) "Theoretical electric current through the stack based on available H2 mass flow";
   Modelica.Units.SI.CurrentDensity i_cell "Current density";
   Modelica.Units.SI.Resistance Ri "Internal resistance in Ohm - intially Ri = - 1.667e-4*T_stack + 0.2289";
   // If use of dynamic activation overvoltage

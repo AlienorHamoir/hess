@@ -116,7 +116,7 @@ model SystemPEMFC "Fuel cell system, with auxiliaries and power controller"
         extent={{-10,30},{10,10}},
         rotation=-90,
         origin={68,108})));
-  inner TransiEnt.SimCenter simCenter annotation (Placement(transformation(extent={{66,-96},{86,-76}})));
+  inner TransiEnt.SimCenter simCenter annotation (Placement(transformation(extent={{66,-90},{86,-70}})));
 equation
 
   P_el_tot = FC.P_el + AirCompressorSystem.P_airCompressor + coolingModel.P_coolingPump;
@@ -144,6 +144,19 @@ equation
     eta_GCV_sys = 0;
     eta_NCV_sys = eta_GCV_sys;
   end if;
+
+  //// Discontinuous peak of efficiency higher than 1: can be managed by post processing in MPC
+//   if eta_GCV_sys > 1
+//     eta_NCV_FC = 1;
+//     eta_NCV_sys = 1;
+//     eta_GCV_FC = 1;
+//     eta_GCV_sys = 1;
+//   else
+//     eta_NCV_FC = eta_NCV_FC;
+//     eta_NCV_sys = eta_NCV_sys;
+//     eta_GCV_FC = eta_GCV_FC;
+//     eta_GCV_sys = eta_GCV_sys;
+//   end if;
 
   connect(FC.feedh,SyngasSource. gas_a) annotation (Line(
       points={{-14,6},{-30,6},{-30,19},{-36,19}},

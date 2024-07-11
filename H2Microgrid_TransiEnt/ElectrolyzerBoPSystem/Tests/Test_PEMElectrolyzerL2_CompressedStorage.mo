@@ -15,7 +15,6 @@ model Test_PEMElectrolyzerL2_CompressedStorage "Test of PEM Electrolyzer L2 conn
         extent={{-10,-10},{10,10}},
         rotation=180,
         origin={-64,0})));
-  inner TransiEnt.SimCenter simCenter annotation (Placement(transformation(extent={{44,78},{64,98}})));
   StorageSystem.H2StorageSystem_Compressed H2StorageSystem(
     start_pressure=true,
     includeHeatTransfer=false,
@@ -33,7 +32,8 @@ model Test_PEMElectrolyzerL2_CompressedStorage "Test of PEM Electrolyzer L2 conn
     startTime=20,
     duration=60,
     height=1e-5) annotation (Placement(transformation(extent={{62,-38},{82,-18}})));
-  TransiEnt.Components.Boundaries.Gas.BoundaryRealGas_Txim_flow H2massSink(medium=medium, variable_m_flow=true) annotation (Placement(transformation(
+  TransiEnt.Components.Boundaries.Gas.BoundaryRealGas_Txim_flow H2massSink(medium=medium, variable_m_flow=true,
+    T_const=296.65)                                                                                             annotation (Placement(transformation(
         extent={{-10,-10},{10,10}},
         rotation=180,
         origin={58,-60})));
@@ -51,6 +51,7 @@ model Test_PEMElectrolyzerL2_CompressedStorage "Test of PEM Electrolyzer L2 conn
     electrolyzer(voltage(humidity_const=21)),
     electrolyzer(massFlow(eta_F=1)),
     electrolyzer(pressure(p_mem_grad=17.1e5))) annotation (Placement(transformation(extent={{-14,-14},{14,14}})));
+
   Modelica.Blocks.Sources.CombiTimeTable Pdata(
     tableOnFile=true,
     tableName="Pdata",
@@ -72,6 +73,7 @@ model Test_PEMElectrolyzerL2_CompressedStorage "Test of PEM Electrolyzer L2 conn
     timeScale=0.2) "Includes Pstat, Ustat, Istat; T_op_start must be 50 degC and stop time is  2280 sec (timestep is 0.2 ms)"                         annotation (Placement(transformation(extent={{-10,-10},{10,10}},
         rotation=180,
         origin={70,56})));
+
   Modelica.Blocks.Sources.CombiTimeTable TempPressure(
     tableOnFile=true,
     tableName="TPdata",
@@ -103,6 +105,7 @@ model Test_PEMElectrolyzerL2_CompressedStorage "Test of PEM Electrolyzer L2 conn
   Buildings.BoundaryConditions.WeatherData.Bus
       weaBus "Weather data bus" annotation (Placement(transformation(extent={{-66,36},{-40,64}}),
                                  iconTransformation(extent={{-112,56},{-88,82}})));
+  inner TransiEnt.SimCenter simCenter annotation (Placement(transformation(extent={{40,78},{60,98}})));
 equation
   connect(H2StorageSystem.H2PortOut, H2massSink.gasPort) annotation (Line(
       points={{33.8,-60},{48,-60}},
