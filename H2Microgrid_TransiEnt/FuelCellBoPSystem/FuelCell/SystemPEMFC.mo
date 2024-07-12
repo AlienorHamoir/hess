@@ -9,8 +9,9 @@ model SystemPEMFC "Fuel cell system, with auxiliaries and power controller"
   final parameter Modelica.Units.SI.SpecificEnergy GCV_H2 = 1.41788e8 "J/kg - Gross calorific value of hydrogen at 25 C and 1 bar";
   final parameter Modelica.Units.SI.SpecificEnthalpy h0 = 356955 "J/kg - Specific enthalpy at 25 C and 1 bar";
 
-  Modelica.Units.SI.Power P_el_tot "Electric power consumed by the FC and air compressor and cooling";
-  Modelica.Units.SI.Power P_el_sys "Electric power actually consumed by the system electrolyzer and dryer and cooling and water circulation";
+  Modelica.Units.SI.Power P_el_tot "Electric power consumed by the fuel cell and air compressor and cooling";
+  Modelica.Units.SI.Power P_el_sys "Electric power actually consumed by the system FC and air compressor and cooling ";
+  Modelica.Units.SI.Power P_el_aux "Electric power consumed by the fuel cell auxiliaries system";
   Modelica.Units.SI.EnthalpyFlowRate H_flow_H2_GCV "H2 enthalpy flow rate out of electrolyzer, gross calorific value";
   Modelica.Units.SI.EnthalpyFlowRate H_flow_H2_NCV "H2 enthalpy flow rate out of electrolyzer, net calorific value";
   Modelica.Units.SI.Efficiency eta_NCV_FC(min=0, max=1) "Efficiency of the electrolyzer based on NCV" annotation (Dialog(group="Initialization", showStartAttribute=true));
@@ -96,7 +97,7 @@ model SystemPEMFC "Fuel cell system, with auxiliaries and power controller"
   CoolingSystem.HeatPortCooling.CoolingModel coolingModel(k_p=1000, tau_i=0.5)
                                                           annotation (Placement(transformation(extent={{44,40},{64,60}})));
   AirSupplySystem.AirCompressorSystem AirCompressorSystem annotation (Placement(transformation(extent={{28,-84},{48,-64}})));
-  Modelica.Blocks.Sources.RealExpression P_el_out(y=P_el_sys) annotation (Placement(transformation(extent={{66,-50},{86,-30}})));
+  Modelica.Blocks.Sources.RealExpression P_el_out(y=P_el_sys) annotation (Placement(transformation(extent={{68,-50},{88,-30}})));
 
   Controller.PowerController powerController(i_max=120, P_min=500) annotation (Placement(transformation(
         extent={{-10,-10},{10,10}},
@@ -117,9 +118,12 @@ model SystemPEMFC "Fuel cell system, with auxiliaries and power controller"
         rotation=-90,
         origin={68,108})));
   inner TransiEnt.SimCenter simCenter annotation (Placement(transformation(extent={{66,-90},{86,-70}})));
+  Modelica.Blocks.Sources.RealExpression P_el_out_aux(y=P_el_aux) annotation (Placement(transformation(extent={{68,-68},{88,-48}})));
+  TransiEnt.Basics.Interfaces.Electrical.ElectricPowerOut P_FC_aux annotation (Placement(transformation(extent={{92,-70},{116,-46}}), iconTransformation(extent={{92,-52},{116,-28}})));
 equation
 
   P_el_tot = FC.P_el + AirCompressorSystem.P_airCompressor + coolingModel.P_coolingPump;
+  P_el_aux = AirCompressorSystem.P_airCompressor + coolingModel.P_coolingPump;
 
 
   //System Power balance
@@ -185,7 +189,7 @@ equation
   connect(lambdaOController_PID.y,AirSource. m_flow) annotation (Line(points={{-32.8,-42},{-56,-42},{-56,-24.4},{-50,-24.4}}, color={0,0,127}));
   connect(lambdaOController_PID.y, AirCompressorSystem.AirMassFlowRateSetpoint) annotation (Line(points={{-32.8,-42},{-36,-42},{-36,-67.6},{27.2,-67.6}}, color={0,0,127}));
   connect(lambdaHController_PID.y, mflowH2_FC) annotation (Line(points={{-86.8,-58},{-92,-58},{-92,-92},{-56,-92},{-56,-110}}, color={0,0,127}));
-  connect(P_el_out.y, P_FC_tot) annotation (Line(points={{87,-40},{104,-40}}, color={0,0,127}));
+  connect(P_el_out.y, P_FC_tot) annotation (Line(points={{89,-40},{104,-40}}, color={0,0,127}));
   connect(FC.V_stack, powerController.V_stack) annotation (Line(
       points={{18,-3},{18,-4},{26,-4},{26,73.4},{-43,73.4}},
       color={0,135,135},
@@ -199,6 +203,7 @@ equation
       color={0,135,135},
       pattern=LinePattern.Dash));
   connect(coolingModel.T_environment, T_environment) annotation (Line(points={{44,50},{34,50},{34,86},{80,86},{80,110}}, color={0,0,127}));
+  connect(P_el_out_aux.y, P_FC_aux) annotation (Line(points={{89,-58},{104,-58}}, color={0,0,127}));
   annotation (
     Diagram(coordinateSystem(preserveAspectRatio=false, extent={{-100,-100},{100,100}})),
     experiment(StopTime=40),

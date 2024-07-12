@@ -63,7 +63,7 @@ end ElectrolyzerRecord;
     redeclare model electrolyzerPressures = TransiEnt.Producer.Gas.Electrolyzer.Base.Physics.Pressures.Pressures1,
     redeclare model electrolyzerMassFlow = TransiEnt.Producer.Gas.Electrolyzer.Base.Physics.MassFlow.MassFlow0thOrderDynamics) annotation (Placement(transformation(extent={{-66,-18},{-26,18}})));
   TransiEnt.Basics.Interfaces.Electrical.ElectricPowerIn CompressorPower "Electrical power from the storage compressor" annotation (Placement(transformation(extent={{-116,-76},{-90,-46}}), iconTransformation(extent={{-116,-76},{-90,-46}})));
-  TransiEnt.Basics.Interfaces.Electrical.ElectricPowerOut P_electrolyzer_tot annotation (Placement(transformation(extent={{94,-82},{118,-58}}), iconTransformation(extent={{94,-82},{118,-58}})));
+  TransiEnt.Basics.Interfaces.Electrical.ElectricPowerOut P_electrolyzer_tot annotation (Placement(transformation(extent={{94,-50},{118,-26}}), iconTransformation(extent={{94,-50},{118,-26}})));
   TransiEnt.Producer.Gas.Electrolyzer.Controller.MinMaxController minMaxController(
     P_el_n=P_el_n,
     P_el_max=P_el_max,
@@ -79,6 +79,7 @@ end ElectrolyzerRecord;
         extent={{-14.6963,37.304},{11.3045,11.3041}},
         rotation=-90,
         origin={58.696,101.304})));
+  TransiEnt.Basics.Interfaces.Electrical.ElectricPowerOut P_electrolyzer_aux annotation (Placement(transformation(extent={{94,-84},{118,-60}}), iconTransformation(extent={{94,-82},{118,-58}})));
 protected
   TransiEnt.Components.Sensors.RealGas.MassFlowSensor massflowSensor_ely(medium=medium, xiNumber=0)         annotation (Placement(transformation(
         extent={{7,6},{-7,-6}},
@@ -106,13 +107,17 @@ equation
       pattern=LinePattern.Dash));
   connect(minMaxController.P_el_set, P_el_set) annotation (Line(points={{-54,57},{-54,82},{0,82},{0,108}}, color={0,127,127}));
   connect(electrolyzer.electrolyzerPowerOut, P_electrolyzer_tot) annotation (Line(
-      points={{-57.2,-12.6},{-57.2,-70},{106,-70}},
+      points={{-60.4,-12.6},{-60.4,-12},{88,-12},{88,-38},{106,-38}},
       color={0,135,135},
       pattern=LinePattern.Dash));
-  connect(electrolyzer.temperatureOut, coolingModel_Pump.T_op) annotation (Line(points={{-57.2,-5.76},{-74,-5.76},{-74,30},{12,30},{12,43},{18,43}}, color={0,0,127}));
+  connect(electrolyzer.temperatureOut, coolingModel_Pump.T_op) annotation (Line(points={{-60.4,-5.04},{-42,-5.04},{-42,28},{44,28},{44,43},{18,43}}, color={0,0,127}));
   connect(electrolyzer.heat, coolingModel_Pump.heatPortCooling) annotation (Line(points={{-26,-11.88},{18.2,-11.88},{18.2,29}}, color={191,0,0}));
   connect(coolingModel_Pump.P_coolingPump, electrolyzer.coolingPumpPowerIn) annotation (Line(points={{38,39},{42,39},{42,20},{-16,20},{-16,4},{-22,4},{-22,3.6}}, color={0,0,127}));
   connect(coolingModel_Pump.T_environment, T_environment) annotation (Line(points={{18,36},{10,36},{10,84},{80,84},{80,108}}, color={0,0,127}));
+  connect(electrolyzer.electrolyzerPowerOutAux, P_electrolyzer_aux) annotation (Line(
+      points={{-60.4,-16.2},{-60,-16.2},{-60,-16},{24,-16},{24,-72},{106,-72}},
+      color={0,135,135},
+      pattern=LinePattern.Dash));
   annotation (Icon(coordinateSystem(preserveAspectRatio=false), graphics={Rectangle(
           extent={{-100,100},{100,-100}},
           lineColor={0,0,0},
