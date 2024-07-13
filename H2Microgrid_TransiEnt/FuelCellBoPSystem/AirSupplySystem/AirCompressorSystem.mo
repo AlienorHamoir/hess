@@ -18,10 +18,10 @@ model AirCompressorSystem "Air compressor system model"
     integrateElPower=true) annotation (Placement(transformation(extent={{-38,4},{-18,24}})));
   TransiEnt.Components.Electrical.Machines.MotorComplex
                                    motorComplex(cosphi=1, eta=0.95)
-                                                          annotation (Placement(transformation(extent={{-18,-38},{2,-18}})));
+                                                          annotation (Placement(transformation(extent={{-18,-50},{2,-30}})));
   TransiEnt.Components.Boundaries.Electrical.ComplexPower.SlackBoundary
-                                                   slackBoundary annotation (Placement(transformation(extent={{54,-38},{74,-18}})));
-  TransiEnt.Components.Sensors.ElectricPowerComplex electricPowerComplex annotation (Placement(transformation(extent={{16,-38},{36,-18}})));
+                                                   slackBoundary annotation (Placement(transformation(extent={{54,-50},{74,-30}})));
+  TransiEnt.Components.Sensors.ElectricPowerComplex electricPowerComplex annotation (Placement(transformation(extent={{16,-50},{36,-30}})));
   TransiEnt.Components.Boundaries.Gas.BoundaryRealGas_pTxi boundary_pTxi(
   medium=medium,
     p_const=100000,
@@ -35,21 +35,21 @@ model AirCompressorSystem "Air compressor system model"
         rotation=180,
         origin={28,14})));
   TransiEnt.Basics.Interfaces.General.MassFlowRateIn AirMassFlowRateSetpoint annotation (Placement(transformation(
-        extent={{-20,-20},{20,20}},
+        extent={{-16,-16},{16,16}},
         rotation=0,
-        origin={-108,64})));
-  TransiEnt.Basics.Interfaces.Electrical.ElectricPowerOut P_airCompressor "Active Power for the air compressor" annotation (Placement(transformation(extent={{96,-18},{116,2}})));
-  inner TransiEnt.SimCenter simCenter annotation (Placement(transformation(extent={{-72,-86},{-52,-66}})));
+        origin={-100,60}), iconTransformation(extent={{-16,-16},{16,16}}, origin={-100,60})));
+  TransiEnt.Basics.Interfaces.Electrical.ElectricPowerOut P_airCompressor "Active Power for the air compressor" annotation (Placement(transformation(extent={{90,-30},{110,-10}})));
+  inner TransiEnt.SimCenter simCenter annotation (Placement(transformation(extent={{-86,-94},{-66,-74}})));
 equation
   connect(motorComplex.epp, electricPowerComplex.epp_IN) annotation (Line(
-      points={{2.1,-28.1},{2.1,-28},{16.8,-28}},
+      points={{2.1,-40.1},{2.1,-40},{16.8,-40}},
       color={28,108,200},
       thickness=0.5));
   connect(electricPowerComplex.epp_OUT, slackBoundary.epp) annotation (Line(
-      points={{35.4,-28},{54,-28}},
+      points={{35.4,-40},{54,-40}},
       color={28,108,200},
       thickness=0.5));
-  connect(airCompressor.mpp, motorComplex.mpp) annotation (Line(points={{-28,4},{-28,-28},{-18,-28}}, color={95,95,95}));
+  connect(airCompressor.mpp, motorComplex.mpp) annotation (Line(points={{-28,4},{-28,-40},{-18,-40}}, color={95,95,95}));
   connect(boundary_pTxi.gasPort, airCompressor.gasPortIn) annotation (Line(
       points={{-68,14},{-38,14}},
       color={255,255,0},
@@ -58,9 +58,9 @@ equation
       points={{-18,14},{18,14}},
       color={255,255,0},
       thickness=1.5));
-  connect(AirMassFlowRateSetpoint, airCompressor.m_flow_in) annotation (Line(points={{-108,64},{-36,64},{-36,25}}, color={0,0,127}));
+  connect(AirMassFlowRateSetpoint, airCompressor.m_flow_in) annotation (Line(points={{-100,60},{-36,60},{-36,25}}, color={0,0,127}));
   connect(electricPowerComplex.P, P_airCompressor) annotation (Line(
-      points={{21,-19.4},{22,-19.4},{22,-8},{106,-8}},
+      points={{21,-31.4},{21,-20},{100,-20}},
       color={0,135,135},
       pattern=LinePattern.Dash));
   annotation (Icon(coordinateSystem(preserveAspectRatio=false)), Diagram(coordinateSystem(preserveAspectRatio=false)),

@@ -3,7 +3,10 @@ model TestMicrogrid "Testing of hybrid microgrid"
 
     extends TransiEnt.Basics.Icons.Checkmodel;
 
-  H2Microgrid_HP Microgrid_HP annotation (Placement(transformation(extent={{-22,-10},{34,38}})));
+  H2Microgrid_HP Microgrid_HP(
+    SOC_start_battery=0.2,
+    P_set_battery(start=0),
+    P_set_HESS(start=0))      annotation (Placement(transformation(extent={{-22,-10},{34,38}})));
   Modelica.Blocks.Sources.Sine BESScommand(
     amplitude=5000,
     f(displayUnit="Hz") = 0.01,
@@ -19,9 +22,8 @@ equation
     Icon(coordinateSystem(preserveAspectRatio=false)),
     Diagram(coordinateSystem(preserveAspectRatio=false)),
     experiment(
-      StartTime=20000,
-      StopTime=40000,
-      Interval=1,
+      StopTime=259200,
+      __Dymola_NumberOfIntervals=145,
       __Dymola_Algorithm="Dassl"),
     Documentation(info="<html>
 <p>Testig before integratio as an FMU and interfacing through Python</p>

@@ -2,13 +2,21 @@ within H2Microgrid_TransiEnt.HybridMicrogrid;
 model H2Microgrid_HP "Hybrid microgrid with high-pressure compressed storage"
 
   parameter Real building_scale = 1 "Building scale";
-  parameter Real der_scale = 1 "DER scale";
+  parameter Real der_scale = 0.25 "DER scale - assumption in our case, we have 1 floor and PV on 25% of roof surface";
   parameter Real battery_scale = 1 "Battery scale";
-  parameter Real building_ft2 = 73.96e3 "Building ft2 scale";
-  parameter String weather_file = Modelica.Utilities.Files.loadResource("modelica://H2Microgrid_TransiEnt/Resources/weather/USA_CA_Los.Angeles.Intl.AP.722950_TMY3.mos") "Path to weather file";
-  parameter String load_file = ModelicaServices.ExternalReferences.loadResource("modelica://H2Microgrid_TransiEnt/Resources/loads/commercial_PrimarySchool_LA.txt") "Path to load file";
+  parameter Real building_ft2 = 5500 "Building ft2 scale";
+  parameter Real sqft2sqm = 10.765 "Convert ft^2 surface to m^2";
 
-  HESS.HESS_Compressed hess annotation (Placement(transformation(extent={{22,-64},{62,-24}})));
+  parameter Modelica.Units.SI.Pressure p_max=350e5   "Maximum pressure in storage" annotation (Dialog(tab="General", group="H2 storage parameters"));
+  parameter Real SOC_start_HESS=0.5  "SOC of H2 tank storage at t=0" annotation (Dialog(tab="General", group="Initial parameters"));
+  parameter Real SOC_start_battery=0.5  "SOC of battery at t=0" annotation (Dialog(tab="General", group="Initial parameters"));
+
+
+  parameter String weather_file = Modelica.Utilities.Files.loadResource("modelica://H2Microgrid_TransiEnt/Resources/weather/USA_CA_Los.Angeles.Intl.AP.722950_TMY3.mos") "Path to weather file";
+  parameter String load_file = ModelicaServices.ExternalReferences.loadResource("modelica://H2Microgrid_TransiEnt/Resources/loads/commercial_SmallOffice_LA.txt") "Path to load file";
+
+  HESS.HESS_Compressed hess(p_max=p_max, SOC_start=SOC_start_HESS)
+                            annotation (Placement(transformation(extent={{22,-64},{62,-24}})));
   Buildings.BoundaryConditions.WeatherData.ReaderTMY3 weaDat(
     relHum=0,
     TDewPoi(displayUnit="K"),
@@ -18,15 +26,15 @@ model H2Microgrid_HP "Hybrid microgrid with high-pressure compressed storage"
     computeWetBulbTemperature=false)
     annotation (Placement(transformation(extent={{-90,62},{-70,82}})));
   SCooDER.Components.Photovoltaics.Model.PVModule_simple
-                                                 pv(n=0.004*building_ft2*der_scale)
+                                                 pv(n=der_scale*building_ft2/(1.65*sqft2sqm))
     annotation (Placement(transformation(extent={{-58,54},{-30,80}})));
   Modelica.Blocks.Sources.Constant ctrl_PV(k=1)
     annotation (Placement(transformation(extent={{-88,48},{-80,56}})));
   SCooDER.Components.Battery.Model.Battery
                                    battery(
-    EMax=25000,
-    Pmax=25000,
-    SOC_start=0.5,
+    EMax=5000,
+    Pmax=5000,
+    SOC_start=SOC_start_battery,
     SOC_min=0.1,
     SOC_max=0.9,
     etaCha=0.98,
@@ -43,8 +51,8 @@ model H2Microgrid_HP "Hybrid microgrid with high-pressure compressed storage"
   Modelica.Blocks.Math.Sum PowerTotal(nin=4) annotation (Placement(transformation(extent={{-6,-8},{10,8}})));
   Modelica.Blocks.Interfaces.RealOutput SOC_battery "State of Charge battery [-]" annotation (Placement(transformation(extent={{100,72},{120,92}}), iconTransformation(extent={{100,72},{120,92}})));
   Modelica.Blocks.Interfaces.RealOutput P_battery "Battery AC power consumption [W]" annotation (Placement(transformation(extent={{100,44},{120,64}}),iconTransformation(extent={{100,44},{120,64}})));
-  Modelica.Blocks.Interfaces.RealOutput P_HESS "HESS DC power production  [W]" annotation (Placement(transformation(extent={{100,-40},{120,-20}}),iconTransformation(extent={{100,-40},{120,-20}})));
-  Modelica.Blocks.Interfaces.RealOutput SOC_HESS "State of Charge H2 tank  [-]" annotation (Placement(transformation(extent={{100,-60},{120,-40}}), iconTransformation(extent={{100,-60},{120,-40}})));
+  Modelica.Blocks.Interfaces.RealOutput P_HESS "HESS DC power production  [W]" annotation (Placement(transformation(extent={{100,-42},{120,-22}}),iconTransformation(extent={{100,-42},{120,-22}})));
+  Modelica.Blocks.Interfaces.RealOutput SOC_HESS "State of Charge H2 tank  [-]" annotation (Placement(transformation(extent={{100,-62},{120,-42}}), iconTransformation(extent={{100,-62},{120,-42}})));
   Modelica.Blocks.Interfaces.RealInput P_set_HESS(unit="W", start=0) annotation (Placement(transformation(
         origin={-10,-102},
         extent={{10,-10},{-10,10}},
@@ -97,11 +105,11 @@ equation
   connect(battery.SOC, SOC_battery) annotation (Line(points={{62,70},{62,82},{110,82}}, color={0,0,127}));
   connect(battery.P, P_battery) annotation (Line(points={{62,54},{110,54}},                 color={0,0,127}));
   connect(PowerTotal.y, PowerBalanceMicrogrid) annotation (Line(points={{10.8,0},{110,0}},                color={0,0,127}));
-  connect(hess.socTankH2, SOC_HESS) annotation (Line(points={{62.8,-50.4},{88,-50.4},{88,-50},{110,-50}}, color={0,0,127}));
+  connect(hess.socTankH2, SOC_HESS) annotation (Line(points={{62.8,-50.4},{88,-50.4},{88,-52},{110,-52}}, color={0,0,127}));
   connect(pv.P, pv_inv.u) annotation (Line(points={{-28.6,67},{-24,67},{-24,42.8}}, color={0,0,127}));
-  connect(P_set_HESS,hess. P_set_HESS) annotation (Line(points={{-10,-102},{-10,-50},{20.2,-50}}, color={0,0,127}));
+  connect(P_set_HESS,hess. P_set_HESS) annotation (Line(points={{-10,-102},{-10,-50},{21,-50}},   color={0,0,127}));
   connect(hess.P_HESS, P_HESS) annotation (Line(
-      points={{63.2,-31.6},{63.2,-30},{110,-30}},
+      points={{63.2,-31.6},{63.2,-32},{110,-32}},
       color={0,135,135},
       pattern=LinePattern.Dash));
   connect(pv_inv.y, PowerTotal.u[1]) annotation (Line(points={{-24,33.6},{-24,-0.6},{-7.6,-0.6}},   color={0,0,127}));
@@ -112,11 +120,11 @@ equation
       color={255,204,51},
       thickness=0.5));
   connect(weaBus.TDryBul,hess. T_environment) annotation (Line(
-      points={{-30.935,-37.93},{-4,-37.93},{-4,-38},{20,-38}},
+      points={{-30.935,-37.93},{-4,-37.93},{-4,-38},{21.2,-38}},
       color={255,204,51},
       thickness=0.5));
   connect(hess.P_HESS, PowerTotal.u[4]) annotation (Line(
-      points={{63.2,-31.6},{66,-31.6},{66,-12},{-12,-12},{-12,0.6},{-7.6,0.6}},
+      points={{63.2,-31.6},{72,-31.6},{72,-12},{-12,-12},{-12,0.6},{-7.6,0.6}},
       color={0,135,135},
       pattern=LinePattern.Dash));
   connect(pv_inv.y, P_PV) annotation (Line(points={{-24,33.6},{-24,28},{110,28}},                 color={0,0,127}));

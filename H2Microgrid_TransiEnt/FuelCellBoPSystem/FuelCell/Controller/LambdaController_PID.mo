@@ -50,9 +50,9 @@ model LambdaController_PID "PID Controller for Lambda in Fuel Cell Applications"
   // _____________________________________________
 
   Modelica.Blocks.Interfaces.RealInput u1 annotation (Placement(transformation(
-          rotation=0, extent={{-112,-46},{-92,-26}})));
+          rotation=0, extent={{-104,-50},{-84,-30}})));
   Modelica.Blocks.Interfaces.RealOutput y annotation (Placement(transformation(
-          rotation=0, extent={{98,-10},{118,10}})));
+          rotation=0, extent={{84,-10},{104,10}})));
 
   // _____________________________________________
   //
@@ -83,8 +83,8 @@ equation
 
   connect(PID_control.y, m_flow_PID.activateInput) annotation (Line(points={{-17,-10},{-10,-10},{-10,-9.6},{-0.4,-9.6}}, color={255,0,255}));
   connect(PID_setpoint.y, m_flow_PID.u_s) annotation (Line(points={{-17,8},{-6,8},{-6,0},{-0.4,0}}, color={0,0,127}));
-  connect(u1, m_flow_PID.u_m) annotation (Line(points={{-102,-36},{14.12,-36},{14.12,-14.4}}, color={0,0,127}));
-  connect(m_flow_PID.y, y) annotation (Line(points={{27.2,0},{108,0}}, color={0,0,127}));
+  connect(u1, m_flow_PID.u_m) annotation (Line(points={{-94,-40},{14.12,-40},{14.12,-14.4}},  color={0,0,127}));
+  connect(m_flow_PID.y, y) annotation (Line(points={{27.2,0},{94,0}},  color={0,0,127}));
   annotation (Diagram(coordinateSystem(preserveAspectRatio=false, extent={{-100,
             -100},{100,100}})),
                 Documentation(info="<html>

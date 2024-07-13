@@ -29,7 +29,8 @@ model TestPEMFCSystem "Example of a fuel cell system with its cooling and air co
     height=4500,
     duration=4000,
     offset=500,
-    startTime=10) annotation (Placement(transformation(extent={{-88,-44},{-68,-24}})));
+    startTime=1000)
+                  annotation (Placement(transformation(extent={{-88,-44},{-68,-24}})));
   Modelica.Blocks.Sources.Step PowerStep(
     height=1000,
     offset=0,
