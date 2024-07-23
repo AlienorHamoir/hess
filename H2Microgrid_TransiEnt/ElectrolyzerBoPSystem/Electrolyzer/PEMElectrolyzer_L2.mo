@@ -69,7 +69,7 @@ protected
   inner parameter Modelica.Units.SI.ThermalResistance R_th=Specification.R_th "Thermal resistance of stack";
   inner parameter Modelica.Units.SI.HeatCapacity C_th=Specification.C_th "Lumped thermal capacitance of stack";
   parameter Real specificWaterConsumption=Specification.specificWaterConsumption "Mass of water per mass of hydrogen";
-  inner parameter Modelica.Units.SI.Power P_el_pump=Specification.P_el_pump "pump el power consumption when electorlyzer is running";
+  inner parameter Modelica.Units.SI.Power P_el_pump=Specification.P_el_pump "pump el power consumption when electrolyzer is running";
   inner parameter Modelica.Units.SI.Efficiency eta_pumpmotor=Specification.eta_pumpmotor "pump's motor electric efficiency";
   inner parameter Modelica.Units.SI.VolumeFlowRate V_flow_water=Specification.V_flow_water "water flow rate in cooling loop";
   inner parameter Modelica.Units.SI.PressureDifference Delta_p_pump=Specification.Delta_p_pump "total pump head";

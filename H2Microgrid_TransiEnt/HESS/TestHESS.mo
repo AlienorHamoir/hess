@@ -37,10 +37,10 @@ equation
       color={255,204,51},
       thickness=0.5));
   connect(weaBus.TDryBul, hESS_Compressed.T_environment) annotation (Line(
-      points={{-22.935,44.07},{-22,44.07},{-22,-2},{2.8,-2},{2.8,-0.9}},
+      points={{-22.935,44.07},{-22,44.07},{-22,-2},{6,-2},{6,-9}},
       color={255,204,51},
       thickness=0.5));
-  connect(load1.y, hESS_Compressed.P_set_HESS) annotation (Line(points={{-65,-38},{-8,-38},{-8,-17.1},{3.12,-17.1}}, color={0,0,127}));
+  connect(load1.y, hESS_Compressed.P_set_FC) annotation (Line(points={{-65,-38},{-8,-38},{-8,9.9},{5.68,9.9}}, color={0,0,127}));
   annotation (Icon(coordinateSystem(preserveAspectRatio=false)), Diagram(coordinateSystem(preserveAspectRatio=false)),
     Documentation(info="<html>
 <p>Testing of compressed and non-compressed HESS models for microgrid applications.</p>

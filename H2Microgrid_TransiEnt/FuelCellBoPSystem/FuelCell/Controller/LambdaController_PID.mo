@@ -34,7 +34,7 @@ model LambdaController_PID "PID Controller for Lambda in Fuel Cell Applications"
   //             Visible Parameters
   // _____________________________________________
 
-  parameter Real lambda_target=2.5 " excess ratio target - value for O2";
+  parameter Real lambda_target=2.5 " excess ratio target for O2 or H2";
   parameter Modelica.Units.SI.MassFlowRate m_flow_rampup=2e-4 "Minimum mass flow";
 
   Boolean lambda_control;

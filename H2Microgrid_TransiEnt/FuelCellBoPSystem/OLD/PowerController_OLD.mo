@@ -1,5 +1,5 @@
-within H2Microgrid_TransiEnt.FuelCellBoPSystem.FuelCell.Controller;
-model PowerConverter "Controller for power and current output in Fuel Cell applications"
+within H2Microgrid_TransiEnt.FuelCellBoPSystem.OLD;
+model PowerController_OLD "Controller for power and current output in Fuel Cell applications"
 
 //________________________________________________________________________________//
 // Component of the TransiEnt Library, version: 2.0.3                             //
@@ -55,7 +55,7 @@ model PowerConverter "Controller for power and current output in Fuel Cell appli
   Modelica.Blocks.Interfaces.RealOutput y annotation (Placement(transformation(
           rotation=180,
                       extent={{10,-10},{-10,10}},
-        origin={110,0}), iconTransformation(extent={{100,-10},{120,10}})));
+        origin={108,36}),iconTransformation(extent={{100,-10},{120,10}})));
   TransiEnt.Basics.Interfaces.Electrical.VoltageIn V_stack "Input for stack voltage" annotation (Placement(
         transformation(
         rotation=0,
@@ -73,19 +73,41 @@ model PowerConverter "Controller for power and current output in Fuel Cell appli
   Modelica.Blocks.Math.Gain Gain(k=k) annotation (Placement(transformation(
         extent={{6,-6.5},{-6,6.5}},
         rotation=180,
-        origin={-40,8.5})));
+        origin={-34,-11.5})));
 
   Modelica.Blocks.Math.Division PowerbyVoltage_divison annotation (Placement(transformation(
-        extent={{13.5,13},{-13.5,-13}},
+        extent={{10,10},{-10,-10}},
         rotation=180,
-        origin={0.5,-1})));
+        origin={1,-38})));
 
-  Modelica.Blocks.Nonlinear.Limiter constantSaturation(uMax=i_max, uMin=0)
-    annotation (Placement(transformation(extent={{68,-12},{92,12}})));
+  Modelica.Blocks.Logical.GreaterThreshold VoltageThreshold(threshold=0) annotation (Placement(transformation(
+        extent={{-10,-10},{10,10}},
+        rotation=90,
+        origin={-74,-18})));
+
+  Modelica.Blocks.Logical.Switch VoltageSwitch annotation (Placement(transformation(
+        extent={{-10,-10},{10,10}},
+        rotation=0,
+        origin={44,36})));
+
+  Modelica.Blocks.Nonlinear.Limiter constantSaturation(uMax=i_max, uMin=0.1)
+    annotation (Placement(transformation(extent={{66,24},{90,48}})));
+
+  Modelica.Blocks.Sources.Constant Rampupcurrent(k=i_rampup)
+    annotation (Placement(transformation(extent={{-36,68},{-20,84}})));
 
   Modelica.Blocks.Nonlinear.Limiter preventDivisionByZero(uMax=150,  uMin=0.1)
-    annotation (Placement(transformation(extent={{-56,-54},{-38,-36}})));
+    annotation (Placement(transformation(extent={{-50,-74},{-32,-56}})));
 
+  Modelica.Blocks.Logical.GreaterThreshold PowerThreshold(threshold=P_min) annotation (Placement(transformation(
+        extent={{-8,-8},{8,8}},
+        rotation=0,
+        origin={-36,50})));
+  Modelica.Blocks.Logical.Switch PowerSwitch annotation (Placement(transformation(
+        extent={{-10,-10},{10,10}},
+        rotation=0,
+        origin={6,60})));
+  Modelica.Blocks.Sources.Constant nulCurrent(k=0) annotation (Placement(transformation(extent={{-38,18},{-22,34}})));
 equation
   // _____________________________________________
   //
@@ -93,21 +115,34 @@ equation
   // _____________________________________________
 
   connect(constantSaturation.y, y) annotation (Line(
-      points={{93.2,0},{110,0}},
+      points={{91.2,36},{108,36}},
       color={0,0,127},
       smooth=Smooth.None));
   connect(Gain.y, PowerbyVoltage_divison.u1) annotation (Line(
-      points={{-33.4,8.5},{-26,8.5},{-26,6.8},{-15.7,6.8}},
+      points={{-27.4,-11.5},{-22,-11.5},{-22,-32},{-11,-32}},
+      color={0,0,127},
+      smooth=Smooth.None));
+  connect(VoltageSwitch.y, constantSaturation.u) annotation (Line(
+      points={{55,36},{63.6,36}},
       color={0,0,127},
       smooth=Smooth.None));
   connect(preventDivisionByZero.y, PowerbyVoltage_divison.u2) annotation (Line(
-      points={{-37.1,-45},{-37.1,-46},{-26,-46},{-26,-8.8},{-15.7,-8.8}},
+      points={{-31.1,-65},{-11,-65},{-11,-44}},
       color={0,0,127},
       smooth=Smooth.None));
-  connect(V_stack, preventDivisionByZero.u) annotation (Line(points={{-100,-66},{-62,-66},{-62,-45},{-57.8,-45}},
+  connect(Rampupcurrent.y, PowerSwitch.u1) annotation (Line(points={{-19.2,76},{-14,76},{-14,68},{-6,68}}, color={0,0,127}));
+  connect(PowerThreshold.y, PowerSwitch.u2) annotation (Line(points={{-27.2,50},{-20,50},{-20,60},{-6,60}},
+                                                                                                          color={255,0,255}));
+  connect(VoltageThreshold.y, VoltageSwitch.u2) annotation (Line(points={{-74,-7},{-74,2},{22,2},{22,36},{32,36}},                      color={255,0,255}));
+  connect(V_stack, preventDivisionByZero.u) annotation (Line(points={{-100,-66},{-76,-66},{-76,-65},{-51.8,-65}},
                                                                                               color={0,127,127}));
-  connect(P, Gain.u) annotation (Line(points={{-100,74},{-60,74},{-60,8.5},{-47.2,8.5}},     color={0,127,127}));
-  connect(PowerbyVoltage_divison.y, constantSaturation.u) annotation (Line(points={{15.35,-1},{15.35,0},{65.6,0}}, color={0,0,127}));
+  connect(V_stack, VoltageThreshold.u) annotation (Line(points={{-100,-66},{-74,-66},{-74,-30}}, color={0,127,127}));
+  connect(P, PowerThreshold.u) annotation (Line(points={{-100,74},{-56,74},{-56,50},{-45.6,50}},
+                                                                                               color={0,127,127}));
+  connect(nulCurrent.y, PowerSwitch.u3) annotation (Line(points={{-21.2,26},{-16,26},{-16,52},{-6,52}}, color={0,0,127}));
+  connect(P, Gain.u) annotation (Line(points={{-100,74},{-56,74},{-56,-11.5},{-41.2,-11.5}}, color={0,127,127}));
+  connect(VoltageSwitch.u1, PowerbyVoltage_divison.y) annotation (Line(points={{32,44},{18,44},{18,-38},{12,-38}}, color={0,0,127}));
+  connect(PowerSwitch.y, VoltageSwitch.u3) annotation (Line(points={{17,60},{24,60},{24,28},{32,28}}, color={0,0,127}));
   annotation (Diagram(coordinateSystem(preserveAspectRatio=false, extent={{-100,
             -100},{100,100}})),           Icon(coordinateSystem(
           preserveAspectRatio=false, extent={{-100,-100},{100,100}}), graphics={Text(
@@ -120,9 +155,14 @@ equation
                 Documentation(info="<html>
 <h4><span style=\"color: #008000\">1. Purpose of model</span></h4>
 <p>Controller for power output in Fuel Cell applications</p>
-<p>Basic model that divides input power by input voltage, to obtain a current setpoint. </p>
+<p>Based on input power setpoint and stack voltage, the current setpoint for the fuel cell is calculated. </p>
 <h4><span style=\"color: #008000\">2. Level of detail, physical effects considered, and physical insight</span></h4>
-<p>(no remarks)</p>
+<p>It has been adapted from the initial model by differentiating several cases:</p>
+<ol>
+<li>If stack voltage is larger than 0, I = P / V</li>
+<li>If power setpoint is smaller than minimum allowed power and stack voltage is smaller or equal to 0, the current is 0</li>
+<li>If power setpoint is larger than minimum allowed power and stack voltage is smaller or equal to 0, the current equals rampup current</li>
+</ol>
 <h4><span style=\"color: #008000\">3. Limits of validity </span></h4>
 <p>(no remarks)</p>
 <h4><span style=\"color: #008000\">4. Interfaces</span></h4>
@@ -134,12 +174,15 @@ equation
 <h4><span style=\"color: #008000\">6. Governing Equations</span></h4>
 <p>I = P / V</p>
 <h4><span style=\"color: #008000\">7. Remarks for Usage</span></h4>
-<p>Current operating range must be adapted for the application. It works if a superior controller only delivers power setpoint </p>
+<p>Adapt current, voltage and power operating ranges and characteristics</p>
 <h4><span style=\"color: #008000\">8. Validation</span></h4>
 <p>(no remarks)</p>
 <h4><span style=\"color: #008000\">9. References</span></h4>
 <p>(no remarks)</p>
 <h4><span style=\"color: #008000\">10. Version History</span></h4>
-<p>Model created by Ali&eacute;nor Hamoir in June 2024</p>
+<p>Model created by Simon Weilbach (simon.weilbach@tuhh.de) on 01.10.2014</p>
+<p>Model revised by Pascal Dubucq (dubucq@tuhh.de) on 01.10.2015</p>
+<p>Quality check (Code conventions) by Rebekka Denninger on 01.10.2016</p>
+<p>Model adapted by Ali&eacute;nor Hamoir in June 2024</p>
 </html>"));
-end PowerConverter;
+end PowerController_OLD;

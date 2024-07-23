@@ -34,10 +34,8 @@ model PowerController "Controller for power and current output in Fuel Cell appl
   //             Visible Parameters
   // _____________________________________________
 
-  parameter Modelica.Units.SI.Current i_max=90 "Maximum current value";
-  parameter Modelica.Units.SI.Current i_rampup=10 "Rampup current value";
+  parameter Modelica.Units.SI.Current i_max=120 "Maximum current value";
   parameter Real k = 1 "Proportional controller gain";
-  parameter Modelica.Units.SI.Power P_min=367.5 "Lower power Limit"; // computed from I_shutdown = 10 A and V_shutdown = 36.75 V
 
   // _____________________________________________
   //
@@ -55,7 +53,7 @@ model PowerController "Controller for power and current output in Fuel Cell appl
   Modelica.Blocks.Interfaces.RealOutput y annotation (Placement(transformation(
           rotation=180,
                       extent={{10,-10},{-10,10}},
-        origin={118,36}),iconTransformation(extent={{100,-10},{120,10}})));
+        origin={104,0}), iconTransformation(extent={{100,-10},{120,10}})));
   TransiEnt.Basics.Interfaces.Electrical.VoltageIn V_stack "Input for stack voltage" annotation (Placement(
         transformation(
         rotation=0,
@@ -73,41 +71,19 @@ model PowerController "Controller for power and current output in Fuel Cell appl
   Modelica.Blocks.Math.Gain Gain(k=k) annotation (Placement(transformation(
         extent={{6,-6.5},{-6,6.5}},
         rotation=180,
-        origin={-34,-11.5})));
+        origin={-42,24.5})));
 
   Modelica.Blocks.Math.Division PowerbyVoltage_divison annotation (Placement(transformation(
         extent={{10,10},{-10,-10}},
         rotation=180,
-        origin={1,-38})));
-
-  Modelica.Blocks.Logical.GreaterThreshold VoltageThreshold(threshold=0) annotation (Placement(transformation(
-        extent={{-10,-10},{10,10}},
-        rotation=90,
-        origin={-74,-18})));
-
-  Modelica.Blocks.Logical.Switch VoltageSwitch annotation (Placement(transformation(
-        extent={{-10,-10},{10,10}},
-        rotation=0,
-        origin={50,36})));
+        origin={5,0})));
 
   Modelica.Blocks.Nonlinear.Limiter constantSaturation(uMax=i_max, uMin=0.1)
-    annotation (Placement(transformation(extent={{76,24},{100,48}})));
-
-  Modelica.Blocks.Sources.Constant Rampupcurrent(k=i_rampup)
-    annotation (Placement(transformation(extent={{-36,68},{-20,84}})));
+    annotation (Placement(transformation(extent={{48,-12},{72,12}})));
 
   Modelica.Blocks.Nonlinear.Limiter preventDivisionByZero(uMax=150,  uMin=0.1)
-    annotation (Placement(transformation(extent={{-50,-74},{-32,-56}})));
+    annotation (Placement(transformation(extent={{-50,-38},{-32,-20}})));
 
-  Modelica.Blocks.Logical.GreaterThreshold PowerThreshold(threshold=P_min) annotation (Placement(transformation(
-        extent={{-8,-8},{8,8}},
-        rotation=0,
-        origin={-36,50})));
-  Modelica.Blocks.Logical.Switch PowerSwitch annotation (Placement(transformation(
-        extent={{-10,-10},{10,10}},
-        rotation=0,
-        origin={6,60})));
-  Modelica.Blocks.Sources.Constant nulCurrent(k=0) annotation (Placement(transformation(extent={{-38,18},{-22,34}})));
 equation
   // _____________________________________________
   //
@@ -115,34 +91,21 @@ equation
   // _____________________________________________
 
   connect(constantSaturation.y, y) annotation (Line(
-      points={{101.2,36},{118,36}},
+      points={{73.2,0},{104,0}},
       color={0,0,127},
       smooth=Smooth.None));
   connect(Gain.y, PowerbyVoltage_divison.u1) annotation (Line(
-      points={{-27.4,-11.5},{-22,-11.5},{-22,-32},{-11,-32}},
-      color={0,0,127},
-      smooth=Smooth.None));
-  connect(VoltageSwitch.y, constantSaturation.u) annotation (Line(
-      points={{61,36},{73.6,36}},
+      points={{-35.4,24.5},{-32,24.5},{-32,6},{-7,6}},
       color={0,0,127},
       smooth=Smooth.None));
   connect(preventDivisionByZero.y, PowerbyVoltage_divison.u2) annotation (Line(
-      points={{-31.1,-65},{-11,-65},{-11,-44}},
+      points={{-31.1,-29},{-31.1,-6},{-7,-6}},
       color={0,0,127},
       smooth=Smooth.None));
-  connect(Rampupcurrent.y, PowerSwitch.u1) annotation (Line(points={{-19.2,76},{-14,76},{-14,68},{-6,68}}, color={0,0,127}));
-  connect(PowerThreshold.y, PowerSwitch.u2) annotation (Line(points={{-27.2,50},{-20,50},{-20,60},{-6,60}},
-                                                                                                          color={255,0,255}));
-  connect(VoltageSwitch.u1, PowerbyVoltage_divison.y) annotation (Line(points={{38,44},{22,44},{22,-24},{24,-24},{24,-38},{12,-38}}, color={0,0,127}));
-  connect(PowerSwitch.y, VoltageSwitch.u3) annotation (Line(points={{17,60},{30,60},{30,28},{38,28}}, color={0,0,127}));
-  connect(VoltageThreshold.y, VoltageSwitch.u2) annotation (Line(points={{-74,-7},{-74,-4},{-44,-4},{-44,2},{28,2},{28,36},{38,36}},    color={255,0,255}));
-  connect(V_stack, preventDivisionByZero.u) annotation (Line(points={{-100,-66},{-76,-66},{-76,-65},{-51.8,-65}},
+  connect(V_stack, preventDivisionByZero.u) annotation (Line(points={{-100,-66},{-64,-66},{-64,-29},{-51.8,-29}},
                                                                                               color={0,127,127}));
-  connect(V_stack, VoltageThreshold.u) annotation (Line(points={{-100,-66},{-74,-66},{-74,-30}}, color={0,127,127}));
-  connect(P, PowerThreshold.u) annotation (Line(points={{-100,74},{-56,74},{-56,50},{-45.6,50}},
-                                                                                               color={0,127,127}));
-  connect(nulCurrent.y, PowerSwitch.u3) annotation (Line(points={{-21.2,26},{-16,26},{-16,52},{-6,52}}, color={0,0,127}));
-  connect(P, Gain.u) annotation (Line(points={{-100,74},{-56,74},{-56,-11.5},{-41.2,-11.5}}, color={0,127,127}));
+  connect(P, Gain.u) annotation (Line(points={{-100,74},{-64,74},{-64,24.5},{-49.2,24.5}},   color={0,127,127}));
+  connect(PowerbyVoltage_divison.y, constantSaturation.u) annotation (Line(points={{16,0},{45.6,0}}, color={0,0,127}));
   annotation (Diagram(coordinateSystem(preserveAspectRatio=false, extent={{-100,
             -100},{100,100}})),           Icon(coordinateSystem(
           preserveAspectRatio=false, extent={{-100,-100},{100,100}}), graphics={Text(

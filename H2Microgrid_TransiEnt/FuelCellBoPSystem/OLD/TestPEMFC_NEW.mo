@@ -1,5 +1,5 @@
-within H2Microgrid_TransiEnt.FuelCellBoPSystem.Tests;
-model TestPEMFC "Example of a fuel cell in a domestic application that follows different power setpoints"
+within H2Microgrid_TransiEnt.FuelCellBoPSystem.OLD;
+model TestPEMFC_NEW "Example of a fuel cell in a domestic application that follows different power setpoints"
 
 //________________________________________________________________________________//
 // Component of the TransiEnt Library, version: 2.0.3                             //
@@ -23,7 +23,7 @@ model TestPEMFC "Example of a fuel cell in a domestic application that follows d
 //________________________________________________________________________________//
 
   extends TransiEnt.Basics.Icons.Checkmodel;
-  inner TransiEnt.SimCenter simCenter annotation (Placement(transformation(extent={{-90,80},{-70,100}})));
+  inner TransiEnt.SimCenter simCenter annotation (Placement(transformation(extent={{-92,84},{-78,96}})));
 
   parameter TransiEnt.Basics.Media.Gases.Gas_MoistAir Air=TransiEnt.Basics.Media.Gases.Gas_MoistAir() "Medium model of air" annotation (choicesAllMatching);
 
@@ -85,15 +85,6 @@ model TestPEMFC "Example of a fuel cell in a domestic application that follows d
     offset=1,
     startTime=100)
                   "To use as direct input to the fuel cell model, without power controller" annotation (Placement(transformation(extent={{34,66},{54,86}})));
-  FuelCell.Controller.LambdaController_PID lambdaHController_PID(lambda_target=1.5, m_flow_rampup=1e-6) annotation (Placement(transformation(
-        extent={{-10,-10},{10,10}},
-        rotation=180,
-        origin={-72,-66})));
-  FuelCell.Controller.LambdaController_PID lambdaOController_PID(lambda_target=2.05, m_flow_rampup=2e-6)
-                                                                 "Controller that outputs the required air mass flow rate to meet OER (oxygen excess ratio) target " annotation (Placement(transformation(
-        extent={{-10,-10},{10,10}},
-        rotation=180,
-        origin={-18,-50})));
   Modelica.Thermal.FluidHeatFlow.Examples.Utilities.DoubleRamp Load(
     startTime=1.25e4,
     interval=1.25e4,
@@ -103,18 +94,42 @@ model TestPEMFC "Example of a fuel cell in a domestic application that follows d
     height_2=-15,
     duration_2=1)
                  annotation (Placement(transformation(extent={{-28,66},{-8,86}})));
-  AirSupplySystem.AirCompressorSystem airCompressorSystemModel annotation (Placement(transformation(extent={{-26,-90},{-6,-70}})));
+  AirSupplySystem.AirCompressorSystem airCompressorSystemModel annotation (Placement(transformation(extent={{-32,-94},{-12,-74}})));
   Modelica.Blocks.Sources.Ramp PowerRamp(
-    height=500,
-    duration=100,
-    offset=0.1,
+    height=4000,
+    duration=1000,
+    offset=500,
     startTime=10) annotation (Placement(transformation(extent={{-94,42},{-74,62}})));
   Modelica.Blocks.Sources.Constant PowerSet(k=600) annotation (Placement(transformation(extent={{4,66},{24,86}})));
   Modelica.Blocks.Sources.Step PowerStep(
     height=1000,
     offset=0,
     startTime=1000) annotation (Placement(transformation(extent={{-58,66},{-38,86}})));
-  Modelica.Blocks.Math.Gain gain(k=10.7639*0.0232) annotation (Placement(transformation(extent={{-44,28},{-34,38}})));
+  TransiEnt.Components.Electrical.FuelCellSystems.FuelCell.Controller.LambdaController lambdaController(m_flow_rampup=1e-8) annotation (Placement(transformation(
+        extent={{-10,-10},{10,10}},
+        rotation=180,
+        origin={-70,-64})));
+  Modelica.Thermal.FluidHeatFlow.Examples.Utilities.DoubleRamp Load1(
+    startTime=1.25e3,
+    interval=1.25e3,
+    duration_1=1000,
+    offset=0,
+    height_1=5000,
+    height_2=-4700,
+    duration_2=1000)
+                  annotation (Placement(transformation(extent={{62,48},{82,68}})));
+  TransiEnt.Components.Electrical.FuelCellSystems.FuelCell.Controller.LambdaController lambdaController1(Lambda_H_target=2.05, m_flow_rampup=1e-8) annotation (Placement(transformation(
+        extent={{-10,-10},{10,10}},
+        rotation=180,
+        origin={-26,-50})));
+  FuelCell.Controller.PowerController powerController annotation (Placement(transformation(
+        extent={{-10,-10},{10,10}},
+        rotation=180,
+        origin={8,32})));
+  FuelCell.Controller.LambdaController_PID lambdaHController_PID(lambda_target=1.5, m_flow_rampup=1e-10) annotation (Placement(transformation(
+        extent={{-10,-10},{10,10}},
+        rotation=180,
+        origin={70,-74})));
 equation
 
   connect(FC.feedh, SyngasSource.gas_a) annotation (Line(
@@ -134,18 +149,18 @@ equation
       color={255,170,85},
       thickness=0.5));
 
-  connect(FC.lambda_H, lambdaHController_PID.u1) annotation (Line(points={{14.32,-26},{14.32,-62},{-62.6,-62}},
-                                                                                                              color={0,0,127}));
-  connect(lambdaHController_PID.y, SyngasSource.m_flow) annotation (Line(points={{-81.4,-66},{-88,-66},{-88,16},{-58,16},{-58,15.8},{-48,15.8}}, color={0,0,127}));
-  connect(FC.lambda_O, lambdaOController_PID.u1) annotation (Line(points={{-1.68,-26},{-1.68,-36},{-2,-36},{-2,-46},{-6,-46},{-6,-46},{-8.6,-46}},    color={0,0,127}));
-  connect(lambdaOController_PID.y, AirSource.m_flow) annotation (Line(points={{-27.4,-50},{-52,-50},{-52,-32.4},{-46,-32.4}}, color={0,0,127}));
-  connect(lambdaOController_PID.y, airCompressorSystemModel.AirMassFlowRateSetpoint) annotation (Line(points={{-27.4,-50},{-34,-50},{-34,-74},{-26,-74}},       color={0,0,127}));
-  connect(PowerRamp.y, gain.u) annotation (Line(points={{-73,52},{-50,52},{-50,33},{-45,33}}, color={0,0,127}));
-  connect(gain.y, FC.I_load) annotation (Line(points={{-33.5,33},{-22,33},{-22,-11.9},{-7.12,-11.9}}, color={0,0,127}));
+  connect(lambdaController.y, SyngasSource.m_flow) annotation (Line(points={{-80.8,-64},{-92,-64},{-92,15.8},{-48,15.8}}, color={0,0,127}));
+  connect(FC.lambda_H, lambdaController.u1) annotation (Line(points={{14.32,-26},{14,-26},{14,-70},{-60,-70}}, color={0,0,127}));
+  connect(FC.lambda_O, lambdaController1.u1) annotation (Line(points={{-1.68,-26},{-1.68,-56},{-16,-56}}, color={0,0,127}));
+  connect(lambdaController1.y, AirSource.m_flow) annotation (Line(points={{-36.8,-50},{-52,-50},{-52,-32.4},{-46,-32.4}}, color={0,0,127}));
+  connect(airCompressorSystemModel.AirMassFlowRateSetpoint, lambdaController1.y) annotation (Line(points={{-32,-78},{-46,-78},{-46,-50},{-36.8,-50}}, color={0,0,127}));
+  connect(powerController.V_stack, FC.V_stack) annotation (Line(points={{17,37.4},{70,37.4},{70,-11},{22,-11}}, color={0,127,127}));
+  connect(powerController.y, FC.I_load) annotation (Line(points={{-3,32},{-18,32},{-18,-11.9},{-7.12,-11.9}}, color={0,0,127}));
+  connect(powerController.P, Load1.y) annotation (Line(points={{17,26},{90,26},{90,58},{83,58}}, color={0,127,127}));
   annotation (
     Diagram(coordinateSystem(preserveAspectRatio=false, extent={{-100,-100},{100,100}})),
     experiment(
-      StopTime=40000,
+      StopTime=5000,
       Interval=1,
       __Dymola_Algorithm="Dassl"),
     __Dymola_experimentSetupOutput,
@@ -178,4 +193,4 @@ equation
 <p>Based on TransiEnt library testing model structure. Compositions, medium, controllers and fuel cell models have been adapted.</p>
 <h4><span style=\"color: #008000\">10. Version History</span></h4>
 </html>"));
-end TestPEMFC;
+end TestPEMFC_NEW;

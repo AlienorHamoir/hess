@@ -85,10 +85,6 @@ model SystemPEMFC "Fuel cell system, with auxiliaries and power controller"
     useHeatPort=true,
     tau_i=0.1,
     k_p=1300)                     annotation (Placement(transformation(extent={{-14,-18},{18,12}})));
-  Controller.LambdaController_PID          lambdaHController_PID(lambda_target=1.5, m_flow_rampup=1e-10)   annotation (Placement(transformation(
-        extent={{-10,-10},{10,10}},
-        rotation=180,
-        origin={-76,-58})));
   Controller.LambdaController_PID          lambdaOController_PID(lambda_target=2.05, m_flow_rampup=1e-8)
                                                                  "Controller that outputs the required air mass flow rate to meet OER (oxygen excess ratio) target " annotation (Placement(transformation(
         extent={{-10,-10},{10,10}},
@@ -99,7 +95,7 @@ model SystemPEMFC "Fuel cell system, with auxiliaries and power controller"
   AirSupplySystem.AirCompressorSystem AirCompressorSystem annotation (Placement(transformation(extent={{28,-84},{48,-64}})));
   Modelica.Blocks.Sources.RealExpression P_el_out(y=P_el_sys) annotation (Placement(transformation(extent={{68,-50},{88,-30}})));
 
-  Controller.PowerController powerController(i_max=120, P_min=500) annotation (Placement(transformation(
+  Controller.PowerController powerController(i_max=150)            annotation (Placement(transformation(
         extent={{-10,-10},{10,10}},
         rotation=180,
         origin={-52,68})));
@@ -120,6 +116,10 @@ model SystemPEMFC "Fuel cell system, with auxiliaries and power controller"
   inner TransiEnt.SimCenter simCenter annotation (Placement(transformation(extent={{62,-98},{76,-84}})));
   Modelica.Blocks.Sources.RealExpression P_el_out_aux(y=P_el_aux) annotation (Placement(transformation(extent={{68,-68},{88,-48}})));
   TransiEnt.Basics.Interfaces.Electrical.ElectricPowerOut P_FC_aux annotation (Placement(transformation(extent={{92,-92},{116,-68}}), iconTransformation(extent={{92,-92},{116,-68}})));
+  Controller.LambdaController_PID          lambdaHController_PID(lambda_target=1.5, m_flow_rampup=1e-10)   annotation (Placement(transformation(
+        extent={{-10,-10},{10,10}},
+        rotation=180,
+        origin={-66,-64})));
 equation
 
   P_el_tot = FC.P_el + AirCompressorSystem.P_airCompressor + coolingModel.P_coolingPump;
@@ -178,16 +178,12 @@ equation
       points={{18,-12},{34,-12},{34,-20},{50,-20}},
       color={255,170,85},
       thickness=0.5));
-  connect(FC.lambda_H,lambdaHController_PID. u1) annotation (Line(points={{10.32,-18},{10.32,-54},{-66.6,-54}},
-                                                                                                              color={0,0,127}));
-  connect(lambdaHController_PID.y,SyngasSource. m_flow) annotation (Line(points={{-85.4,-58},{-92,-58},{-92,24},{-62,24},{-62,23.8},{-52,23.8}}, color={0,0,127}));
   connect(FC.lambda_O,lambdaOController_PID. u1) annotation (Line(points={{-5.68,-18},{-5.68,-28},{-6,-28},{-6,-38},{-10,-38},{-10,-38},{-12.6,-38}}, color={0,0,127}));
   connect(FC.heat,coolingModel. heatPortCooling) annotation (Line(points={{18.16,-7.65},{66,-7.65},{66,36},{44,36},{44,42.2}},
                                                                                                                          color={191,0,0}));
   connect(FC.temperatureOut,coolingModel. T_op) annotation (Line(points={{-5.04,-7.5},{-22,-7.5},{-22,20},{36,20},{36,56},{44,56}},         color={0,0,127}));
   connect(lambdaOController_PID.y,AirSource. m_flow) annotation (Line(points={{-31.4,-42},{-56,-42},{-56,-24.4},{-50,-24.4}}, color={0,0,127}));
   connect(lambdaOController_PID.y, AirCompressorSystem.AirMassFlowRateSetpoint) annotation (Line(points={{-31.4,-42},{-36,-42},{-36,-68},{28,-68}},       color={0,0,127}));
-  connect(lambdaHController_PID.y, mflowH2_FC) annotation (Line(points={{-85.4,-58},{-92,-58},{-92,-82},{-56,-82},{-56,-102}}, color={0,0,127}));
   connect(P_el_out.y, P_FC_tot) annotation (Line(points={{89,-40},{104,-40}}, color={0,0,127}));
   connect(FC.V_stack, powerController.V_stack) annotation (Line(
       points={{18,-3},{18,-4},{26,-4},{26,73.4},{-43,73.4}},
@@ -203,6 +199,9 @@ equation
       pattern=LinePattern.Dash));
   connect(coolingModel.T_environment, T_environment) annotation (Line(points={{44,50},{34,50},{34,86},{85,86},{85,107}}, color={0,0,127}));
   connect(P_el_out_aux.y, P_FC_aux) annotation (Line(points={{89,-58},{96,-58},{96,-80},{104,-80}}, color={0,0,127}));
+  connect(FC.lambda_H, lambdaHController_PID.u1) annotation (Line(points={{10.32,-18},{10.32,-70},{-50,-70},{-50,-60},{-56.6,-60}}, color={0,0,127}));
+  connect(lambdaHController_PID.y, SyngasSource.m_flow) annotation (Line(points={{-75.4,-64},{-80,-64},{-80,0},{-58,0},{-58,23.8},{-52,23.8}}, color={0,0,127}));
+  connect(lambdaHController_PID.y, mflowH2_FC) annotation (Line(points={{-75.4,-64},{-80,-64},{-80,-84},{-56,-84},{-56,-102}}, color={0,0,127}));
   annotation (
     Diagram(coordinateSystem(preserveAspectRatio=false, extent={{-100,-100},{100,100}})),
     experiment(StopTime=40),
