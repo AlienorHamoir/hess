@@ -70,39 +70,50 @@ model TestPEMFCexp "Test and validation with experimental results of the PEMFC m
   Modelica.Blocks.Sources.Ramp CurrentRamp(
     height=20,
     duration=1,
-    offset=1,
-    startTime=3000)
+    offset=0.1,
+    startTime=1000)
                   "To use as direct input to the fuel cell model, without power controller" annotation (Placement(transformation(extent={{34,66},{54,86}})));
-  Modelica.Thermal.FluidHeatFlow.Examples.Utilities.DoubleRamp Load(
-    startTime=1.25e4,
-    interval=1.25e4,
+  Modelica.Thermal.FluidHeatFlow.Examples.Utilities.DoubleRamp DynamicCurrentDensity(
+    startTime=13,
+    interval=26,
     duration_1=1,
-    offset=10,
-    height_1=40,
-    height_2=-15,
-    duration_2=1)
-                 annotation (Placement(transformation(extent={{-28,66},{-8,86}})));
+    offset=0.015,
+    height_1=0.095,
+    height_2=-0.095,
+    duration_2=1) "Test current density for dynamical model validation" annotation (Placement(transformation(extent={{-28,66},{-8,86}})));
   Modelica.Blocks.Sources.Ramp PowerRamp(
-    height=30,
+    height=120,
     duration=1000,
     offset=10,
-    startTime=10) annotation (Placement(transformation(extent={{-94,42},{-74,62}})));
+    startTime=1000)
+                  annotation (Placement(transformation(extent={{-94,42},{-74,62}})));
   Modelica.Blocks.Sources.Constant PowerSet(k=11)  annotation (Placement(transformation(extent={{4,66},{24,86}})));
-  Modelica.Blocks.Sources.Step PowerStep(
-    height=50,
-    offset=0,
-    startTime=500)  annotation (Placement(transformation(extent={{-58,66},{-38,86}})));
-  PEMFC_KhanIqbal FC(usePowerPort=false, useHeatPort=false)
+  Modelica.Blocks.Sources.Step CurrentDensityStep(
+    height=60,
+    offset=20,
+    startTime=1200)
+                  annotation (Placement(transformation(extent={{-58,66},{-38,86}})));
+  PEMFC_KhanIqbal FC(
+    T_nom=338.15,
+    T_stack_max=333.15,
+    T_cool_set=331.15,
+                     usePowerPort=false, useHeatPort=false,
+    T_stack(start=313.15))
                      annotation (Placement(transformation(extent={{-6,-18},{14,2}})));
   inner TransiEnt.SimCenter simCenter annotation (Placement(transformation(extent={{-90,82},{-74,98}})));
-  TransiEnt.Components.Electrical.FuelCellSystems.FuelCell.Controller.LambdaController lambdaController(m_flow_rampup=1e-8) annotation (Placement(transformation(extent={{-90,4},{-70,24}})));
-  TransiEnt.Components.Electrical.FuelCellSystems.FuelCell.Controller.LambdaController lambdaControllerO2(
-    Lambda_H_target=2.05,
-    m_flow_rampup=1e-4,
-    k=1e-2) annotation (Placement(transformation(
+  Modelica.Blocks.Math.Gain A_cell(k=232) annotation (Placement(transformation(
+        extent={{-5,-5},{5,5}},
+        rotation=-90,
+        origin={-33,47})));
+  Modelica.Blocks.Sources.CombiTimeTable CellDynamicResponse(table=[0,0.995; 13,0.995; 14,0.82; 16,0.8; 28,0.8; 40,0.8; 41,0.97; 42,0.995; 70,0.995], tableOnFile=false) "create a stair-step signal for efficiency computation" annotation (Placement(transformation(
         extent={{-10,-10},{10,10}},
         rotation=180,
-        origin={-18,-44})));
+        origin={62,40})));
+  FuelCell.Controller.LambdaController_PID lambdaController_PID(lambda_target=1.5, m_flow_rampup=1e-8) annotation (Placement(transformation(extent={{-90,-10},{-70,10}})));
+  FuelCell.Controller.LambdaController_PID lambdaController_PID1(lambda_target=2.05, m_flow_rampup=1e-8) annotation (Placement(transformation(
+        extent={{-10,-10},{10,10}},
+        rotation=180,
+        origin={-26,-54})));
 equation
 
   connect(FC.feedh, SyngasSource.gas_a) annotation (Line(
@@ -121,14 +132,15 @@ equation
       points={{14,-14},{50,-14},{50,-28},{54,-28}},
       color={255,170,85},
       thickness=0.5));
-  connect(FC.lambda_H, lambdaController.u1) annotation (Line(points={{9.2,-18},{9.2,-26},{8,-26},{8,-96},{-94,-96},{-94,20},{-90,20}}, color={0,0,127}));
-  connect(lambdaController.y, SyngasSource.m_flow) annotation (Line(points={{-69.2,14},{-52,14},{-52,15.8},{-48,15.8}}, color={0,0,127}));
-  connect(FC.lambda_O, lambdaControllerO2.u1) annotation (Line(points={{-0.8,-18},{-0.8,-50},{-8,-50}}, color={0,0,127}));
-  connect(lambdaControllerO2.y, AirSource.m_flow) annotation (Line(points={{-28.8,-44},{-56,-44},{-56,-32.4},{-46,-32.4}}, color={0,0,127}));
-  connect(Load.y, FC.I_load) annotation (Line(points={{-7,76},{-4,76},{-4,6},{-14,6},{-14,-8.6},{-4.2,-8.6}}, color={0,0,127}));
+  connect(DynamicCurrentDensity.y, A_cell.u) annotation (Line(points={{-7,76},{-4,76},{-4,58},{-33,58},{-33,53}}, color={0,0,127}));
+  connect(FC.lambda_H, lambdaController_PID.u1) annotation (Line(points={{9.2,-18},{9.2,-70},{-96,-70},{-96,-4},{-89.4,-4}}, color={0,0,127}));
+  connect(lambdaController_PID.y, SyngasSource.m_flow) annotation (Line(points={{-70.6,0},{-54,0},{-54,15.8},{-48,15.8}}, color={0,0,127}));
+  connect(FC.lambda_O, lambdaController_PID1.u1) annotation (Line(points={{-0.8,-18},{-0.8,-50},{-16.6,-50}}, color={0,0,127}));
+  connect(lambdaController_PID1.y, AirSource.m_flow) annotation (Line(points={{-35.4,-54},{-52,-54},{-52,-32.4},{-46,-32.4}}, color={0,0,127}));
+  connect(PowerRamp.y, FC.I_load) annotation (Line(points={{-73,52},{-56,52},{-56,-8.6},{-4.2,-8.6}}, color={0,0,127}));
   annotation (experiment(
       StartTime=1,
-      StopTime=40000,
+      StopTime=4800,
       Interval=1,
       Tolerance=1e-06,
       __Dymola_Algorithm="Dassl"));
