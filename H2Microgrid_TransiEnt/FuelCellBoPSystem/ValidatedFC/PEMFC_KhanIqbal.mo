@@ -43,7 +43,7 @@ model PEMFC_KhanIqbal "Model of PEM Fuel Cell stack experimentally validated - K
 
   parameter Integer no_Cells = 35 "Number of cells connected in series";
 
-  parameter Real lambda=12.5 "constant humidity";
+  parameter Real lambda=16 "constant humidity";
 
   parameter Modelica.Units.SI.Thickness t_mem = 178e-6 "PE membrane thickness - ref. Nafion 115 in microm";
 
@@ -51,9 +51,9 @@ model PEMFC_KhanIqbal "Model of PEM Fuel Cell stack experimentally validated - K
 
   parameter Modelica.Units.SI.Area A=0.0232 "Area of one cell";
 
-  parameter Modelica.Units.SI.Pressure p_Anode=303975 "Pressure at the anode - 3 atm";
+  parameter Modelica.Units.SI.Pressure p_Anode=3e5 "Pressure at the anode - 3 bar";
 
-  parameter Modelica.Units.SI.Pressure p_Cathode=303975  "Pressure at the cathode - 3 atm";
+  parameter Modelica.Units.SI.Pressure p_Cathode=3e5  "Pressure at the cathode - 3 bar";
 
   parameter Modelica.Units.SI.Pressure p_Amb=1e5 "Pressure at the cathode";
 
@@ -65,17 +65,17 @@ model PEMFC_KhanIqbal "Model of PEM Fuel Cell stack experimentally validated - K
 
   parameter Modelica.Units.SI.Mass m=43 "Mass of the stack";
 
-  parameter Modelica.Units.SI.SpecificHeatCapacity cp=35000/43 "Specific heat capacity of the stack";
+  parameter Modelica.Units.SI.SpecificHeatCapacity cp=814 "Specific heat capacity of the stack - cp * m = 35000";
 
-  parameter Modelica.Units.SI.Temperature T_nom = 60 + 273.15 "Temperature in nominal point";
+  parameter Modelica.Units.SI.Temperature T_nom = 65 + 273.15 "Temperature in nominal point";
 
   parameter Modelica.Units.SI.Temperature T_amb = 25 + 273.15 "Ambient temperature";
 
   parameter Modelica.Units.SI.Temperature T_std = 25 + 273.15 "Standard temperature";
 
-  parameter Modelica.Units.SI.Temperature T_stack_max = 60 + 273.15 "Maximum stack temperature";
+  parameter Modelica.Units.SI.Temperature T_stack_max = 65 + 273.15 "Maximum stack temperature";
 
-  parameter Modelica.Units.SI.Temperature T_cool_set = 45 + 273.15 "Cooling trigger point";
+  parameter Modelica.Units.SI.Temperature T_cool_set = 60 + 273.15 "Cooling trigger point";
 
   parameter Modelica.Units.SI.ThermalConductance ka=17 "Thermal conductance of the stack ";
 
@@ -85,9 +85,11 @@ model PEMFC_KhanIqbal "Model of PEM Fuel Cell stack experimentally validated - K
 
   parameter Modelica.Units.SI.Voltage v_n=simCenter.v_n "Nominal Voltage for grid";
 
-  parameter Modelica.Units.SI.Capacitance C = 0.35 * 20  "Stack capacitance for dynamic activation overvoltage";
+  parameter Modelica.Units.SI.Voltage OCV=1.473 "Open circuit voltage of a cell";
 
-  parameter Modelica.Units.SI.Enthalpy H_0 = 282.5e3 "Hydrogen enthalpy of combustion";
+  parameter Modelica.Units.SI.Capacitance C_dl = 4  "Stack double layer capacitance for dynamic activation overvoltage";
+
+  parameter Modelica.Units.SI.Enthalpy H_0 = 285.5e3 "Hydrogen enthalpy of combustion";
 
   parameter Modelica.Units.SI.Volume V_a = 0.005 "Anode volume";
 
@@ -108,8 +110,8 @@ model PEMFC_KhanIqbal "Model of PEM Fuel Cell stack experimentally validated - K
 
 
    //Temperature PID Controller Parameters
-  parameter Modelica.Units.SI.Time tau_i=0.005 "1/tau_i for cooling system PID integrator gain";
-  parameter Real k_p=500 "gain, cooling system PID proportional control - 1050 when opposite sign convention with PID";
+  parameter Modelica.Units.SI.Time tau_i=0.01 "1/tau_i, cooling system PID integrator gain";
+  parameter Real k_p=3800 "gain, cooling system PID proportional control";
   parameter Modelica.Units.SI.Time tau_d=0.1 "tau_d, for cooling system PID derivator gain";
   parameter Real N_i=0.5 "gain of anti-windup compensation ";
   parameter Real N_d=1 "gain, ideal derivative block ";
@@ -125,7 +127,7 @@ model PEMFC_KhanIqbal "Model of PEM Fuel Cell stack experimentally validated - K
   Modelica.Units.SI.Temperature T_syng_ein "Temperature of the syngas";
   Modelica.Units.SI.Temperature T_air_ein "Temperature of the air";
 
-  Modelica.Units.SI.Voltage E_cell "Voltage of one cell";
+  Modelica.Units.SI.Voltage E_cell(start=OCV, fixed=true) "Voltage of one cell";
   Modelica.Units.SI.Voltage E_stack "Voltage of the stack";
   Modelica.Units.SI.Voltage V_ohmic "Ohmic losses";
   Modelica.Units.SI.Voltage V_Nernst "Nernst voltage";
@@ -150,7 +152,7 @@ model PEMFC_KhanIqbal "Model of PEM Fuel Cell stack experimentally validated - K
   Modelica.Units.SI.Concentration c_O2 "Concentration in mol/m3 fraction of O2 in the stack";
   Modelica.Units.SI.Concentration c_H2 "Concentration in mol/m3 fraction of H2 in the stack";
   Modelica.Units.SI.Resistivity rho_m "Resistivity of the PE membrane";
-  Modelica.Units.SI.Pressure P_O2(start=p_Anode, fixed=true) "Partial pressure of oxygen at the cathode";
+  Modelica.Units.SI.Pressure P_O2(start=p_Cathode, fixed=true) "Partial pressure of oxygen at the cathode";
   Modelica.Units.SI.Pressure P_H2(start=p_Anode, fixed=true) "Partial pressure of hydrogen at the anode";
   Modelica.Units.SI.Pressure P_H2O "Partial pressure of water at the cathode";
 
@@ -161,11 +163,11 @@ model PEMFC_KhanIqbal "Model of PEM Fuel Cell stack experimentally validated - K
   Modelica.Units.SI.SpecificEnthalpy h_aaus=aira.h;
 
   Boolean cooling_control "control operation of Q_cool";
-  Modelica.Units.SI.HeatFlowRate Q_flow_reac "Heat flow due to reaction";
-  Modelica.Units.SI.HeatFlowRate Q_flow_gas "Heat flow to/from syngas and air";
+  Modelica.Units.SI.TemperatureSlope der_T_stack "Operating stack temperature";
+  Modelica.Units.SI.HeatFlowRate Q_flow_gas "Heat flow from syngas";
   Modelica.Units.SI.HeatFlowRate Q_flow_convective "Convective heat flow ";
-  Modelica.Units.SI.HeatFlowRate Q_flow_cooling "cooling power of heat exchanger";
-  Modelica.Units.SI.HeatFlowRate Q_flow_el "W, heat generated in FC from hydrogen reaction for electricity production";
+  Modelica.Units.SI.HeatFlowRate Q_flow_cooling "Cooling power of heat exchanger";
+  Modelica.Units.SI.HeatFlowRate Q_flow_el "W, heat used in FC by hydrogen reaction for electricity production";
 
   Modelica.Units.SI.Current I "Electric current through the stack";
   Modelica.Units.SI.Current I_is "Theoretical electric current through the stack based on available H2 mass flow";
@@ -213,7 +215,7 @@ model PEMFC_KhanIqbal "Model of PEM Fuel Cell stack experimentally validated - K
         rotation=-90,
         origin={52,-100})));
 
-  TransiEnt.Basics.Interfaces.Electrical.ElectricPowerOut P_el = -1 * V_stack * I annotation (Placement(
+  TransiEnt.Basics.Interfaces.Electrical.ElectricPowerOut P_el annotation (Placement(
         transformation(
         extent={{-20,-20},{20,20}},
         rotation=270,
@@ -286,27 +288,28 @@ model PEMFC_KhanIqbal "Model of PEM Fuel Cell stack experimentally validated - K
   TransiEnt.Basics.Interfaces.General.TemperatureOut temperatureOut annotation (Placement(transformation(extent={{-54,-40},{-34,-20}}), iconTransformation(extent={{-54,-40},{-34,-20}})));
   Modelica.Thermal.HeatTransfer.Sources.PrescribedHeatFlow prescribedHeatFlow(T_ref=T_nom, alpha=0)
                                                                               if useHeatPort annotation (Placement(transformation(extent={{70,-36},{78,-28}})));
-  Modelica.Blocks.Sources.RealExpression Q_flow_positive(y=-Q_flow_cooling)
+  Modelica.Blocks.Sources.RealExpression Q_flow_positive(y=Q_flow_cooling)
                                                                      if useHeatPort annotation (Placement(transformation(extent={{50,-38},{62,-26}})));
   Modelica.Thermal.HeatTransfer.Interfaces.HeatPort_a heat if useHeatPort annotation (Placement(transformation(extent={{90,-42},{112,-20}}), iconTransformation(extent={{90,-42},{112,-20}})));
-  Modelica.Blocks.Sources.RealExpression PID_T_max(y=T_stack_max)
-                                                               annotation (Placement(transformation(extent={{-10,-48},{10,-28}})));
   Modelica.Blocks.Sources.BooleanExpression PID_T_control(y=cooling_control) annotation (Placement(transformation(extent={{-10,-62},{10,-42}})));
   Modelica.Blocks.Sources.RealExpression PID_T_op(y=T_stack)
                                                           annotation (Placement(transformation(extent={{-10,-76},{10,-56}})));
   ClaRa.Components.Utilities.Blocks.LimPID cooling_PID(
-    y_max=12000,
+    y_max=15000,
     y_min=0,
+    Tau_d=tau_d,
     Ni=N_i,
+    Nd=N_d,
     y_inactive=0,
     use_activateInput=true,
-    sign=1,
+    sign=-1,
     Tau_i=tau_i,
     k=k_p,
     controllerType=Modelica.Blocks.Types.SimpleController.PI)  annotation (Placement(transformation(extent={{20,-56},{40,-36}})));
   Modelica.Blocks.Sources.RealExpression Q_Cooling(y=Q_flow_cooling) "excess waste heat generated by fuel cell system, actively cooled by default" annotation (Placement(transformation(extent={{-42,-80},{-22,-60}})));
   TransiEnt.Basics.Interfaces.Thermal.HeatFlowRateOut excessHeatFlowOut annotation (Placement(transformation(extent={{-54,-70},{-34,-50}})));
 
+  Modelica.Blocks.Sources.RealExpression T_setpoint(y=T_nom) annotation (Placement(transformation(extent={{-10,-44},{10,-24}})));
 equation
   // _____________________________________________
   //
@@ -316,14 +319,16 @@ equation
           ////////
   //// Voltage and current model ////
           ////////
+  P_el = - V_stack * I;
 
   V_Nernst = 1.229 - 0.9e-3*(T_stack - T_amb) + ( Modelica.Constants.R * T_stack) / (z * Modelica.Constants.F) * log(P_H2 * sqrt(P_O2));
 
 
   V_ohmic = I * Rm;
-  Rm =   t_mem / rho_m / A;
-  rho_m = (0.00514*lambda - 0.00326)*exp(1268*(1/303 - 1/T_stack))*10e2; // Springer, 1991 "Polymer Electrolyte Fuel Cell Model"
-  // rho_m = 181.6 * (1 + 0.03 * J + 0.062 * (T_stack / 303)^2 * J^(2.5)) / ( (lambda - 0.634 - 3 * J) * exp(4.18 * ((T_stack-303)/T_stack))); // Khan and Iqbal (2004), from Mann and Amphlett (2000) from  Springer et al. (1991) - equivalent to above equation à priori
+  Rm =   t_mem * rho_m / A;
+  // rho_m = (0.00514*lambda - 0.00326)*exp(1268*(1/303 - 1/T_stack))*10e2; // Springer, 1991 "Polymer Electrolyte Fuel Cell Model"
+  // rho_m = 181.6 * (1 + 0.03 * J + 0.062 * (T_stack / 303)^2 * J^(2.5)) / ( (lambda - 0.634 - 3 * J) * exp(4.18 * ((T_stack-303)/T_stack)))*10e-2; // Khan and Iqbal (2004), from Mann and Amphlett (2000) from  Springer et al. (1991) - equivalent to above equation à priori: rm = 1/sm
+  rho_m = 181.6 / ((lambda - 0.634) * exp(4.18 * ((T_stack-298.15)/T_stack)))*10e-2; // simplified Khan and Iqbal (2004), neglecting dependency on J
 
 
   V_act = -1 * (-0.948 + (0.00286 + 0.0002 * log(A) + 4.3e-5 * log(c_H2))*T_stack + 7.6e-5*T_stack*log(c_O2) - 1.93e-4*T_stack* log(I));
@@ -331,14 +336,14 @@ equation
   c_H2 = P_H2 * 9.74e-7 * exp(-77/T_stack);
 
 
-  der(V_d) = I/C - V_d / (C*Ra);
+  der(V_d) = I/C_dl - V_d / (C_dl*Ra);
   Ra =  V_act / I;
 
   // If use of steady activation overvoltage
-  E_cell = V_Nernst - V_act - V_ohmic;
+ // E_cell = V_Nernst - V_act - V_ohmic;
 
   // If use of dynamic activation overvoltage
- // E_cell = V_Nernst - V_d - V_ohmic;
+  E_cell = V_Nernst - V_d - V_ohmic;
 
 
   E_stack = E_cell * no_Cells;
@@ -347,8 +352,8 @@ equation
   J = I / A;
 
   // Normal operating point: Reaction is running
- // I = min(I_load,I_is); // to implement when mflow_H2 differet than 0
-  I = I_load;
+  I = min(I_load,I_is); // to accomodate with the hydrogen supply dynamics
+  // I = I_load;
   V_stack = E_stack;
   lambda_H = (feedh.m_flow*inStream(feedh.xi_outflow[5]))/m_dot_H2_react_stack;
   lambda_O = (feeda.m_flow*(1-inStream(feeda.xi_outflow[1]) - inStream(feeda.xi_outflow[2])))/m_dot_O2_react_stack;
@@ -381,19 +386,23 @@ equation
 
 
   // Energy balance
+  der(T_stack) = der_T_stack;
+
   cooling_control = T_stack > T_cool_set;
 
+ // Q_flow_gas = m_dot_H2_react_stack / M_H2 * H_0 - m_dot_H2O_gen_stack * 2410000 + feedh.m_flow*h_hein + feeda.m_flow*h_aein + drainh.m_flow*h_haus + draina.m_flow*h_aaus;
+
+  //Q_flow_gas = m_dot_H2_react_stack * 14.43e3 + m_dot_O2_react_stack * 0.928e3  - m_dot_H2O_gen_stack/syng.M_i[4]*Delta_H_T; // cp for O2 and H2 at 350 K used (source: engineering toolbox)
+
+  Q_flow_gas = feedh.m_flow*h_hein + feeda.m_flow*h_aein + drainh.m_flow*h_haus + draina.m_flow*h_aaus - m_dot_H2O_gen_stack/syng.M_i[4]*Delta_H_T;
+
   Q_flow_el = E_stack*I;
-
-  Q_flow_reac = 0;
-
-  Q_flow_gas = feedh.m_flow*(h_hein + 356955 + 1.19951e8); // h0 + H2 NCV
 
   Q_flow_convective = (T_stack - T_amb)/R_th "convection heat transfer rate";
 
   Q_flow_cooling = cooling_PID.y;
 
-  der(T_stack)*m*cp = Q_flow_gas - Q_flow_convective - Q_flow_cooling - Q_flow_el;
+  m*cp * der_T_stack = Q_flow_gas - Q_flow_convective - Q_flow_cooling - Q_flow_el;
 
 
 
@@ -403,14 +412,14 @@ equation
 
    // H2 balance at anode
    V_a * der(P_H2) / (Modelica.Constants.R * T_stack) = (feedh.m_flow*inStream(feedh.xi_outflow[5]) - m_dot_H2_react_stack + drainh.m_flow*drainh.xi_outflow[5])/M_H2;
-  - drainh.m_flow*drainh.xi_outflow[5] = k_a * (P_H2 - p_Anode);
+  - drainh.m_flow*drainh.xi_outflow[5] = M_H2 * k_a * (P_H2 - p_Anode);
 
   // O2 balance at cathode
   V_c * der(P_O2) / (Modelica.Constants.R * T_stack)  = (feeda.m_flow*(1-inStream(feeda.xi_outflow[1])-inStream(feeda.xi_outflow[2])) - m_dot_O2_react_stack + draina.m_flow*(1-draina.xi_outflow[1]-draina.xi_outflow[2]))/M_O2;
-  - draina.m_flow*(1-draina.xi_outflow[1]-draina.xi_outflow[2]) = k_c * (P_O2 - p_Cathode);
+  - draina.m_flow*(1-draina.xi_outflow[1]-draina.xi_outflow[2]) = M_O2 * k_c * (P_O2 - p_Cathode);
 
   // Products balance: H2O mass balance at cathode
-   V_c * der(P_H2O) / (Modelica.Constants.R * T_stack)  = feeda.m_flow*inStream(feeda.xi_outflow[1]) + m_dot_H2O_gen_stack/no_Cells + draina.m_flow*draina.xi_outflow[1];
+   V_c * der(P_H2O) / (Modelica.Constants.R * T_stack)  = (feeda.m_flow*inStream(feeda.xi_outflow[1]) + m_dot_H2O_gen_stack/no_Cells + draina.m_flow*draina.xi_outflow[1])/ syng.M_i[4];
 
 
   // mass balance (total mass)
@@ -454,8 +463,6 @@ equation
                                                                                     color={0,0,127}));
   connect(PID_T_op.y, cooling_PID.u_m) annotation (Line(points={{11,-66},{30.1,-66},{30.1,-58}},                  color={0,0,127}));
   connect(PID_T_control.y, cooling_PID.activateInput) annotation (Line(points={{11,-52},{12,-54},{18,-54}},      color={255,0,255}));
-  connect(PID_T_max.y, cooling_PID.u_s) annotation (Line(points={{11,-38},{14,-38},{14,-46},{18,-46}},
-                                                                                               color={0,0,127}));
   connect(excessHeatFlowOut, Q_Cooling.y) annotation (Line(
       points={{-44,-60},{-18,-60},{-18,-70},{-21,-70}},
       color={162,29,33},
@@ -463,6 +470,7 @@ equation
 
   connect(Q_flow_positive.y, prescribedHeatFlow.Q_flow) annotation (Line(points={{62.6,-32},{70,-32}}, color={0,0,127}));
   connect(heat, heat) annotation (Line(points={{101,-31},{101,-31}}, color={191,0,0}));
+  connect(T_setpoint.y, cooling_PID.u_s) annotation (Line(points={{11,-34},{16,-34},{16,-38},{18,-38},{18,-46}}, color={0,0,127}));
  annotation (Line(points={{50.6,-26},{70,-26}}, color={0,0,127}),
               Icon(coordinateSystem(preserveAspectRatio=false, extent={{-100,-100},
             {100,100}}), graphics={

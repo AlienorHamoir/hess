@@ -20,10 +20,6 @@ model HESS_Compressed "HESS with high-pressure compressed storage system"
   StorageSystem.H2StorageSystem_Compressed h2StorageSystem_Compressed(p_start=p_start, p_maxHigh=p_max)
                                                                       annotation (Placement(transformation(extent={{22,-40},{62,20}})));
   Modelica.Blocks.Interfaces.RealOutput SOC "H2 Tank State of Charge [-]" annotation (Placement(transformation(extent={{88,-16},{120,16}}), iconTransformation(extent={{88,-16},{120,16}})));
-  FuelCellBoPSystem.FuelCell.SystemPEMFC systemFC annotation (Placement(transformation(
-        extent={{-20,-20},{20,20}},
-        rotation=90,
-        origin={-20,60})));
   TransiEnt.Basics.Interfaces.Electrical.ElectricPowerIn P_set_FC "Input for FC power production setpoint" annotation (Placement(transformation(extent={{-120,50},{-82,90}}), iconTransformation(extent={{-120,50},{-82,90}})));
   TransiEnt.Components.Boundaries.Gas.BoundaryRealGas_Txim_flow H2massSink(medium=medium, variable_m_flow=true) annotation (Placement(transformation(
         extent={{-9,-8},{9,8}},
@@ -47,6 +43,10 @@ model HESS_Compressed "HESS with high-pressure compressed storage system"
         extent={{-20,-20},{20,20}},
         rotation=90,
         origin={40,-100})));
+  FuelCellBoPSystem.ValidatedFC.SystemPEMFCexp systemFC annotation (Placement(transformation(
+        extent={{-20,-20},{20,20}},
+        rotation=90,
+        origin={-20,60})));
 equation
   //// States and power setpoints management: delta_i = 0 -> OFF, delta_i = 1 -> STB, delta_i = 2 -> ON
   // FUEL CELL
@@ -82,18 +82,18 @@ equation
       points={{42,19.4},{42,44},{36,44}},
       color={255,255,0},
       thickness=1.5));
-  connect(systemFC.mflowH2_FC, H2massSink.m_flow) annotation (Line(points={{0.4,48.8},{16.2,48.8}}, color={0,0,127}));
   connect(h2StorageSystem_Compressed.P_comp, systemEL.CompressorPower) annotation (Line(
       points={{62.8,-20.8},{68,-20.8},{68,-76},{-7.8,-76},{-7.8,-68.6}},
       color={0,135,135},
       pattern=LinePattern.Dash));
   connect(systemEL.T_environment, T_environment) annotation (Line(points={{-40.6,-31.4},{-74,-31.4},{-74,0},{-100,0}}, color={0,0,127}));
-  connect(T_environment, systemFC.T_environment) annotation (Line(points={{-100,0},{-74,0},{-74,78},{-41.6,78},{-41.6,77.6}}, color={0,0,127}));
-  connect(PowerSetpointFC.y, systemFC.P_el_set) annotation (Line(points={{-51,60},{-41.6,60}},                   color={0,0,127}));
   connect(PowerSetpointEL.y, systemEL.P_el_set) annotation (Line(points={{-55,-48},{-40.8,-48}},                     color={0,0,127}));
   connect(PowerOutEL.y, P_EL) annotation (Line(points={{63,-66},{88,-66},{88,-69},{109,-69}}, color={0,0,127}));
   connect(PowerOutFC.y, P_FC) annotation (Line(points={{77,62},{90,62},{90,67},{109,67}},
                                                                                   color={0,0,127}));
+  connect(PowerSetpointFC.y, systemFC.P_el_set) annotation (Line(points={{-51,60},{-41.6,60}}, color={0,0,127}));
+  connect(T_environment, systemFC.T_environment) annotation (Line(points={{-100,0},{-74,0},{-74,46},{-76,46},{-76,84},{-41.6,84},{-41.6,77.6}}, color={0,0,127}));
+  connect(systemFC.mflowH2_FC, H2massSink.m_flow) annotation (Line(points={{0.4,48.8},{16.2,48.8}}, color={0,0,127}));
   annotation (Icon(coordinateSystem(preserveAspectRatio=false), graphics={Rectangle(
           extent={{-100,100},{100,-100}},
           lineColor={0,0,0},
