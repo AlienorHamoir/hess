@@ -67,12 +67,11 @@ model TestPEMFCexp "Test and validation with experimental results of the PEMFC m
     medium=FC.Syngas,
     xi_const={0,0,0,0,1,0}) annotation (Placement(transformation(extent={{-48,3},{-32,19}})));
 
-  Modelica.Blocks.Sources.Ramp CurrentRamp(
-    height=20,
-    duration=1,
-    offset=0.1,
-    startTime=1000)
-                  "To use as direct input to the fuel cell model, without power controller" annotation (Placement(transformation(extent={{34,66},{54,86}})));
+  Modelica.Blocks.Sources.Ramp PolarizationCurrentRamp(
+    height=125,
+    duration=3.24,
+    offset=8,
+    startTime=0) annotation (Placement(transformation(extent={{-4,74},{16,94}})));
   Modelica.Thermal.FluidHeatFlow.Examples.Utilities.DoubleRamp DynamicCurrentDensity(
     startTime=13,
     interval=26,
@@ -80,24 +79,27 @@ model TestPEMFCexp "Test and validation with experimental results of the PEMFC m
     offset=0.015,
     height_1=0.095,
     height_2=-0.095,
-    duration_2=1) "Test current density for dynamical model validation" annotation (Placement(transformation(extent={{-28,66},{-8,86}})));
-  Modelica.Blocks.Sources.Ramp PowerRamp(
-    height=100,
+    duration_2=1) "Test current density for dynamical model validation" annotation (Placement(transformation(extent={{-36,74},{-16,94}})));
+  Modelica.Blocks.Sources.Ramp CurrentRangeRamp(
+    height=200,
     duration=1,
-    offset=10,
-    startTime=1000)
-                  annotation (Placement(transformation(extent={{-88,72},{-68,92}})));
-  Modelica.Blocks.Sources.Constant PowerSet(k=15 + 273.15)
-                                                   annotation (Placement(transformation(extent={{4,66},{24,86}})));
+    offset=8,
+    startTime=4) annotation (Placement(transformation(extent={{-96,74},{-76,94}})));
+  Modelica.Blocks.Sources.Constant TempSet(k=15 + 273.15) annotation (Placement(transformation(extent={{0,28},{8,36}})));
   Modelica.Blocks.Sources.Step CurrentDensityStep(
-    height=-0.49,
-    offset=0.5,
+    height=0.8,
+    offset=0.1,
     startTime=100)
-                  annotation (Placement(transformation(extent={{-58,66},{-38,86}})));
+                  annotation (Placement(transformation(extent={{-66,74},{-46,94}})));
   PEMFC_KhanIqbal FC(
-    p_Anode=200000,     usePowerPort=false,
+    no_Cells=36,
+    lambda=12.5,
+    t_mem=250e-6,
+    T_nom=345.15,
+    T_stack_max=348.15,
+    T_cool_set=346.15,  usePowerPort=false,
     useHeatPort=true,
-    T_stack(start=343.15))
+    T_stack(displayUnit="degC"))
                      annotation (Placement(transformation(extent={{-6,-16},{14,4}})));
   inner TransiEnt.SimCenter simCenter annotation (Placement(transformation(extent={{72,-94},{88,-78}})));
   Modelica.Blocks.Math.Gain A_cell(k=232) annotation (Placement(transformation(
@@ -105,23 +107,45 @@ model TestPEMFCexp "Test and validation with experimental results of the PEMFC m
         rotation=-90,
         origin={-19,45})));
   Modelica.Blocks.Sources.CombiTimeTable CellVoltageExp(table=[0,0.995; 13,0.995; 14,0.82; 16,0.8; 28,0.8; 40,0.8; 41,0.97; 42,0.993; 43,0.995; 70,0.995], tableOnFile=false) "cell dynamic voltage response (Kan et Iqbal)" annotation (Placement(transformation(
-        extent={{-10,-10},{10,10}},
+        extent={{-7,-7},{7,7}},
         rotation=180,
-        origin={76,72})));
+        origin={83,89})));
   FuelCell.Controller.LambdaController_PID lambdaController_PID(lambda_target=1.5, m_flow_rampup=1e-8) annotation (Placement(transformation(extent={{-90,-10},{-70,10}})));
   FuelCell.Controller.LambdaController_PID lambdaController_PID1(lambda_target=2.05, m_flow_rampup=1e-8) annotation (Placement(transformation(
         extent={{-10,-10},{10,10}},
         rotation=180,
         origin={-26,-54})));
   Modelica.Thermal.FluidHeatFlow.Examples.Utilities.DoubleRamp LoadChange(
-    startTime=10,
-    interval=10,
+    startTime=4,
+    interval=0.1,
     duration_1=0.1,
-    offset=47.55,
-    height_1=-37.55,
-    height_2=75.15,
-    duration_2=0.1) "Test current density for dynamical model validation" annotation (Placement(transformation(extent={{-92,34},{-72,54}})));
-  CoolingSystem.HeatPortCooling.CoolingModel coolingModel(k_p=1000, tau_i=0.01) annotation (Placement(transformation(extent={{20,22},{40,42}})));
+    offset=100,
+    height_1=120,
+    height_2=-65,
+    duration_2=0.3) "Test current density for dynamical model validation" annotation (Placement(transformation(extent={{-96,42},{-76,62}})));
+  CoolingSystem.HeatPortCooling.CoolingModel coolingModel(
+    k_p=0.5,                                                        tau_i=0.01,
+    controller(controllerType=Modelica.Blocks.Types.SimpleController.P))        annotation (Placement(transformation(extent={{20,22},{40,42}})));
+  Modelica.Blocks.Sources.CombiTimeTable StackVoltageExp(table=[0,68; 20,57; 40,50; 60,45; 80,43; 100,40; 120,38; 140,35; 160,32; 180,30; 200,28; 220,25], tableOnFile=false) "Polarization curve 5kW water cooled PEMFC"    annotation (Placement(transformation(
+        extent={{-7,-7},{7,7}},
+        rotation=180,
+        origin={83,57})));
+  Modelica.Blocks.Sources.CombiTimeTable PowerVoltageExp(table=[0,0; 10,-500; 20,-900; 30,-1400; 40,-1800; 50,-2200; 60,-2400; 70,-2700; 80,-3000; 90,-3400; 100,-3800; 110,-4000; 120,-4200; 130,-4500; 140,-4900; 150,-5000; 160,-5100; 170,-5200; 180,-5400; 190,-5500; 200,-5600; 210,-5500; 220,-5400], tableOnFile=false) "Polarization curve 5kW water cooled PEMFC" annotation (Placement(transformation(
+        extent={{-7,-7},{7,7}},
+        rotation=180,
+        origin={83,35})));
+  Modelica.Blocks.Sources.CombiTimeTable CurrentPolarization(table=[0,8; 0.1,8; 0.2,13; 0.3,18; 0.4,23; 0.5,28; 0.6,33; 0.7,38; 0.8,43; 0.9,48; 1.0,53; 1.1,58; 1.2,63; 1.3,68; 1.4,73; 1.5,78; 1.6,83; 1.7,88; 1.8,93; 1.9,98; 2.0,103; 2.1,108; 2.2,113; 2.3,118; 2.4,123; 2.5,128; 2.6,133; 2.7,138; 2.8,143; 2.9,148; 3.0,153; 3.1,158; 3.2,163; 3.3,168; 3.4,175], tableOnFile=false) annotation (Placement(transformation(
+        extent={{-10,-10},{10,10}},
+        rotation=0,
+        origin={-58,52})));
+  Modelica.Blocks.Sources.CombiTimeTable PolarizationV(
+    table=[1,33.5; 2,32.8; 3,32.3; 4,31.8; 5,31.4; 6,30.9; 7,30.4; 8,29.9; 9,29.4; 10,28.9; 11,28.4; 12,27.9; 13,27.6; 14,27.3; 15,27; 16,26.7; 17,26.4; 18,26.1; 19,25.8; 20,25.5; 21,25.2; 22,24.9; 23,24.6; 24,24.3; 25,24],
+    tableOnFile=false,
+    timeScale=0.15) "Polarization curve 5kW air cooled PEMFC" annotation (Placement(transformation(
+        extent={{-7,-7},{7,7}},
+        rotation=180,
+        origin={83,11})));
+  Modelica.Blocks.Sources.Constant CurrentSet(k=10) annotation (Placement(transformation(extent={{-94,18},{-78,34}})));
 equation
 
   connect(FC.feedh, SyngasSource.gas_a) annotation (Line(
@@ -144,14 +168,13 @@ equation
   connect(lambdaController_PID.y, SyngasSource.m_flow) annotation (Line(points={{-70.6,0},{-54,0},{-54,15.8},{-48,15.8}}, color={0,0,127}));
   connect(FC.lambda_O, lambdaController_PID1.u1) annotation (Line(points={{-0.8,-16},{-0.8,-50},{-16.6,-50}}, color={0,0,127}));
   connect(lambdaController_PID1.y, AirSource.m_flow) annotation (Line(points={{-35.4,-54},{-52,-54},{-52,-32.4},{-46,-32.4}}, color={0,0,127}));
-  connect(PowerSet.y, coolingModel.T_environment) annotation (Line(points={{25,76},{30,76},{30,46},{12,46},{12,32},{20,32}}, color={0,0,127}));
-  connect(FC.temperatureOut, coolingModel.T_op) annotation (Line(points={{-0.4,-9},{-0.4,-10},{-12,-10},{-12,36},{10,36},{10,38},{20,38}}, color={0,0,127}));
+  connect(TempSet.y, coolingModel.T_environment) annotation (Line(points={{8.4,32},{20,32}}, color={0,0,127}));
+  connect(FC.temperatureOut, coolingModel.T_op) annotation (Line(points={{-0.4,-9},{-0.4,-10},{-12,-10},{-12,40},{10,40},{10,38},{20,38}}, color={0,0,127}));
   connect(FC.heat, coolingModel.heatPortCooling) annotation (Line(points={{14.1,-9.1},{22,-9.1},{22,18},{16,18},{16,24.2},{20,24.2}}, color={191,0,0}));
-  connect(A_cell.y, FC.I_load) annotation (Line(points={{-19,39.5},{-20,39.5},{-20,-6.6},{-4.2,-6.6}}, color={0,0,127}));
-  connect(CurrentDensityStep.y, A_cell.u) annotation (Line(points={{-37,76},{-32,76},{-32,56},{-19,56},{-19,51}}, color={0,0,127}));
+  connect(A_cell.u, DynamicCurrentDensity.y) annotation (Line(points={{-19,51},{-20,51},{-20,70},{-12,70},{-12,84},{-15,84}}, color={0,0,127}));
+  connect(CurrentRangeRamp.y, FC.I_load) annotation (Line(points={{-75,84},{-70,84},{-70,66},{-30,66},{-30,24},{-26,24},{-26,-6.6},{-4.2,-6.6}}, color={0,0,127}));
   annotation (experiment(
-      StartTime=1,
-      StopTime=4000,
+      StopTime=4.2,
       Interval=1,
       Tolerance=1e-06,
       __Dymola_Algorithm="Dassl"));

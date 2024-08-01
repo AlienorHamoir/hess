@@ -15,7 +15,9 @@ model AirCompressorSystem "Air compressor system model"
     presetVariableType="m_flow",
     useMechPowerPort=true,
     m_flowInput=true,
-    integrateElPower=true) annotation (Placement(transformation(extent={{-38,4},{-18,24}})));
+    integrateElPower=true,
+    allow_reverseFlow=false)
+                           annotation (Placement(transformation(extent={{-38,4},{-18,24}})));
   TransiEnt.Components.Electrical.Machines.MotorComplex
                                    motorComplex(cosphi=1, eta=0.95)
                                                           annotation (Placement(transformation(extent={{-18,-50},{2,-30}})));
@@ -26,12 +28,12 @@ model AirCompressorSystem "Air compressor system model"
   medium=medium,
     p_const=100000,
     T_const=296.65,
-    xi_const={0,0,0,0.77,0,0.001,0,0.22,0})                                                                             annotation (Placement(transformation(extent={{-88,4},{-68,24}})));
+    xi_const={0,0,0,0.77,0,0.02,0,0.21,0})                                                                              annotation (Placement(transformation(extent={{-88,4},{-68,24}})));
   TransiEnt.Components.Boundaries.Gas.BoundaryRealGas_pTxi boundary_pTxi1(
     medium=medium,
-    p_const=243180,
+    p_const=300000,
     T_const=296.65,
-    xi_const={0,0,0,0.77,0,0.001,0,0.22,0})                                                                             annotation (Placement(transformation(extent={{-10,-10},{10,10}},
+    xi_const={0,0,0,0.77,0,0.02,0,0.21,0})                                                                              annotation (Placement(transformation(extent={{-10,-10},{10,10}},
         rotation=180,
         origin={28,14})));
   TransiEnt.Basics.Interfaces.General.MassFlowRateIn AirMassFlowRateSetpoint annotation (Placement(transformation(
@@ -58,11 +60,11 @@ equation
       points={{-18,14},{18,14}},
       color={255,255,0},
       thickness=1.5));
-  connect(AirMassFlowRateSetpoint, airCompressor.m_flow_in) annotation (Line(points={{-100,60},{-36,60},{-36,25}}, color={0,0,127}));
   connect(electricPowerComplex.P, P_airCompressor) annotation (Line(
       points={{21,-31.4},{21,-20},{100,-20}},
       color={0,135,135},
       pattern=LinePattern.Dash));
+  connect(AirMassFlowRateSetpoint, airCompressor.m_flow_in) annotation (Line(points={{-100,60},{-36,60},{-36,25}}, color={0,0,127}));
   annotation (Icon(coordinateSystem(preserveAspectRatio=false)), Diagram(coordinateSystem(preserveAspectRatio=false)),
     Documentation(info="<html>
 <h4>1. Purpose of model</h4>

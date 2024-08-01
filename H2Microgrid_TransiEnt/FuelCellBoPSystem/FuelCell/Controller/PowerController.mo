@@ -34,7 +34,7 @@ model PowerController "Controller for power and current output in Fuel Cell appl
   //             Visible Parameters
   // _____________________________________________
 
-  parameter Modelica.Units.SI.Current i_max=120 "Maximum current value";
+  parameter Modelica.Units.SI.Current i_max=150 "Maximum current value";
   parameter Real k = 1 "Proportional controller gain";
 
   // _____________________________________________

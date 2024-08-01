@@ -124,7 +124,6 @@ equation
       points={{20.4,-70.4},{20.4,-74},{-24,-74},{-24,-8.54},{-14.42,-8.54}},
       color={0,135,135},
       pattern=LinePattern.Dash));
-  connect(PowerRampTest.y, ElectrolyzerSystem.P_el_set) annotation (Line(points={{31,56},{0,56},{0,14.56}}, color={0,0,127}));
   connect(weaDat.weaBus, weaBus) annotation (Line(
       points={{-68,50},{-53,50}},
       color={255,204,51},
@@ -133,6 +132,7 @@ equation
       points={{-52.935,50.07},{11.62,50.07},{11.62,14.42}},
       color={255,204,51},
       thickness=0.5));
+  connect(PowerRampTest.y, ElectrolyzerSystem.P_el_set) annotation (Line(points={{31,56},{8,56},{8,18},{0,18},{0,14.56}}, color={0,0,127}));
   annotation (Icon(coordinateSystem(preserveAspectRatio=false)), Diagram(coordinateSystem(preserveAspectRatio=false)),
     experiment(
       StopTime=4600,

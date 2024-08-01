@@ -2,7 +2,7 @@ within H2Microgrid_TransiEnt.FuelCellBoPSystem.CoolingSystem.HeatPortCooling;
 model CoolingModel
 
 
-  parameter Real k_p=10 "gain, cooling system PID proportional control - 1050 when opposite sign convention with PID";
+  parameter Real k_p=0.5 "gain, cooling system PID proportional control - 1050 when opposite sign convention with PID";
   parameter Modelica.Units.SI.Time tau_i=0.1 "1/tau_i for cooling system PID integrator gain";
   parameter Real N_i=0.5 "gain of anti-windup compensation ";
 
@@ -26,7 +26,7 @@ model CoolingModel
   Buildings.Fluid.Sources.Boundary_pT sink(redeclare package Medium = Buildings.Media.Water, nPorts=1)
     annotation (Placement(transformation(extent={{88,-10},{68,10}})));
   Buildings.Controls.Continuous.LimPID controller(
-    controllerType=Modelica.Blocks.Types.SimpleController.PI,
+    controllerType=Modelica.Blocks.Types.SimpleController.P,
     k=k_p,
     Ti=tau_i,
     Td=0.01,

@@ -21,15 +21,16 @@ model TestPEMFCSystemexp "Example of a fuel cell system with its cooling and air
       weaBus "Weather data bus" annotation (Placement(transformation(extent={{-16,68},{10,96}}),
                                  iconTransformation(extent={{-112,56},{-88,82}})));
   Modelica.Blocks.Sources.Ramp PowerRamp(
-    height=1250,
-    duration=2310,
-    offset=0,
+    height=3500,
+    duration=1200,
+    offset=1000,
     startTime=1000)
                   annotation (Placement(transformation(extent={{-88,-44},{-68,-24}})));
   Modelica.Blocks.Sources.Step PowerStep(
-    height=680,
+    height=650,
     offset=0,
-    startTime=1000) annotation (Placement(transformation(extent={{-88,-6},{-68,14}})));
+    startTime=1000) "can go up to 680 W with curret parameters"
+                    annotation (Placement(transformation(extent={{-88,-6},{-68,14}})));
   Modelica.Thermal.FluidHeatFlow.Examples.Utilities.DoubleRamp Load(
     startTime=1.25e3,
     interval=1.25e3,
@@ -55,7 +56,7 @@ model TestPEMFCSystemexp "Example of a fuel cell system with its cooling and air
     timeScale=0.2) "Includes Pstat, Ustat, Istat; T_op_start must be 50 degC and stop time is  2280 sec (timestep is 0.2 ms)"                         annotation (Placement(transformation(extent={{-10,-10},{10,10}},
         rotation=180,
         origin={76,46})));
-  SystemPEMFCexp systemPEMFCexp(coolingModel(k_p=1500, tau_i=1000)) annotation (Placement(transformation(extent={{-40,-20},{0,20}})));
+  SystemPEMFCexp systemPEMFCexp(coolingModel(k_p=0.5))              annotation (Placement(transformation(extent={{-40,-20},{0,20}})));
   Modelica.Blocks.Math.Gain A_cell(k=0.2) annotation (Placement(transformation(
         extent={{-6,-6},{6,6}},
         rotation=180,
@@ -73,6 +74,10 @@ model TestPEMFCSystemexp "Example of a fuel cell system with its cooling and air
         extent={{-6,-6},{6,6}},
         rotation=180,
         origin={8,40})));
+  Modelica.Blocks.Sources.Sine HESScommand(
+    amplitude=1000,
+    f(displayUnit="Hz") = 0.0001,
+    offset=1500) annotation (Placement(transformation(extent={{-46,-72},{-26,-52}})));
 equation
 
   connect(weaDat.weaBus, weaBus) annotation (Line(
@@ -88,7 +93,7 @@ equation
   connect(Pstat.y[1], add.u2) annotation (Line(points={{65,46},{50,46}}, color={0,0,127}));
   connect(const.y, add.u1) annotation (Line(points={{65,16},{50,16},{50,34}}, color={0,0,127}));
   connect(add.y, A_cell1.u) annotation (Line(points={{27,40},{15.2,40}}, color={0,0,127}));
-  connect(PowerStep.y, systemPEMFCexp.P_el_set) annotation (Line(points={{-67,4},{-46,4},{-46,32},{-20,32},{-20,21.6}}, color={0,0,127}));
+  connect(HESScommand.y, systemPEMFCexp.P_el_set) annotation (Line(points={{-25,-62},{-20,-62},{-20,-28},{-44,-28},{-44,32},{-20,32},{-20,21.6}}, color={0,0,127}));
   annotation (
     Diagram(coordinateSystem(preserveAspectRatio=false, extent={{-100,-100},{100,100}})),
     experiment(

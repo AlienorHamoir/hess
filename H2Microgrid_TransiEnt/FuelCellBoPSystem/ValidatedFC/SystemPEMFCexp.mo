@@ -58,8 +58,7 @@ model SystemPEMFCexp "Fuel cell system, with auxiliaries and power controller - 
     variable_xi=false,
     p_const=1e5,
     medium=FC.Syngas,
-    T_const=23.5 + 273.15,
-    xi_const={0,0,0,0,1,0})
+    T_const=23.5 + 273.15)
                       annotation (Placement(transformation(
         extent={{-6,-9},{6,9}},
         rotation=180,
@@ -73,7 +72,7 @@ model SystemPEMFCexp "Fuel cell system, with auxiliaries and power controller - 
     medium=FC.Syngas,
     xi_const={0,0,0,0,1,0})
                       annotation (Placement(transformation(extent={{-52,11},{-36,27}})));
-  FuelCell.Controller.LambdaController_PID lambdaOController_PID(lambda_target=2.05, m_flow_rampup=1e-8) "Controller that outputs the required air mass flow rate to meet OER (oxygen excess ratio) target " annotation (Placement(transformation(
+  FuelCell.Controller.LambdaController_PID lambdaOController_PID(lambda_target=2,    m_flow_rampup=1e-8) "Controller that outputs the required air mass flow rate to meet OER (oxygen excess ratio) target " annotation (Placement(transformation(
         extent={{-10,-10},{10,10}},
         rotation=180,
         origin={-22,-42})));
@@ -82,7 +81,7 @@ model SystemPEMFCexp "Fuel cell system, with auxiliaries and power controller - 
   AirSupplySystem.AirCompressorSystem AirCompressorSystem annotation (Placement(transformation(extent={{16,-74},{36,-54}})));
   Modelica.Blocks.Sources.RealExpression P_el_out(y=P_el_sys) annotation (Placement(transformation(extent={{68,-50},{88,-30}})));
 
-  FuelCell.Controller.PowerController powerController(i_max=140, preventDivisionByZero(uMax=52.5))
+  FuelCell.Controller.PowerController powerController(i_max=200, preventDivisionByZero(uMax=45))
                                                                  annotation (Placement(transformation(
         extent={{-10,-10},{10,10}},
         rotation=180,
@@ -188,7 +187,10 @@ equation
   connect(SumPower.u3, P_el_set) annotation (Line(points={{10,84},{10,94},{24,94},{24,108}}, color={0,0,127}));
   annotation (
     Diagram(coordinateSystem(preserveAspectRatio=false, extent={{-100,-100},{100,100}})),
-    experiment(StopTime=40),
+    experiment(
+      StopTime=2500,
+      Interval=1,
+      __Dymola_Algorithm="Dassl"),
     __Dymola_experimentSetupOutput,
     __Dymola_experimentFlags(
       Advanced(
