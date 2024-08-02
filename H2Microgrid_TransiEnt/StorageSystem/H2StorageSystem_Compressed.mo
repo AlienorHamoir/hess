@@ -41,14 +41,14 @@ public
   parameter Modelica.Units.SI.Temperature T_out=273.15+40 "Hydrogen output temperature" annotation(Dialog(tab="General", group="Electrolyzer"));
   parameter Modelica.Units.SI.Efficiency eta_mech_compressor(
     min=0,
-    max=1)=0.9 "Compressor mechanical efficiency coefficient (min = 0, max = 1)" annotation (Dialog(tab="General", group="Compressor"));
+    max=1)=0.8 "Compressor mechanical efficiency coefficient (min = 0, max = 1)" annotation (Dialog(tab="General", group="Compressor"));
   parameter Modelica.Units.SI.Efficiency eta_el_compressor(
     min=0,
     max=1)=0.9 "Compressor motor electrical efficiency coefficient (min = 0, max = 1)" annotation (Dialog(tab="General", group="Compressor"));
-  parameter Modelica.Units.SI.Power P_el_n_compressor=62.72 "W, compressor nominal electrical power" annotation (Dialog(tab="General", group="Compressor"));
+ // parameter Modelica.Units.SI.Power P_el_n_compressor=62.72 "W, compressor nominal electrical power" annotation (Dialog(tab="General", group="Compressor"));
   parameter Modelica.Units.SI.Efficiency eta_n(
     min=0,
-    max=1)=0.743 "Nominal efficency refering to the GCV (min = 0, max = 1)" annotation (Dialog(tab="General", group="Electrolyzer"));
+    max=1)=0.7 "Nominal electrolyzer efficency refering to the GCV (min = 0, max = 1)" annotation (Dialog(tab="General", group="Electrolyzer"));
 
   TransiEnt.Basics.Interfaces.Gas.RealGasPortIn H2PortIn(Medium=medium) "inlet flow" annotation (Placement(transformation(extent={{-12,-114},{14,-88}}), iconTransformation(extent={{-12,-114},{14,-88}})));
   TransiEnt.Basics.Interfaces.Gas.RealGasPortOut H2PortOut(Medium=medium) "outlet flow" annotation (Placement(transformation(extent={{-14,84},{14,112}}), iconTransformation(extent={{-14,84},{14,112}})));
@@ -108,7 +108,8 @@ public
     p_startJunction=simCenter.p_amb_const,
     T_startSplit=T_start,
     T_startJunction=T_start,
-    redeclare model Compressor = TransiEnt.Components.Gas.Compressor.CompressorRealGasIsentropicEff_L1_simple) annotation (Placement(transformation(extent={{-78,-14},{-48,16}})));
+    redeclare model Compressor = TransiEnt.Components.Gas.Compressor.CompressorRealGasIsentropicEff_L1_simple,
+    compressorRealGasIsentropicEff_L1_simple(eta_mech=0.8))                                                    annotation (Placement(transformation(extent={{-78,-14},{-48,16}})));
   inner TransiEnt.ModelStatistics modelStatistics annotation (Placement(transformation(extent={{30,-96},{50,-76}})));
   inner TransiEnt.SimCenter simCenter annotation (Placement(transformation(extent={{66,-98},{86,-78}})));
 equation

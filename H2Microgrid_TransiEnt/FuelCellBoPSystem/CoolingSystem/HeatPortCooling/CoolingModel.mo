@@ -6,7 +6,7 @@ model CoolingModel
   parameter Modelica.Units.SI.Time tau_i=0.1 "1/tau_i for cooling system PID integrator gain";
   parameter Real N_i=0.5 "gain of anti-windup compensation ";
 
-  Buildings.Fluid.Movers.SpeedControlled_y pump(redeclare package Medium = Buildings.Media.Water, redeclare Buildings.Fluid.Movers.Data.Pumps.Wilo.TopS40slash10 per)
+  Buildings.Fluid.Movers.SpeedControlled_y pump(redeclare package Medium = Buildings.Media.Water, redeclare H2Microgrid_TransiEnt.ElectrolyzerBoPSystem.CoolingSystem.HeatPortCooling.CoolingPumpDESL per)
     annotation (Placement(transformation(extent={{10,-12},{34,12}})));
   Buildings.Fluid.Sources.Boundary_pT watertowater(
     redeclare package Medium = Buildings.Media.Water,

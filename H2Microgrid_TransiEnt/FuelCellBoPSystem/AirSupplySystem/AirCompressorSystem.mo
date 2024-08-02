@@ -4,10 +4,10 @@ model AirCompressorSystem "Air compressor system model"
   parameter TransiEnt.Basics.Media.Gases.VLE_VDIWA_NG7_SG_O2_var medium=TransiEnt.Basics.Media.Gases.VLE_VDIWA_NG7_SG_O2_var() "Medium model of real air" annotation (choicesAllMatching); // in this model, we use real air (on the contrary in fuel cell model, ideal air is used)
   parameter Modelica.Units.SI.Efficiency eta_mech_compressor(
     min=0,
-    max=1)=0.95 "Compressor mechanical efficiency coefficient (min = 0, max = 1)" annotation (Dialog(tab="General", group="Compressor"));
+    max=1)=0.8 "Compressor mechanical efficiency coefficient (min = 0, max = 1)" annotation (Dialog(tab="General", group="Compressor"));
   parameter Modelica.Units.SI.Efficiency eta_el_compressor(
     min=0,
-    max=1)=0.95 "Compressor motor electrical efficiency coefficient (min = 0, max = 1)" annotation (Dialog(tab="General", group="Compressor"));
+    max=1)=0.9 "Compressor motor electrical efficiency coefficient (min = 0, max = 1)" annotation (Dialog(tab="General", group="Compressor"));
   TransiEnt.Components.Gas.Compressor.CompressorRealGasIsothermal_L1_simple airCompressor(
     medium=medium,
     eta_mech=eta_mech_compressor,
@@ -16,10 +16,11 @@ model AirCompressorSystem "Air compressor system model"
     useMechPowerPort=true,
     m_flowInput=true,
     integrateElPower=true,
+    Delta_p_start=200000,
     allow_reverseFlow=false)
                            annotation (Placement(transformation(extent={{-38,4},{-18,24}})));
   TransiEnt.Components.Electrical.Machines.MotorComplex
-                                   motorComplex(cosphi=1, eta=0.95)
+                                   motorComplex(cosphi=1, eta=0.9)
                                                           annotation (Placement(transformation(extent={{-18,-50},{2,-30}})));
   TransiEnt.Components.Boundaries.Electrical.ComplexPower.SlackBoundary
                                                    slackBoundary annotation (Placement(transformation(extent={{54,-50},{74,-30}})));
@@ -28,12 +29,12 @@ model AirCompressorSystem "Air compressor system model"
   medium=medium,
     p_const=100000,
     T_const=296.65,
-    xi_const={0,0,0,0.77,0,0.02,0,0.21,0})                                                                              annotation (Placement(transformation(extent={{-88,4},{-68,24}})));
+    xi_const={0,0,0,0.77,0,0.001,0,0.23,0})                                                                             annotation (Placement(transformation(extent={{-88,4},{-68,24}})));
   TransiEnt.Components.Boundaries.Gas.BoundaryRealGas_pTxi boundary_pTxi1(
     medium=medium,
-    p_const=300000,
+    p_const=303975,
     T_const=296.65,
-    xi_const={0,0,0,0.77,0,0.02,0,0.21,0})                                                                              annotation (Placement(transformation(extent={{-10,-10},{10,10}},
+    xi_const={0,0,0,0.77,0,0.001,0,0.23,0})                                                                             annotation (Placement(transformation(extent={{-10,-10},{10,10}},
         rotation=180,
         origin={28,14})));
   TransiEnt.Basics.Interfaces.General.MassFlowRateIn AirMassFlowRateSetpoint annotation (Placement(transformation(

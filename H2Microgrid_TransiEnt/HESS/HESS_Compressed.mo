@@ -5,7 +5,7 @@ model HESS_Compressed "HESS with high-pressure compressed storage system"
   parameter Modelica.Units.SI.Pressure p_max=350e5   "Pressure in storage at t=0" annotation (Dialog(tab="General", group="Storage parameters"));
   parameter Real SOC_start=0.5  "Pressure in storage at t=0" annotation (Dialog(tab="General", group="Storage parameters"));
   parameter Modelica.Units.SI.Pressure p_start = SOC_start * p_max "Start pressure depending on inital HESS SOC";
-  parameter Modelica.Units.SI.Power P_STB_FC = 200 "Constant power consumed by FC system due to auxiliaries in STANDBY";
+  parameter Modelica.Units.SI.Power P_STB_FC = 16.6 "Constant power consumed by FC system due to auxiliaries in STANDBY";
   parameter Modelica.Units.SI.Power P_STB_EL = 285.7 "Constant power consumed by ELECTROLYZER system due to auxiliaries in STANDBY";
 
   inner TransiEnt.SimCenter simCenter annotation (Placement(transformation(extent={{28,82},{42,96}})));
@@ -21,7 +21,8 @@ model HESS_Compressed "HESS with high-pressure compressed storage system"
                                                                       annotation (Placement(transformation(extent={{22,-40},{62,20}})));
   Modelica.Blocks.Interfaces.RealOutput SOC "H2 Tank State of Charge [-]" annotation (Placement(transformation(extent={{88,-16},{120,16}}), iconTransformation(extent={{88,-16},{120,16}})));
   TransiEnt.Basics.Interfaces.Electrical.ElectricPowerIn P_set_FC "Input for FC power production setpoint" annotation (Placement(transformation(extent={{-120,50},{-82,90}}), iconTransformation(extent={{-120,50},{-82,90}})));
-  TransiEnt.Components.Boundaries.Gas.BoundaryRealGas_Txim_flow H2massSink(medium=medium, variable_m_flow=true) annotation (Placement(transformation(
+  TransiEnt.Components.Boundaries.Gas.BoundaryRealGas_Txim_flow H2massSink(medium=medium, variable_m_flow=true,
+    T_const=313.15)                                                                                             annotation (Placement(transformation(
         extent={{-9,-8},{9,8}},
         rotation=0,
         origin={27,44})));
@@ -30,7 +31,7 @@ model HESS_Compressed "HESS with high-pressure compressed storage system"
   inner TransiEnt.ModelStatistics modelStatistics annotation (Placement(transformation(extent={{48,82},{62,96}})));
   TransiEnt.Basics.Interfaces.Electrical.ElectricPowerIn P_set_EL "Input for Electrolyzer power consumption setpoint" annotation (Placement(transformation(extent={{-118,-90},{-80,-50}}), iconTransformation(extent={{-118,-90},{-80,-50}})));
   TransiEnt.Basics.Interfaces.Electrical.ElectricPowerOut P_EL "Actual Electrolyzer electrical power balance (consumed - produced)" annotation (Placement(transformation(extent={{94,-84},{124,-54}}), iconTransformation(extent={{94,-84},{124,-54}})));
-  Modelica.Blocks.Sources.RealExpression PowerSetpointFC(y=P_cmd_FC) "Applied FC system electrical setpoint" annotation (Placement(transformation(extent={{-72,50},{-52,70}})));
+  Modelica.Blocks.Sources.RealExpression PowerSetpointFC(y=P_cmd_FC) "Applied FC system electrical setpoint" annotation (Placement(transformation(extent={{-70,50},{-50,70}})));
   Modelica.Blocks.Sources.RealExpression PowerSetpointEL(y=P_cmd_EL) "Applied electrolyzer system electrical setpoint" annotation (Placement(transformation(extent={{-76,-58},{-56,-38}})));
   Modelica.Blocks.Sources.RealExpression PowerOutEL(y=P_real_EL) "Actual electricity consumed by electrolyzer system" annotation (Placement(transformation(extent={{42,-76},{62,-56}})));
   Modelica.Blocks.Sources.RealExpression PowerOutFC(y=P_real_FC) "Actual electricity produced/consumed by FC system"
@@ -91,8 +92,8 @@ equation
   connect(PowerOutEL.y, P_EL) annotation (Line(points={{63,-66},{88,-66},{88,-69},{109,-69}}, color={0,0,127}));
   connect(PowerOutFC.y, P_FC) annotation (Line(points={{77,62},{90,62},{90,67},{109,67}},
                                                                                   color={0,0,127}));
-  connect(PowerSetpointFC.y, systemFC.P_el_set) annotation (Line(points={{-51,60},{-41.6,60}}, color={0,0,127}));
-  connect(T_environment, systemFC.T_environment) annotation (Line(points={{-100,0},{-74,0},{-74,46},{-76,46},{-76,84},{-41.6,84},{-41.6,77.6}}, color={0,0,127}));
+  connect(PowerSetpointFC.y, systemFC.P_el_set) annotation (Line(points={{-49,60},{-41.6,60}}, color={0,0,127}));
+  connect(T_environment, systemFC.T_environment) annotation (Line(points={{-100,0},{-74,0},{-74,84},{-41.6,84},{-41.6,77.6}},                   color={0,0,127}));
   connect(systemFC.mflowH2_FC, H2massSink.m_flow) annotation (Line(points={{0.4,48.8},{16.2,48.8}}, color={0,0,127}));
   annotation (Icon(coordinateSystem(preserveAspectRatio=false), graphics={Rectangle(
           extent={{-100,100},{100,-100}},

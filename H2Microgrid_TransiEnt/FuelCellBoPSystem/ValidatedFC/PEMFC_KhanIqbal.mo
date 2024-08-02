@@ -45,19 +45,19 @@ model PEMFC_KhanIqbal "Model of PEM Fuel Cell stack experimentally validated - K
 
   parameter Real lambda=12.5 "constant humidity";
 
-  parameter Modelica.Units.SI.Thickness t_mem = 250e-6 "PE membrane thickness - ref. Nafion 115 in microm";
+  parameter Modelica.Units.SI.Thickness t_mem = 125e-6 "PE membrane thickness - ref. Dow's membrane in microm";
 
   parameter Real z = 2 "Quantity of transfered electrons";
 
   parameter Modelica.Units.SI.Area A=0.0232 "Area of one cell";
 
-  parameter Modelica.Units.SI.Pressure p_Anode=3e5 "Pressure at the anode - 3 bar";
+  parameter Modelica.Units.SI.Pressure p_Anode=3.03975e5 "Pressure at the anode - 3 atm";
 
-  parameter Modelica.Units.SI.Pressure p_Cathode=3e5  "Pressure at the cathode - 3 bar";
+  parameter Modelica.Units.SI.Pressure p_Cathode=3.03975e5  "Pressure at the cathode - 3 atm";
 
-  parameter Modelica.Units.SI.Pressure p_Amb=1e5 "Ambient pressure";
+  parameter Modelica.Units.SI.Pressure p_Amb=1e5 "Ambient pressure - 1 bar";
 
-  parameter Modelica.Units.SI.Pressure p_Atm=1e5 "Atmospheric pressure";
+  parameter Modelica.Units.SI.Pressure p_Atm=1.01325e5 "Atmospheric pressure - 1 atm";
 
   parameter TransiEnt.Basics.Media.Gases.Gas_VDIWA_SG7_var Syngas=TransiEnt.Basics.Media.Gases.Gas_VDIWA_SG7_var() "Medium model of Syngas" annotation (choicesAllMatching);
 
@@ -79,9 +79,9 @@ model PEMFC_KhanIqbal "Model of PEM Fuel Cell stack experimentally validated - K
 
   parameter Modelica.Units.SI.Temperature T_cool_set = 73 + 273.15 "Cooling trigger point";
 
-  parameter Modelica.Units.SI.ThermalConductance ka=17 "Thermal conductance of the stack ";
+  parameter Modelica.Units.SI.ThermalConductance ka=22 "Thermal conductance of the stack ";
 
-  parameter Modelica.Units.SI.ThermalResistance R_th=0.115 "°C/W; Thermal resistance of stack";
+  parameter Modelica.Units.SI.ThermalResistance R_th=1/ka "°C/W; Thermal resistance of stack";
 
   parameter Modelica.Units.SI.Voltage V_tn=1.482 "or U_tn, Thermoneutral voltage (voltage at which reaction can occur without releasing any heat)";
 
@@ -93,7 +93,9 @@ model PEMFC_KhanIqbal "Model of PEM Fuel Cell stack experimentally validated - K
 
   parameter Modelica.Units.SI.Enthalpy H_0 = 285.5e3 "Hydrogen enthalpy of combustion";
 
-  parameter Modelica.Units.SI.SpecificHeatCapacity cp_H2O = 4184 "Specific heat capacity of liquid water";
+  parameter Modelica.Units.SI.SpecificHeatCapacity cp_H2O = 4182 "Specific heat capacity of liquid water";
+
+  parameter Modelica.Units.SI.Current I_shutdown=8 "If load controller requests currents below this value, stack will shut down";
 
   parameter Modelica.Units.SI.Volume V_a = 0.005 "Anode volume";
 
@@ -136,8 +138,11 @@ model PEMFC_KhanIqbal "Model of PEM Fuel Cell stack experimentally validated - K
   Modelica.Units.SI.Voltage V_ohmic "Ohmic losses";
   Modelica.Units.SI.Voltage V_Nernst "Nernst voltage";
   Modelica.Units.SI.Voltage V_act "Activation voltage";
-  Modelica.Units.SI.Voltage V_d "Dynamic activation voltage - Correa dynamic model";
+ // Modelica.Units.SI.Voltage V_d "Dynamic activation voltage - Correa dynamic model";
   Modelica.Units.SI.Voltage V_conc "Concentration voltage";
+  Modelica.Units.SI.Resistance Rm "Membrane resistance in Ohm";
+  // If use of dynamic activation overvoltage
+  //Modelica.Units.SI.Resistance Ra "Activation resistance in Ohm";
 
 
   Real da= cp_tab[3,1] - cp_tab[1,1] - 0.5* cp_tab[2,1] "Empiric parameter for calculating Gibbs free energy according to Barbir";
@@ -161,7 +166,7 @@ model PEMFC_KhanIqbal "Model of PEM Fuel Cell stack experimentally validated - K
   Modelica.Units.SI.MoleFraction x_H2 "Molar fraction of H2 in the air";
   Modelica.Units.SI.Concentration c_O2 "Concentration in mol/m3 fraction of O2 in the stack";
   Modelica.Units.SI.Concentration c_H2 "Concentration in mol/m3 fraction of H2 in the stack";
-  Modelica.Units.SI.Resistivity rho_m "Resistivity of the PE membrane";
+  Modelica.Units.SI.Resistivity r_mem "Resistivity of the PE membrane";
   Modelica.Units.SI.Pressure P_O2=x_O2*air.p "Partial pressure of oxygen at the cathode";
   Modelica.Units.SI.Pressure P_H2=x_H2*syng.p "Partial pressure of hydrogen at the anode";
   // Modelica.Units.SI.Pressure P_H2O "Partial pressure of water at the cathode";
@@ -179,12 +184,11 @@ model PEMFC_KhanIqbal "Model of PEM Fuel Cell stack experimentally validated - K
   Modelica.Units.SI.HeatFlowRate Q_flow_cooling "Cooling power of heat exchanger";
   Modelica.Units.SI.HeatFlowRate Q_flow_el "W, heat used in FC by hydrogen reaction for electricity production";
 
+  Boolean is_Shutdown(start=false) "true, if load current is indicating to shut the stack down";
   Modelica.Units.SI.Current I "Electric current through the stack";
   Modelica.Units.SI.Current I_is "Theoretical electric current through the stack based on available H2 mass flow";
   Modelica.Units.SI.CurrentDensity J "Current density";
-  Modelica.Units.SI.Resistance Rm "Membrane resistance in Ohm";
-  // If use of dynamic activation overvoltage
-  Modelica.Units.SI.Resistance Ra "Activation resistance in Ohm";
+
 
   // _____________________________________________
   //
@@ -332,31 +336,27 @@ equation
   P_el = - V_stack * I;
 
 
-  V_Nernst = 1.05 - 0.9e-3*(T_stack - T_amb) + ( Modelica.Constants.R * T_stack) / (z * Modelica.Constants.F) * log(P_H2 *1e-5 * sqrt(P_O2 * 1e-5)); // replace E0 by 0.99 V for more accurate polarization curve
+  V_Nernst = 1.05 - 0.9e-3*(T_stack - T_amb) + ( Modelica.Constants.R * T_stack) / (z * Modelica.Constants.F) * log(P_H2 *1e-5 * sqrt(P_O2 * 1e-5)); // replace E0 by OCV = 0.99 V for more accurate polarization curve
 
 
-  V_ohmic = I * Rm;
-  Rm =   t_mem * rho_m / A;
-  // rho_m = (0.00514*lambda - 0.00326)*exp(1268*(1/303 - 1/T_stack))*10e2; // Springer, 1991 "Polymer Electrolyte Fuel Cell Model"
-  // rho_m = 181.6 * (1 + 0.03 * J + 0.062 * (T_stack / 303)^2 * J^(2.5)) / ( (lambda - 0.634 - 3 * J) * exp(4.18 * ((T_stack-303)/T_stack)))*10e-2; // Khan and Iqbal (2004), from Mann and Amphlett (2000) from  Springer et al. (1991) - equivalent to above equation à priori: rm = 1/sm
-  rho_m = 181.6 / ((lambda - 0.634) * exp(4.18 * ((T_stack-303)/T_stack)))* 1e-2; // simplified Khan and Iqbal (2004), neglecting dependency on J
-
-
-  V_act = 0.948 - (0.00286 + 0.0002 * log(A*1e4) + 4.3e-5 * log(c_H2*10e-6)) * T_stack - 7.6e-5*T_stack*log(c_O2*10e-6) + 1.93e-4*T_stack* log(I/(A*1e4));
   c_O2 = P_O2 * 1.97e-7 * exp(498/T_stack);
   c_H2 = P_H2 * 9.174e-7 * exp(-77/T_stack);
 
-  //der(V_d) = I/C_dl - V_d / (C_dl*Ra);
-  V_d = 0;
-  Ra =  V_act / I;
+
+  V_ohmic = I * Rm;
+  Rm =   t_mem * r_mem / A;
+  r_mem = 181.6 / ((lambda - 0.634) * exp(4.18 * ((T_stack-303)/T_stack)))* 1e-2; // simplified Khan and Iqbal (2004), neglecting dependency on J
 
 
-  V_conc = (1.1e-4 - 1.2e-6 * (T_stack -273.15)) * exp(8e-4 * J);
+  V_conc = 0;
 
-  // If use of steady activation overvoltage
+
+  // If use of steady-state activation overvoltage
   E_cell = V_Nernst - V_act - V_ohmic - V_conc;
 
   // If use of dynamic activation overvoltage
+  //der(V_d) = I/C_dl - V_d / (C_dl*Ra);
+  //Ra =  V_act / I;
   //E_cell = V_Nernst - V_d - V_ohmic - V_conc;
 
 
@@ -365,12 +365,28 @@ equation
   I_is = 2*feedh.m_flow*inStream(feedh.xi_outflow[5])*Modelica.Constants.F / (M_H2*no_Cells);
   J = I / A; // A/m^2
 
-  // Normal operating point: Reaction is running
+
+ // Minimal load current management
+  is_Shutdown = I_load < I_shutdown;
+
+  if is_Shutdown then
+    // Load current below mimimum value = signal to shut down/stand-by!
+    I = 0;
+    V_stack = no_Cells * 1.05; // replace E_0 by OCV
+    V_act = 0;
+    lambda_H = -1; // signal to lambda h controller that we are in shut down mode!
+    lambda_O = -1;
+  else
+   // Normal operating point: Reaction is running
   //I = min(I_load,I_is); // to accomodate with the hydrogen supply dynamics
   I = I_load;
   V_stack = E_stack;
+  V_act = 0.948 - (0.00286 + 0.0002 * log(A*1e4) + 4.3e-5 * log(c_H2*10e-6)) * T_stack - 7.6e-5*T_stack*log(c_O2*10e-6) + 1.93e-4*T_stack* log(I/(A*1e4));
   lambda_H = (feedh.m_flow*inStream(feedh.xi_outflow[5]))/m_dot_H2_react_stack;
   lambda_O = (feeda.m_flow*(1-inStream(feeda.xi_outflow[1]) - inStream(feeda.xi_outflow[2])))/m_dot_O2_react_stack;
+  end if;
+
+
 
   N_dot_e = I / Modelica.Constants.F;
 
@@ -388,9 +404,6 @@ equation
   feeda.T_outflow = air.T;
   feedh.T_outflow = syng.T;
 
-  // Initial model: contra design flow direction - why?
-//   feeda.T_outflow = aira.T;
-//   feedh.T_outflow = aira.T;
 
 
   // Energy balance
@@ -398,9 +411,6 @@ equation
 
   cooling_control = T_stack > T_cool_set;
 
- // Q_flow_gas = m_dot_H2_react_stack / M_H2 * H_0 - m_dot_H2O_gen_stack * 2410000 + feedh.m_flow*h_hein + feeda.m_flow*h_aein + drainh.m_flow*h_haus + draina.m_flow*h_aaus;
-
-  //Q_flow_gas = m_dot_H2_react_stack * 14.43e3 + m_dot_O2_react_stack * 0.928e3  - m_dot_H2O_gen_stack/syng.M_i[4]*Delta_H_T; // cp for O2 and H2 at 350 K used (source: engineering toolbox)
 
   Q_flow_gas = m_dot_H2_react_stack / M_H2 * H_0 + feedh.m_flow*h_hein + feeda.m_flow*h_aein + drainh.m_flow*h_haus + draina.m_flow*h_aaus - m_dot_H2O_gen_stack/M_H2O*cp_H2O*(T_stack-T_amb);
 
@@ -410,7 +420,7 @@ equation
 
   Q_flow_cooling = cooling_PID.y;
 
-  m*cp * der_T_stack = Q_flow_gas - Q_flow_convective - Q_flow_cooling - Q_flow_el;
+  m*cp * der_T_stack = Q_flow_gas  - Q_flow_el - Q_flow_convective - Q_flow_cooling;
 
 
 
@@ -419,15 +429,17 @@ equation
           ////////
 
    //// H2 balance at anode (syngas balance)
+
   // Dynamic model
 //   V_a * der(P_H2) / (Modelica.Constants.R * T_stack) = (feedh.m_flow*inStream(feedh.xi_outflow[5]) - m_dot_H2_react_stack + drainh.m_flow*drainh.xi_outflow[5])/M_H2;
 //   P_H2 = p_Anode - P_H2O;
 //   - drainh.m_flow*drainh.xi_outflow[5] = M_H2 * k_a * (P_H2 - p_Anode);
+
   // Static model
   feedh.m_flow*inStream(feedh.xi_outflow[5]) = m_dot_H2_react_stack - drainh.m_flow*drainh.xi_outflow[5]; // H2 balance
   feedh.m_flow - m_dot_H2_react_stack = - drainh.m_flow; // syngas feed
 
-  -drainh.m_flow*drainh.xi_outflow[1] = feedh.m_flow*inStream(feedh.xi_outflow[1]); //Methane balance
+  -drainh.m_flow*drainh.xi_outflow[1] = feedh.m_flow*inStream(feedh.xi_outflow[1]); // Methane balance
   -drainh.m_flow*drainh.xi_outflow[2] = feedh.m_flow*inStream(feedh.xi_outflow[2]); // Oxygen balance
   -drainh.m_flow*drainh.xi_outflow[3] = feedh.m_flow*inStream(feedh.xi_outflow[3]); // Carbon dioxide balance
   -drainh.m_flow*drainh.xi_outflow[4] = feedh.m_flow*inStream(feedh.xi_outflow[4]); // Water balance at anode - we assume all the water is formed at the cathode
@@ -440,23 +452,27 @@ equation
 
 
   //// O2 balance at cathode
+
   // Dynamic model
 //   V_c * der(P_O2) / (Modelica.Constants.R * T_stack)  = (feeda.m_flow*(1-inStream(feeda.xi_outflow[1])-inStream(feeda.xi_outflow[2])) - m_dot_O2_react_stack + draina.m_flow*(1-draina.xi_outflow[1]-draina.xi_outflow[2]))/M_O2;
 //   P_O2 = p_Cathode - P_H2O;
 //   - draina.m_flow*(1-draina.xi_outflow[1]-draina.xi_outflow[2]) = M_O2 * k_c * (P_O2 - p_Cathode);
+
   // Static model
   -draina.m_flow*draina.xi_outflow[1] = feeda.m_flow*inStream(feeda.xi_outflow[1]) + m_dot_H2O_gen_stack;  //Water balance at cathode
-  -draina.m_flow*draina.xi_outflow[2] = feeda.m_flow*inStream(feeda.xi_outflow[2]);  //Nitrogen mass flow rate of the cell stack - if balanced for H2O and N, balanced for O2 - 1 equation too many
+  -draina.m_flow*draina.xi_outflow[2] = feeda.m_flow*inStream(feeda.xi_outflow[2]);  //Nitrogen mass flow rate of the cell stack - if balanced for H2O and N, balanced for O2
   feeda.m_flow - m_dot_air_react_stack = - draina.m_flow; // air feed
 
   m_dot_O2_react_stack =  N_dot_e / 4 * M_O2 * no_Cells;
   xi_O2 = 1 - (air.xi[1] + air.xi[2]);
   x_O2 = 1 - (air.x[1] + air.x[2]);
   m_dot_air_react_stack = m_dot_O2_react_stack / xi_O2;
+
   m_dot_H2O_gen_stack = N_dot_e / 2 * M_H2O * no_Cells;
 
 
   //// Products balance: H2O mass balance at cathode (since water is produced at cathode side)
+
   // Dynamic model
 //   V_c * der(P_H2O) / (Modelica.Constants.R * T_stack)  = (feeda.m_flow*inStream(feeda.xi_outflow[1]) + m_dot_H2O_gen_stack + draina.m_flow*draina.xi_outflow[1])/ M_H2O;
 //   P_H2O = exp(-2.1794 + 0.02953 * T_stack - 9.1837e-5 * T_stack^2 + 1.4454e-7*T_stack^7);
@@ -473,9 +489,8 @@ equation
   end for;
 
   // impulse equation
-  //   feedh.p = drainh.p;
   feedh.p = p_Anode;
-  feeda.p = draina.p;
+  feeda.p = p_Cathode;
 
 
   if usePowerPort then

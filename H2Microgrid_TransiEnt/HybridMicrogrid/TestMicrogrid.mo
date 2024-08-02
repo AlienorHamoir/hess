@@ -23,7 +23,7 @@ model TestMicrogrid "Testing of hybrid microgrid"
   Modelica.Blocks.Sources.Pulse pulseEL(
     period=400,
     offset=1,
-    startTime=40) annotation (Placement(transformation(extent={{-14,-90},{6,-70}})));
+    startTime=40) annotation (Placement(transformation(extent={{0,-90},{20,-70}})));
   Modelica.Blocks.Sources.Sine HESScommand1(
     amplitude=3000,
     f(displayUnit="Hz") = 0.0001,
@@ -31,10 +31,10 @@ model TestMicrogrid "Testing of hybrid microgrid"
   Modelica.Blocks.Sources.Constant PowerSet(k=2)   annotation (Placement(transformation(extent={{-46,-46},{-26,-26}})));
 equation
   connect(BESScommand.y, Microgrid_HP.P_set_battery) annotation (Line(points={{-59,70},{-44,70},{-44,26},{-23.12,26},{-23.12,26.48}}, color={0,0,127}));
-  connect(pulseEL.y, Microgrid_HP.state_EL) annotation (Line(points={{7,-80},{24,-80},{24,-18},{19.44,-18},{19.44,-10.96}}, color={0,0,127}));
   connect(HESScommand.y, Microgrid_HP.P_set_FC) annotation (Line(points={{-59,20},{-32,20},{-32,6.8},{-23.68,6.8}}, color={0,0,127}));
-  connect(pulseFC.y, Microgrid_HP.state_FC) annotation (Line(points={{-25,-66},{-8,-66},{-8,-10.48}}, color={0,0,127}));
   connect(HESScommand.y, Microgrid_HP.P_set_EL) annotation (Line(points={{-59,20},{-32,20},{-32,-2.8},{-23.68,-2.8}}, color={0,0,127}));
+  connect(PowerSet.y, Microgrid_HP.state_FC) annotation (Line(points={{-25,-36},{-8,-36},{-8,-10.48}}, color={0,0,127}));
+  connect(PowerSet.y, Microgrid_HP.state_EL) annotation (Line(points={{-25,-36},{-8,-36},{-8,-18},{19.44,-18},{19.44,-10.96}}, color={0,0,127}));
   annotation (
     Icon(coordinateSystem(preserveAspectRatio=false)),
     Diagram(coordinateSystem(preserveAspectRatio=false)),

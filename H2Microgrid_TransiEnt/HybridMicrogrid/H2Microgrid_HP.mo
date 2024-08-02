@@ -49,8 +49,8 @@ model H2Microgrid_HP "Hybrid microgrid with high-pressure compressed storage"
         rotation=180,
         origin={-104,52})));
   Modelica.Blocks.Math.Sum PowerTotal(nin=5) annotation (Placement(transformation(extent={{0,-8},{16,8}})));
-  Modelica.Blocks.Interfaces.RealOutput SOC_battery "State of Charge battery [-]" annotation (Placement(transformation(extent={{100,80},{120,100}}),iconTransformation(extent={{100,80},{120,100}})));
-  Modelica.Blocks.Interfaces.RealOutput P_battery "Battery AC power consumption [W]" annotation (Placement(transformation(extent={{100,60},{120,80}}),iconTransformation(extent={{100,60},{120,80}})));
+  Modelica.Blocks.Interfaces.RealOutput SOC_battery "State of Charge battery [-]" annotation (Placement(transformation(extent={{100,86},{120,106}}),iconTransformation(extent={{100,86},{120,106}})));
+  Modelica.Blocks.Interfaces.RealOutput P_battery "Battery AC power consumption [W]" annotation (Placement(transformation(extent={{100,56},{120,76}}),iconTransformation(extent={{100,56},{120,76}})));
   Modelica.Blocks.Interfaces.RealOutput P_FC "Fuel cell system DC power balance  [W]" annotation (Placement(transformation(extent={{100,-30},{120,-10}}), iconTransformation(extent={{100,-30},{120,-10}})));
   Modelica.Blocks.Interfaces.RealOutput SOC_HESS "State of Charge H2 tank  [-]" annotation (Placement(transformation(extent={{100,-50},{120,-30}}), iconTransformation(extent={{100,-50},{120,-30}})));
   Modelica.Blocks.Interfaces.RealInput P_set_FC(unit="W", start=0) annotation (Placement(transformation(
@@ -114,6 +114,7 @@ model H2Microgrid_HP "Hybrid microgrid with high-pressure compressed storage"
         extent={{-12,-12},{12,12}},
         rotation=90,
         origin={48,-104})));
+  Modelica.Blocks.Interfaces.RealOutput SOE_battery "State of Energy [Wh]" annotation (Placement(transformation(extent={{100,70},{120,90}})));
 equation
   connect(pv.weaBus,weaDat. weaBus) annotation (Line(
       points={{-58,70.8},{-58,72},{-70,72}},
@@ -124,8 +125,8 @@ equation
   connect(P_set_battery,battery. PCtrl)
     annotation (Line(points={{0,106},{0,54},{16,54}},
                                                  color={0,0,127}));
-  connect(battery.SOC, SOC_battery) annotation (Line(points={{62,70},{62,90},{110,90}}, color={0,0,127}));
-  connect(battery.P, P_battery) annotation (Line(points={{62,54},{86,54},{86,70},{110,70}}, color={0,0,127}));
+  connect(battery.SOC, SOC_battery) annotation (Line(points={{62,70},{62,96},{110,96}}, color={0,0,127}));
+  connect(battery.P, P_battery) annotation (Line(points={{62,54},{86,54},{86,66},{110,66}}, color={0,0,127}));
   connect(PowerTotal.y, PowerBalanceMicrogrid) annotation (Line(points={{16.8,0},{64,0},{64,10},{110,10}},color={0,0,127}));
   connect(hess.SOC, SOC_HESS) annotation (Line(points={{60.8,-40},{110,-40}}, color={0,0,127}));
   connect(pv.P, pv_inv.u) annotation (Line(points={{-32.8,66},{-24,66},{-24,42.8}}, color={0,0,127}));
@@ -164,6 +165,7 @@ equation
       pattern=LinePattern.Dash));
   connect(state_FC, hess.delta_FC) annotation (Line(points={{-50,-102},{-50,-86},{10,-86},{10,-70},{32,-70},{32,-60}}, color={0,0,127}));
   connect(state_EL, hess.delta_EL) annotation (Line(points={{48,-104},{48,-60}}, color={0,0,127}));
+  connect(battery.SOE, SOE_battery) annotation (Line(points={{62,64},{84,64},{84,80},{110,80}}, color={0,0,127}));
   annotation (Icon(coordinateSystem(preserveAspectRatio=false), graphics={Rectangle(
           extent={{-100,100},{100,-100}},
           lineColor={0,128,255},

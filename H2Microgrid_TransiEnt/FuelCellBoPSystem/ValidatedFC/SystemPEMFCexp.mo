@@ -72,7 +72,7 @@ model SystemPEMFCexp "Fuel cell system, with auxiliaries and power controller - 
     medium=FC.Syngas,
     xi_const={0,0,0,0,1,0})
                       annotation (Placement(transformation(extent={{-52,11},{-36,27}})));
-  FuelCell.Controller.LambdaController_PID lambdaOController_PID(lambda_target=2,    m_flow_rampup=1e-8) "Controller that outputs the required air mass flow rate to meet OER (oxygen excess ratio) target " annotation (Placement(transformation(
+  FuelCell.Controller.LambdaController_PID lambdaOController_PID(lambda_target=2, m_flow_rampup=1e-6)    "Controller that outputs the required air mass flow rate to meet OER (oxygen excess ratio) target " annotation (Placement(transformation(
         extent={{-10,-10},{10,10}},
         rotation=180,
         origin={-22,-42})));
@@ -81,7 +81,7 @@ model SystemPEMFCexp "Fuel cell system, with auxiliaries and power controller - 
   AirSupplySystem.AirCompressorSystem AirCompressorSystem annotation (Placement(transformation(extent={{16,-74},{36,-54}})));
   Modelica.Blocks.Sources.RealExpression P_el_out(y=P_el_sys) annotation (Placement(transformation(extent={{68,-50},{88,-30}})));
 
-  FuelCell.Controller.PowerController powerController(i_max=200, preventDivisionByZero(uMax=45))
+  FuelCell.Controller.PowerController powerController(i_max=180, preventDivisionByZero(uMax=45))
                                                                  annotation (Placement(transformation(
         extent={{-10,-10},{10,10}},
         rotation=180,
@@ -182,7 +182,7 @@ equation
   connect(lambdaHController_PID.y, SyngasSource.m_flow) annotation (Line(points={{-85.4,-58},{-90,-58},{-90,23.8},{-52,23.8}}, color={0,0,127}));
   connect(lambdaHController_PID.y, mflowH2_FC) annotation (Line(points={{-85.4,-58},{-90,-58},{-90,-84},{-56,-84},{-56,-102}}, color={0,0,127}));
   connect(SumPower.y, powerController.P) annotation (Line(points={{-13,76},{-20,76},{-20,62},{-29,62}}, color={0,0,127}));
-  connect(SumPower.u1, AirCompressorSystem.P_airCompressor) annotation (Line(points={{10,68},{10,20},{-20,20},{-20,-24},{42,-24},{42,-66},{36,-66}}, color={0,0,127}));
+  connect(SumPower.u1, AirCompressorSystem.P_airCompressor) annotation (Line(points={{10,68},{42,68},{42,-66},{36,-66}},                             color={0,0,127}));
   connect(SumPower.u2, coolingModel.P_coolingPump) annotation (Line(points={{10,76},{82,76},{82,60},{72,60}}, color={0,0,127}));
   connect(SumPower.u3, P_el_set) annotation (Line(points={{10,84},{10,94},{24,94},{24,108}}, color={0,0,127}));
   annotation (

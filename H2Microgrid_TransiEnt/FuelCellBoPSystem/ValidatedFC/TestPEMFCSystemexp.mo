@@ -21,11 +21,10 @@ model TestPEMFCSystemexp "Example of a fuel cell system with its cooling and air
       weaBus "Weather data bus" annotation (Placement(transformation(extent={{-16,68},{10,96}}),
                                  iconTransformation(extent={{-112,56},{-88,82}})));
   Modelica.Blocks.Sources.Ramp PowerRamp(
-    height=3500,
-    duration=1200,
-    offset=1000,
-    startTime=1000)
-                  annotation (Placement(transformation(extent={{-88,-44},{-68,-24}})));
+    height=4000,
+    duration=900,
+    offset=300,
+    startTime=10) annotation (Placement(transformation(extent={{-88,-44},{-68,-24}})));
   Modelica.Blocks.Sources.Step PowerStep(
     height=650,
     offset=0,
@@ -39,8 +38,9 @@ model TestPEMFCSystemexp "Example of a fuel cell system with its cooling and air
     height_1=5000,
     height_2=-4700,
     duration_2=1000)
-                  annotation (Placement(transformation(extent={{-90,-82},{-70,-62}})));
-  Modelica.Blocks.Sources.Constant PowerSet(k=600) annotation (Placement(transformation(extent={{-88,34},{-68,54}})));
+                  annotation (Placement(transformation(extent={{-88,-80},{-68,-60}})));
+  Modelica.Blocks.Sources.Constant PowerSet(k=-600)
+                                                   annotation (Placement(transformation(extent={{-88,34},{-68,54}})));
   Modelica.Blocks.Sources.CombiTimeTable StairSignal(table=[0,0; 499,0; 500,500; 999,500; 1000,1000; 1499,1000; 1500,1500; 1999,1500; 2000,2000; 2499,2000; 2500,2500; 2999,2500; 3000,3000; 3499,3000; 3500,3500; 3999,3500; 4000,4000; 4499,4000; 4500,4500; 4999,4500; 5000,5000; 5500,5000], tableOnFile=false) "create a stair-step signal for efficiency computation" annotation (Placement(transformation(
         extent={{-10,-10},{10,10}},
         rotation=180,
@@ -77,7 +77,7 @@ model TestPEMFCSystemexp "Example of a fuel cell system with its cooling and air
   Modelica.Blocks.Sources.Sine HESScommand(
     amplitude=1000,
     f(displayUnit="Hz") = 0.0001,
-    offset=1500) annotation (Placement(transformation(extent={{-46,-72},{-26,-52}})));
+    offset=1500) annotation (Placement(transformation(extent={{-54,-80},{-34,-60}})));
 equation
 
   connect(weaDat.weaBus, weaBus) annotation (Line(
@@ -93,7 +93,7 @@ equation
   connect(Pstat.y[1], add.u2) annotation (Line(points={{65,46},{50,46}}, color={0,0,127}));
   connect(const.y, add.u1) annotation (Line(points={{65,16},{50,16},{50,34}}, color={0,0,127}));
   connect(add.y, A_cell1.u) annotation (Line(points={{27,40},{15.2,40}}, color={0,0,127}));
-  connect(HESScommand.y, systemPEMFCexp.P_el_set) annotation (Line(points={{-25,-62},{-20,-62},{-20,-28},{-44,-28},{-44,32},{-20,32},{-20,21.6}}, color={0,0,127}));
+  connect(PowerRamp.y, systemPEMFCexp.P_el_set) annotation (Line(points={{-67,-34},{-44,-34},{-44,32},{-20,32},{-20,21.6}}, color={0,0,127}));
   annotation (
     Diagram(coordinateSystem(preserveAspectRatio=false, extent={{-100,-100},{100,100}})),
     experiment(
