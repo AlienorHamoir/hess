@@ -5,7 +5,7 @@ model TestPowerController "Testing of power controller used in FC system"
 
   Modelica.Blocks.Sources.Constant Voltage(k=0) annotation (Placement(transformation(extent={{-86,-60},{-66,-40}})));
   Modelica.Blocks.Sources.Constant Power(k=500) annotation (Placement(transformation(extent={{-82,42},{-62,62}})));
-  FuelCell.Controller.PowerController powerController annotation (Placement(transformation(extent={{26,2},{46,22}})));
+  Controller.PowerController powerController annotation (Placement(transformation(extent={{26,2},{46,22}})));
   Modelica.Thermal.FluidHeatFlow.Examples.Utilities.DoubleRamp Load(
     startTime=10,
     interval=10,

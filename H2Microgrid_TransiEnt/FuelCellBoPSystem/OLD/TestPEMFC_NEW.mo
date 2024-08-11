@@ -70,15 +70,6 @@ model TestPEMFC_NEW "Example of a fuel cell in a domestic application that follo
     xi_const={0,0,0,0,1,0})
                       annotation (Placement(transformation(extent={{-48,3},{-32,19}})));
 
-  FuelCell.PEMFC FC(
-    Syngas=TransiEnt.Basics.Media.Gases.Gas_VDIWA_SG7_var(),
-    I_shutdown=10,
-    T_nom(displayUnit="K") = 350,
-    T_stack_max(displayUnit="K") = 355,
-    T_cool_set(displayUnit="K") = 350,
-    usePowerPort=false,
-    useHeatPort=false,
-    I(start=10))                  annotation (Placement(transformation(extent={{-10,-26},{22,4}})));
   Modelica.Blocks.Sources.Ramp CurrentRamp(
     height=120,
     duration=4000,
@@ -122,11 +113,11 @@ model TestPEMFC_NEW "Example of a fuel cell in a domestic application that follo
         extent={{-10,-10},{10,10}},
         rotation=180,
         origin={-26,-50})));
-  FuelCell.Controller.PowerController powerController annotation (Placement(transformation(
+  Controller.PowerController powerController annotation (Placement(transformation(
         extent={{-10,-10},{10,10}},
         rotation=180,
         origin={8,32})));
-  FuelCell.Controller.LambdaController_PID lambdaHController_PID(lambda_target=1.5, m_flow_rampup=1e-10) annotation (Placement(transformation(
+  Controller.LambdaController_PID lambdaHController_PID(lambda_target=1.5, m_flow_rampup=1e-10) annotation (Placement(transformation(
         extent={{-10,-10},{10,10}},
         rotation=180,
         origin={70,-74})));

@@ -62,27 +62,16 @@ TransiEnt.Components.Electrical.FuelCellSystems.FuelCell.Controller.PowerControl
         rotation=180,
         origin={58,-13})));
 
-  FuelCell.PEMFC FC(
-    Syngas=TransiEnt.Basics.Media.Gases.Gas_VDIWA_SG7_var(),
-    m=1,
-    cp=35000,
-    no_Cells=35,
-    T_nom=308.15,
-    T_stack_max=313.15,
-    T_cool_set=303.15,
-    T_stack(start=298.15),
-    usePowerPort=false,
-    useHeatPort=true)             annotation (Placement(transformation(extent={{-16,-48},{16,-18}})));
   Modelica.Blocks.Sources.Ramp ramp(
     height=4000,
     duration=500,
     offset=500,
     startTime=10) annotation (Placement(transformation(extent={{14,54},{34,74}})));
-  FuelCell.Controller.LambdaController_PID lambdaHController_PID(lambda_target=1.5, m_flow_rampup=1e-6) annotation (Placement(transformation(
+  Controller.LambdaController_PID lambdaHController_PID(lambda_target=1.5, m_flow_rampup=1e-6) annotation (Placement(transformation(
         extent={{-10,-10},{10,10}},
         rotation=180,
         origin={-72,-88})));
-  FuelCell.Controller.LambdaController_PID lambdaOController_PID annotation (Placement(transformation(
+  Controller.LambdaController_PID lambdaOController_PID annotation (Placement(transformation(
         extent={{-10,-10},{10,10}},
         rotation=180,
         origin={-26,-72})));

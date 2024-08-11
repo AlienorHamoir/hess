@@ -6,10 +6,6 @@ model HESS_nonCompressed "HESS with low-pressure non-compressed storage system"
   Modelica.Units.SI.Power P_FC_set "FC system electrical setpoint";
   Modelica.Units.SI.Power P_EL_set "Electrolyzer system electrical setpoint";
   Modelica.Blocks.Interfaces.RealOutput socTankH2 annotation (Placement(transformation(extent={{92,-18},{126,16}}), iconTransformation(extent={{92,-18},{126,16}})));
-  FuelCellBoPSystem.FuelCell.SystemPEMFC systemPEMFC annotation (Placement(transformation(
-        extent={{-20,-20},{20,20}},
-        rotation=90,
-        origin={-20,60})));
   TransiEnt.Basics.Interfaces.Electrical.ElectricPowerIn P_set_HESS "Input for HESS power production and consumption setpoint" annotation (Placement(transformation(extent={{-132,-50},{-94,-12}}), iconTransformation(extent={{-132,-50},{-94,-12}})));
   TransiEnt.Basics.Interfaces.Electrical.ElectricPowerOut P_HESS "Actual HESS electrical power balance (consumed - produced)" annotation (Placement(transformation(extent={{92,60},{124,92}}), iconTransformation(extent={{92,60},{124,92}})));
   StorageSystem.H2StorageSystem_nonCompressed h2StorageSystem_nonCompressed annotation (Placement(transformation(extent={{20,-50},{56,6}})));

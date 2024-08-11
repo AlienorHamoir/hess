@@ -19,7 +19,8 @@ model HESS_Compressed "HESS with high-pressure compressed storage system"
         origin={-20,-48})));
   StorageSystem.H2StorageSystem_Compressed h2StorageSystem_Compressed(p_start=p_start, p_maxHigh=p_max)
                                                                       annotation (Placement(transformation(extent={{22,-40},{62,20}})));
-  Modelica.Blocks.Interfaces.RealOutput SOC "H2 Tank State of Charge [-]" annotation (Placement(transformation(extent={{88,-16},{120,16}}), iconTransformation(extent={{88,-16},{120,16}})));
+  Modelica.Blocks.Interfaces.RealOutput LOH "H2 Tank Level of Hydrogen [-]"
+                                                                          annotation (Placement(transformation(extent={{88,-16},{120,16}}), iconTransformation(extent={{88,-16},{120,16}})));
   TransiEnt.Basics.Interfaces.Electrical.ElectricPowerIn P_set_FC "Input for FC power production setpoint" annotation (Placement(transformation(extent={{-120,50},{-82,90}}), iconTransformation(extent={{-120,50},{-82,90}})));
   TransiEnt.Components.Boundaries.Gas.BoundaryRealGas_Txim_flow H2massSink(medium=medium, variable_m_flow=true,
     T_const=313.15)                                                                                             annotation (Placement(transformation(
@@ -44,7 +45,7 @@ model HESS_Compressed "HESS with high-pressure compressed storage system"
         extent={{-20,-20},{20,20}},
         rotation=90,
         origin={40,-100})));
-  FuelCellBoPSystem.ValidatedFC.SystemPEMFCexp systemFC annotation (Placement(transformation(
+  FuelCellBoPSystem.FuelCell.SystemPEMFCexp systemFC annotation (Placement(transformation(
         extent={{-20,-20},{20,20}},
         rotation=90,
         origin={-20,60})));
@@ -78,7 +79,7 @@ equation
       points={{-0.2,-48},{42.2,-48},{42.2,-40.3}},
       color={255,255,0},
       thickness=1.5));
-  connect(h2StorageSystem_Compressed.socTank, SOC) annotation (Line(points={{63.2,13.4},{70,13.4},{70,14},{78,14},{78,0},{104,0}}, color={0,0,127}));
+  connect(h2StorageSystem_Compressed.LOH, LOH) annotation (Line(points={{63.2,13.4},{70,13.4},{70,14},{78,14},{78,0},{104,0}}, color={0,0,127}));
   connect(h2StorageSystem_Compressed.H2PortOut, H2massSink.gasPort) annotation (Line(
       points={{42,19.4},{42,44},{36,44}},
       color={255,255,0},

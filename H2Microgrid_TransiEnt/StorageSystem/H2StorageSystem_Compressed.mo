@@ -55,7 +55,7 @@ public
   TransiEnt.Basics.Interfaces.General.PressureOut pressureTank annotation (Placement(transformation(extent={{96,30},{116,50}})));
   StorageSystem.TankSOC tankSOC(maxPressure=p_maxHigh)
                                 annotation (Placement(transformation(extent={{42,68},{62,88}})));
-  Modelica.Blocks.Interfaces.RealOutput socTank annotation (Placement(transformation(extent={{96,68},{116,88}})));
+  Modelica.Blocks.Interfaces.RealOutput LOH annotation (Placement(transformation(extent={{96,68},{116,88}})));
 
 // public
 //   inner Summary summary(
@@ -113,7 +113,7 @@ public
   inner TransiEnt.ModelStatistics modelStatistics annotation (Placement(transformation(extent={{30,-96},{50,-76}})));
   inner TransiEnt.SimCenter simCenter annotation (Placement(transformation(extent={{66,-98},{86,-78}})));
 equation
-  connect(tankSOC.tankSOC, socTank) annotation (Line(points={{62.6,78},{106,78}}, color={0,0,127}));
+  connect(tankSOC.tankSOC, LOH) annotation (Line(points={{62.6,78},{106,78}}, color={0,0,127}));
   connect(H2storage.p_gas, controlCompressor.p_afterCompIn) annotation (Line(points={{-3.5,8.25},{-3.5,56},{-54,56}},
                                                                                                                  color={0,0,127}));
   connect(H2storage.p_gas, tankSOC.currentTankPressure) annotation (Line(points={{-3.5,8.25},{-3.5,56},{32,56},{32,78},{36,78},{36,77.8},{41.8,77.8}},
