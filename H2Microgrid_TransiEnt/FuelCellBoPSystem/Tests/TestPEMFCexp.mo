@@ -68,8 +68,8 @@ model TestPEMFCexp "Test and validation with experimental results of the PEMFC m
     xi_const={0,0,0,0,1,0}) annotation (Placement(transformation(extent={{-48,-9},{-32,7}})));
 
   Modelica.Blocks.Sources.Ramp PolarizationCurrentRamp(
-    height=125,
-    duration=2.2,
+    height=117,
+    duration=2.34,
     offset=8,
     startTime=0) "Laurencelle Ballard MK5-E polarization curve" annotation (Placement(transformation(extent={{-66,22},{-50,38}})));
   Modelica.Thermal.FluidHeatFlow.Examples.Utilities.DoubleRamp DynamicCurrentDensity(
@@ -94,19 +94,17 @@ model TestPEMFCexp "Test and validation with experimental results of the PEMFC m
                   annotation (Placement(transformation(extent={{-62,74},{-46,90}})));
   FuelCell.PEMFC_KhanIqbal FC(
     no_Cells=36,
-    lambda=12.5,
     T_nom=345.15,
     T_stack_max=348.15,
     T_cool_set=346.15,
-    E_0=0.99,
     usePowerPort=false,
     useHeatPort=true,
-    T_stack(displayUnit="degC", start=345.15)) annotation (Placement(transformation(extent={{-6,-16},{14,4}})));
+    T_stack(displayUnit="degC", start=333.15)) annotation (Placement(transformation(extent={{-6,-16},{14,4}})));
   inner TransiEnt.SimCenter simCenter annotation (Placement(transformation(extent={{72,-94},{88,-78}})));
   Modelica.Blocks.Math.Gain A_cell(k=232) annotation (Placement(transformation(
         extent={{-5,-5},{5,5}},
         rotation=-90,
-        origin={-19,45})));
+        origin={-29,49})));
   Modelica.Blocks.Sources.CombiTimeTable CellVoltageExp(table=[0,0.995; 13,0.995; 14,0.82; 16,0.8; 28,0.8; 40,0.8; 41,0.97; 42,0.993; 43,0.995; 70,0.995], tableOnFile=false) "cell dynamic voltage response (Kan et Iqbal)" annotation (Placement(transformation(
         extent={{-7,-7},{7,7}},
         rotation=180,
@@ -153,12 +151,19 @@ model TestPEMFCexp "Test and validation with experimental results of the PEMFC m
   Modelica.Blocks.Sources.CombiTimeTable CurrentPolarization125A(table=[0,8; 0.1,8; 0.2,13; 0.3,18; 0.4,23; 0.5,28; 0.6,33; 0.7,38; 0.8,43; 0.9,48; 1.0,53; 1.1,58; 1.2,63; 1.3,68; 1.4,73; 1.5,78; 1.6,83; 1.7,88; 1.8,93; 1.9,98; 2.0,103; 2.1,108; 2.2,113; 2.3,118; 2.4,123], tableOnFile=false) "Laurencelle Ballard MK5-E polarization curve from 8 to 125A" annotation (Placement(transformation(
         extent={{-8,-8},{8,8}},
         rotation=0,
-        origin={-36,28})));
-  Modelica.Blocks.Sources.Ramp PolarizationCurrentRamp1(
+        origin={-34,28})));
+  Modelica.Blocks.Sources.Ramp FullRangeCurrentRamp(
     height=222,
     duration=4.4,
     offset=8,
-    startTime=0) "Laurencelle Ballard MK5-E polarization curve" annotation (Placement(transformation(extent={{-80,-46},{-64,-30}})));
+    startTime=0) "Laurencelle Ballard MK5-E polarization curve" annotation (Placement(transformation(extent={{-88,-48},{-72,-32}})));
+  Modelica.Blocks.Sources.CombiTimeTable ExperimentalPolarizationCurve(
+    table=[0,32.50; 1,31.7; 2,30.94; 3,30.25; 4,29.75; 5,29.46; 6,29.08; 7,28.7; 8,28.4; 9,28; 10,27.81; 11,27.55; 12,27.205; 13,27.04; 14,26.6; 15,26.42; 16,26.12; 17,25.8; 18,25.5; 19,25.1; 20,24.87; 21,24.51; 22,24.2; 23,23.7],
+    tableOnFile=false,
+    timeScale=0.1) " Laurencelle Ballard MK5-E polarization curve at 72°C for I = (8;125) A" annotation (Placement(transformation(
+        extent={{-7,-7},{7,7}},
+        rotation=180,
+        origin={89,-9})));
 equation
 
   connect(FC.feedh, SyngasSource.gas_a) annotation (Line(
@@ -185,8 +190,7 @@ equation
   connect(FC.temperatureOut, coolingModel.T_op) annotation (Line(points={{-0.4,-9},{-0.4,-10},{-12,-10},{-12,40},{10,40},{10,38},{20,38}}, color={0,0,127}));
   connect(FC.heat, coolingModel.heatPortCooling) annotation (Line(points={{14.1,-9.1},{22,-9.1},{22,18},{16,18},{16,24.2},{20,24.2}}, color={191,0,0}));
   connect(lambdaController_PID1.y, AirCompressorSystem.AirMassFlowRateSetpoint) annotation (Line(points={{-35.4,-54},{-40,-54},{-40,-72},{18,-72},{18,-56},{24,-56}}, color={0,0,127}));
-  connect(CurrentDensityStep.y, A_cell.u) annotation (Line(points={{-45.2,82},{-40,82},{-40,56},{-19,56},{-19,51}}, color={0,0,127}));
-  connect(PolarizationCurrentRamp1.y, FC.I_load) annotation (Line(points={{-63.2,-38},{-54,-38},{-54,-14},{-26,-14},{-26,-6.6},{-4.2,-6.6}}, color={0,0,127}));
+  connect(CurrentDensityStep.y, A_cell.u) annotation (Line(points={{-45.2,82},{-40,82},{-40,62},{-29,62},{-29,55}}, color={0,0,127}));
   annotation (experiment(
       StopTime=4.2,
       Interval=1,

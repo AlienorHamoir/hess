@@ -43,7 +43,7 @@ model PEMFC_KhanIqbal "Model of PEM Fuel Cell stack experimentally validated - K
 
   parameter Integer no_Cells = 36 "Number of cells connected in series";
 
-  parameter Real lambda=12.5 "constant humidity";
+  parameter Real lambda=11.1074 "constant humidity";
 
   parameter Modelica.Units.SI.Thickness t_mem = 125e-6 "PE membrane thickness - ref. Dow's membrane in microm";
 
@@ -89,7 +89,7 @@ model PEMFC_KhanIqbal "Model of PEM Fuel Cell stack experimentally validated - K
 
   parameter Modelica.Units.SI.Voltage OCV=0.99 "Open circuit voltage of a cell";
 
-  parameter Modelica.Units.SI.Voltage E_0=0.99 "Open circuit voltage of a cell used in voltage equation";
+  parameter Modelica.Units.SI.Voltage E_0=0.89195 "Open circuit voltage of a cell used in voltage equation";
 
   parameter Modelica.Units.SI.Capacitance C_dl = 4  "Stack double layer capacitance for dynamic activation overvoltage";
 

@@ -182,11 +182,11 @@ equation
   connect(FC.lambda_H, lambdaHController_PID.u1) annotation (Line(points={{9.28,-14},{9.28,-60},{-60,-60},{-60,-54},{-66.6,-54}}, color={0,0,127}));
   connect(lambdaHController_PID.y, SyngasSource.m_flow) annotation (Line(points={{-85.4,-58},{-90,-58},{-90,23.8},{-52,23.8}}, color={0,0,127}));
   connect(lambdaHController_PID.y, mflowH2_FC) annotation (Line(points={{-85.4,-58},{-90,-58},{-90,-84},{-56,-84},{-56,-102}}, color={0,0,127}));
-  connect(SumPower.y, powerController.P) annotation (Line(points={{-13,76},{-20,76},{-20,62},{-29,62}}, color={0,0,127}));
   connect(SumPower.u1, AirCompressorSystem.P_airCompressor) annotation (Line(points={{10,68},{42,68},{42,-66},{36,-66}},                             color={0,0,127}));
   connect(SumPower.u2, coolingModel.P_coolingPump) annotation (Line(points={{10,76},{82,76},{82,60},{72,60}}, color={0,0,127}));
   connect(SumPower.u3, P_el_set) annotation (Line(points={{10,84},{10,94},{24,94},{24,108}}, color={0,0,127}));
   connect(P_el_out_POS.y, P_FC_tot_POS) annotation (Line(points={{93,-2},{108,-2}}, color={0,0,127}));
+  connect(P_el_set, powerController.P) annotation (Line(points={{24,108},{24,94},{-20,94},{-20,62},{-29,62}}, color={0,127,127}));
   annotation (
     Diagram(coordinateSystem(preserveAspectRatio=false, extent={{-100,-100},{100,100}})),
     experiment(

@@ -21,8 +21,8 @@ model TestPEMFCSystemexp "Example of a fuel cell system with its cooling and air
       weaBus "Weather data bus" annotation (Placement(transformation(extent={{-16,68},{10,96}}),
                                  iconTransformation(extent={{-112,56},{-88,82}})));
   Modelica.Blocks.Sources.Ramp PowerRamp(
-    height=4300,
-    duration=4.4,
+    height=4700,
+    duration=15,
     offset=300,
     startTime=1)  annotation (Placement(transformation(extent={{-88,-44},{-68,-24}})));
   Modelica.Blocks.Sources.Step PowerStep(
@@ -58,8 +58,8 @@ model TestPEMFCSystemexp "Example of a fuel cell system with its cooling and air
         origin={76,46})));
   FuelCell.SystemPEMFCexp systemPEMFCexp(
     coolingModel(k_p=0.5),
-    powerController(i_max=230),
-    FC(T_stack(start=345.15))) annotation (Placement(transformation(extent={{-40,-20},{0,20}})));
+    powerController(i_max=300),
+    FC(T_stack(start=333.15))) annotation (Placement(transformation(extent={{-40,-20},{0,20}})));
   Modelica.Blocks.Math.Gain A_cell(k=0.2) annotation (Placement(transformation(
         extent={{-6,-6},{6,6}},
         rotation=180,
