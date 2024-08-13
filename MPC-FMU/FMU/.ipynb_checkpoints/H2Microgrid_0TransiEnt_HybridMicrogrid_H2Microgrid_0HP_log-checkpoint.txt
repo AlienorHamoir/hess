@@ -1,0 +1,13 @@
+FMIL: module = FMILIB, log level = 4: Loading 'linux64' binary with 'default' platform types
+FMIL: module = Model, log level = 2: [][FMU status:Error] ... loading "default" from "C:/ambient/UndergroundTemperature_Duesseldorf_1m_2017.txt"
+Error: The following error was detected at time: 0
+FMIL: module = Model, log level = 2: [][FMU status:Error] Not possible to open file "C:/ambient/UndergroundTemperature_Duesseldorf_1m_2017.txt": No such file or directory
+
+FMIL: module = Model, log level = 2: [][FMU status:Error] The stack of functions is:
+FMIL: module = Model, log level = 2: [][FMU status:Error] Modelica.Blocks.Types.ExternalCombiTimeTable
+FMIL: module = Model, log level = 2: [][FMU status:Error] Modelica.Blocks.Types.ExternalCombiTimeTable((if hESS.simCenter.Variable_Ground_Temperature.MSL_combiTimeTable.tableOnFile then hESS.simCenter.Variable_Ground_Temperature.MSL_combiTimeTable.tableName else "NoName"), (if hESS.simCenter.Variable_Ground_Temperature.MSL_combiTimeTable.tableOnFile and hESS.simCenter.Variable_Ground_Temperature.MSL_combiTimeTable.fileName <> "NoName" and  not Modelic...
+FMIL: module = Model, log level = 2: [][FMU status:Error] 
+FMIL: module = Model, log level = 2: [][FMU status:Error] fmiInitialize: dsblock_ failed, QiErr = 1
+FMIL: module = Model, log level = 2: [][FMU status:Error] Unless otherwise indicated by error messages, possible errors are (non-exhaustive):
+The model references external data that is not present on the target machine, at least not with the same location.
+

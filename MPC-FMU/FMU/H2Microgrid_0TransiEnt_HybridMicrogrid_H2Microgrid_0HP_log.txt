@@ -1,0 +1,24 @@
+FMIL: module = FMILIB, log level = 4: Loading 'linux64' binary with 'default' platform types
+FMIL: module = Model, log level = 4: [][FMU status:OK] ... loading "Load" from "/tmp/JModelica.org/jm_tmp7dofhcgu/resources/commercial_SmallOffice_LA.txt"
+
+FMIL: module = Model, log level = 4: [CvodeStatistics][FMU status:OK] Sundials CVode Statistics
+    Stop time                                : 0.00 s
+    Simulation time                          : 0.01 s
+    Number of external steps                 : 0
+    Number of internal steps                 : 0
+    Number of non-linear iterations          : 0
+    Number of non-linear convergence failures: 0
+    Number of f function evaluations         : 0
+    Number of g function evaluations         : 0
+    Number of Jacobian-evaluations (direct)  : 3702046240
+    Maximum integration order                : 0
+    Suggested tolerance scale factor         : 1.0
+    Grouping used                            : yes
+
+FMIL: module = Model, log level = 4: [][FMU status:OK] Rejected count
+    Number of external steps                 : 0
+    Number of internal steps                 : 0
+    Number of f function evaluations         : 0
+    Number of Jac function evaluations       : 0
+
+FMIL: module = Model, log level = 3: [IllegalFunctionCall][FMU status:Warning] fmi2Terminate: already terminated, ignoring call
