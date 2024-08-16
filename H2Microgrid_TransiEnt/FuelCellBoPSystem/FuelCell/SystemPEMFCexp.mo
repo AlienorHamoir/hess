@@ -18,21 +18,21 @@ model SystemPEMFCexp "Fuel cell system, with auxiliaries and power controller - 
   Modelica.Units.SI.Efficiency eta_NCV_sys(min=0, max=1) "Efficiency of the electrolyzer + BoP system based on NCV" annotation (Dialog(group="Initialization", showStartAttribute=true));
   Modelica.Units.SI.Efficiency eta_GCV_sys(min=0, max=1) "Efficiency of the electrolyzer + BoP system based on GCV" annotation (Dialog(group="Initialization", showStartAttribute=true));
 
-  Modelica.Blocks.Interfaces.RealOutput mflowH2_FC annotation (Placement(transformation(
+  Modelica.Blocks.Interfaces.RealOutput mflowH2 annotation (Placement(transformation(
         extent={{-12,-12},{12,12}},
         rotation=-90,
-        origin={-56,-102}), iconTransformation(
+        origin={-56,-100}), iconTransformation(
         extent={{-12,-12},{12,12}},
         rotation=-90,
-        origin={-56,-102})));
-  TransiEnt.Basics.Interfaces.Electrical.ElectricPowerIn P_el_set "Input for FC system power production setpoint" annotation (Placement(transformation(
+        origin={-56,-100})));
+  TransiEnt.Basics.Interfaces.Electrical.ElectricPowerIn P_FC_set "Input for FC system power production setpoint" annotation (Placement(transformation(
         extent={{-10,-10},{10,10}},
         rotation=-90,
-        origin={24,108}), iconTransformation(
+        origin={0,102}),  iconTransformation(
         extent={{-10,-10},{10,10}},
         rotation=-90,
         origin={0,108})));
-  TransiEnt.Basics.Interfaces.Electrical.ElectricPowerOut P_FC_tot annotation (Placement(transformation(extent={{92,-52},{116,-28}}), iconTransformation(extent={{92,-52},{116,-28}})));
+  TransiEnt.Basics.Interfaces.Electrical.ElectricPowerOut P_FC_sys annotation (Placement(transformation(extent={{88,-52},{112,-28}}), iconTransformation(extent={{88,-52},{112,-28}})));
   ClaRa.Components.BoundaryConditions.BoundaryGas_Txim_flow AirSource(
     variable_m_flow=true,
     variable_xi=false,
@@ -41,7 +41,7 @@ model SystemPEMFCexp "Fuel cell system, with auxiliaries and power controller - 
     medium=FC.Air)    annotation (Placement(transformation(
         extent={{6.5,-9},{-6.5,9}},
         rotation=180,
-        origin={-43.5,-19})));
+        origin={-51.5,-19})));
   ClaRa.Components.BoundaryConditions.BoundaryGas_pTxi AirSink(
     variable_p=false,
     variable_T=false,
@@ -51,7 +51,7 @@ model SystemPEMFCexp "Fuel cell system, with auxiliaries and power controller - 
     medium=FC.Air)        annotation (Placement(transformation(
         extent={{-7,-8},{7,8}},
         rotation=180,
-        origin={57,-20})));
+        origin={31,-20})));
   ClaRa.Components.BoundaryConditions.BoundaryGas_pTxi SyngasSink(
     variable_p=false,
     variable_T=false,
@@ -62,7 +62,7 @@ model SystemPEMFCexp "Fuel cell system, with auxiliaries and power controller - 
                       annotation (Placement(transformation(
         extent={{-6,-9},{6,9}},
         rotation=180,
-        origin={56,17})));
+        origin={30,17})));
   ClaRa.Components.BoundaryConditions.BoundaryGas_Txim_flow SyngasSource(
     variable_T=false,
     m_flow_const=5.1e-2,
@@ -71,32 +71,33 @@ model SystemPEMFCexp "Fuel cell system, with auxiliaries and power controller - 
     T_const=40 + 273.15,
     medium=FC.Syngas,
     xi_const={0,0,0,0,1,0})
-                      annotation (Placement(transformation(extent={{-52,11},{-36,27}})));
+                      annotation (Placement(transformation(extent={{-60,11},{-44,27}})));
   H2Microgrid_TransiEnt.FuelCellBoPSystem.Controller.LambdaController_PID lambdaOController_PID(lambda_target=2, m_flow_rampup=1e-6) "Controller that outputs the required air mass flow rate to meet OER (oxygen excess ratio) target " annotation (Placement(transformation(
         extent={{-10,-10},{10,10}},
         rotation=180,
-        origin={-22,-42})));
-  CoolingSystem.HeatPortCooling.CoolingModel coolingModel(k_p=1000, tau_i=0.01)
-                                                          annotation (Placement(transformation(extent={{52,46},{72,66}})));
-  AirSupplySystem.AirCompressorSystem AirCompressorSystem annotation (Placement(transformation(extent={{16,-74},{36,-54}})));
+        origin={-30,-42})));
+  CoolingSystem.HeatPortCooling.CoolingModel coolingModel(k_p=100,  tau_i=0.01)
+                                                          annotation (Placement(transformation(extent={{54,52},{82,72}})));
+  AirSupplySystem.AirCompressorSystem AirCompressorSystem annotation (Placement(transformation(extent={{-6,-92},{26,-72}})));
   Modelica.Blocks.Sources.RealExpression P_el_out(y=P_el_sys) annotation (Placement(transformation(extent={{68,-50},{88,-30}})));
 
-  H2Microgrid_TransiEnt.FuelCellBoPSystem.Controller.PowerController powerController(i_max=230, preventDivisionByZero(uMax=45)) annotation (Placement(transformation(
+  H2Microgrid_TransiEnt.FuelCellBoPSystem.Controller.PowerController powerController(i_max=300, preventDivisionByZero(uMax=45)) annotation (Placement(transformation(
         extent={{-10,-10},{10,10}},
         rotation=180,
-        origin={-38,68})));
-  Modelica.Blocks.Interfaces.RealInput T_environment "Prescribed boundary temperature from weather file" annotation (Placement(transformation(
-        extent={{-15,-15},{15,15}},
+        origin={-72,52})));
+  Modelica.Blocks.Interfaces.RealInput T_env "Prescribed boundary temperature from weather file" annotation (Placement(transformation(
+        extent={{-11,-11},{11,11}},
         rotation=-90,
-        origin={85,107}), iconTransformation(
+        origin={45,107}), iconTransformation(
         extent={{-10,30},{10,10}},
         rotation=-90,
         origin={68,108})));
-  inner TransiEnt.SimCenter simCenter annotation (Placement(transformation(extent={{62,-98},{76,-84}})));
+  inner TransiEnt.SimCenter simCenter annotation (Placement(transformation(extent={{-88,84},{-74,98}})));
   Modelica.Blocks.Sources.RealExpression P_el_out_aux(y=P_el_aux) annotation (Placement(transformation(extent={{68,-88},{88,-68}})));
-  TransiEnt.Basics.Interfaces.Electrical.ElectricPowerOut P_FC_aux annotation (Placement(transformation(extent={{92,-92},{116,-68}}), iconTransformation(extent={{92,-92},{116,-68}})));
-  PEMFC_KhanIqbal FC(useHeatPort=true) annotation (Placement(transformation(extent={{-12,-14},{16,12}})));
-  H2Microgrid_TransiEnt.FuelCellBoPSystem.Controller.LambdaController_PID lambdaHController_PID(lambda_target=1.5, m_flow_rampup=1e-8) "Controller that outputs the required air mass flow rate to meet OER (oxygen excess ratio) target " annotation (Placement(transformation(
+  TransiEnt.Basics.Interfaces.Electrical.ElectricPowerOut P_FC_aux annotation (Placement(transformation(extent={{88,-92},{112,-68}}), iconTransformation(extent={{88,-92},{112,-68}})));
+  PEMFC FC(useHeatPort=true) annotation (Placement(transformation(extent={{-20,-14},{8,12}})));
+  H2Microgrid_TransiEnt.FuelCellBoPSystem.Controller.LambdaController_PID lambdaHController_PID(lambda_target=1.5, m_flow_rampup=1e-8) "Controller that outputs the required air mass flow rate to meet HER (hydrogen excess ratio) target "
+                                                                                                                                                                                                        annotation (Placement(transformation(
         extent={{-10,-10},{10,10}},
         rotation=180,
         origin={-76,-58})));
@@ -106,9 +107,9 @@ model SystemPEMFCexp "Fuel cell system, with auxiliaries and power controller - 
     k3=+1) annotation (Placement(transformation(
         extent={{-10,-10},{10,10}},
         rotation=180,
-        origin={-2,76})));
-  Modelica.Blocks.Sources.RealExpression P_el_out_POS(y=-FC.P_el) annotation (Placement(transformation(extent={{72,-12},{92,8}})));
-  TransiEnt.Basics.Interfaces.Electrical.ElectricPowerOut P_FC_tot_POS annotation (Placement(transformation(extent={{96,-14},{120,10}}), iconTransformation(extent={{92,-52},{116,-28}})));
+        origin={-24,56})));
+  Modelica.Blocks.Sources.RealExpression P_el_out_POS(y=-FC.P_el) annotation (Placement(transformation(extent={{68,-12},{88,8}})));
+  TransiEnt.Basics.Interfaces.Electrical.ElectricPowerOut P_FC_net "positive value of the net power produced by the fuel cell, wihtout accountign fro th auxiliaries" annotation (Placement(transformation(extent={{88,-14},{112,10}}), iconTransformation(extent={{92,-16},{116,8}})));
 equation
 
   P_el_tot = FC.P_el + AirCompressorSystem.P_airCompressor + coolingModel.P_coolingPump;
@@ -122,8 +123,8 @@ equation
   end if;
 
   //Efficiency
-  H_flow_H2_GCV = (mflowH2_FC*(GCV_H2 + (h0 + FC.h_hein)));
-  H_flow_H2_NCV = (mflowH2_FC*(NCV_H2 + (h0 + FC.h_hein)));
+  H_flow_H2_GCV =(mflowH2*(GCV_H2 + (h0 + FC.h_hein)));
+  H_flow_H2_NCV =(mflowH2*(NCV_H2 + (h0 + FC.h_hein)));
 
   if abs(FC.P_el)>0 then
     eta_GCV_FC = - FC.P_el / H_flow_H2_GCV;
@@ -151,42 +152,44 @@ equation
 //   end if;
 
   connect(FC.feedh, SyngasSource.gas_a) annotation (Line(
-      points={{-12,6.8},{-28,6.8},{-28,19},{-36,19}},
+      points={{-20,6.8},{-36,6.8},{-36,19},{-44,19}},
       color={255,170,85},
       thickness=0.5));
   connect(FC.feeda, AirSource.gas_a) annotation (Line(
-      points={{-12,-8.8},{-28,-8.8},{-28,-19},{-37,-19}},
+      points={{-20,-8.8},{-36,-8.8},{-36,-19},{-45,-19}},
       color={255,170,85},
       thickness=0.5));
   connect(FC.drainh, SyngasSink.gas_a) annotation (Line(
-      points={{16,6.8},{16,17},{50,17}},
+      points={{8,6.8},{16,6.8},{16,14},{22,14},{22,17},{24,17}},
       color={255,170,85},
       thickness=0.5));
   connect(FC.draina, AirSink.gas_a) annotation (Line(
-      points={{16,-8.8},{50,-8.8},{50,-20},{50,-20}},
+      points={{8,-8.8},{18,-8.8},{18,-20},{24,-20}},
       color={255,170,85},
       thickness=0.5));
-  connect(lambdaOController_PID.y,AirSource. m_flow) annotation (Line(points={{-31.4,-42},{-56,-42},{-56,-24.4},{-50,-24.4}}, color={0,0,127}));
-  connect(lambdaOController_PID.y, AirCompressorSystem.AirMassFlowRateSetpoint) annotation (Line(points={{-31.4,-42},{-36,-42},{-36,-58},{16,-58}},       color={0,0,127}));
-  connect(P_el_out.y, P_FC_tot) annotation (Line(points={{89,-40},{104,-40}}, color={0,0,127}));
-  connect(coolingModel.T_environment, T_environment) annotation (Line(points={{52,56},{34,56},{34,86},{85,86},{85,107}}, color={0,0,127}));
-  connect(P_el_out_aux.y, P_FC_aux) annotation (Line(points={{89,-78},{90,-80},{104,-80}},          color={0,0,127}));
-  connect(FC.lambda_O, lambdaOController_PID.u1) annotation (Line(points={{-4.72,-14},{-10,-14},{-10,-38},{-12.6,-38}}, color={0,0,127}));
-  connect(powerController.y, FC.I_load) annotation (Line(points={{-49,68},{-58,68},{-58,-1.78},{-9.48,-1.78}},                   color={0,0,127}));
+  connect(lambdaOController_PID.y,AirSource. m_flow) annotation (Line(points={{-39.4,-42},{-64,-42},{-64,-24.4},{-58,-24.4}}, color={0,0,127}));
+  connect(lambdaOController_PID.y, AirCompressorSystem.AirMassFlowRateSetpoint) annotation (Line(points={{-39.4,-42},{-44,-42},{-44,-76},{-6,-76}},       color={0,0,127}));
+  connect(P_el_out.y,P_FC_sys)  annotation (Line(points={{89,-40},{100,-40}}, color={0,0,127}));
+  connect(coolingModel.T_environment, T_env) annotation (Line(points={{54,62},{45,62},{45,107}}, color={0,0,127}));
+  connect(P_el_out_aux.y, P_FC_aux) annotation (Line(points={{89,-78},{89,-80},{100,-80}},          color={0,0,127}));
+  connect(FC.lambda_O, lambdaOController_PID.u1) annotation (Line(points={{-12.72,-14},{-18,-14},{-18,-38},{-20.6,-38}},color={0,0,127}));
+  connect(powerController.I_load, FC.I_load) annotation (Line(points={{-83,52},{-88,52},{-88,-2},{-52,-2},{-52,-1.78},{-17.48,-1.78}}, color={0,0,127}));
   connect(FC.V_stack, powerController.V_stack) annotation (Line(
-      points={{16,-1},{16,-2},{28,-2},{28,66},{-22,66},{-22,73.4},{-29,73.4}},
+      points={{8,-1},{8,-2},{20,-2},{20,16},{-34,16},{-34,54},{-48,54},{-48,57.4},{-63,57.4}},
       color={0,135,135},
       pattern=LinePattern.Dash));
-  connect(FC.heat, coolingModel.heatPortCooling) annotation (Line(points={{16.14,-5.03},{46,-5.03},{46,48.2},{52,48.2}},                 color={191,0,0}));
-  connect(FC.temperatureOut, coolingModel.T_op) annotation (Line(points={{-4.16,-4.9},{-18,-4.9},{-18,18},{26,18},{26,62},{52,62}}, color={0,0,127}));
-  connect(FC.lambda_H, lambdaHController_PID.u1) annotation (Line(points={{9.28,-14},{9.28,-60},{-60,-60},{-60,-54},{-66.6,-54}}, color={0,0,127}));
-  connect(lambdaHController_PID.y, SyngasSource.m_flow) annotation (Line(points={{-85.4,-58},{-90,-58},{-90,23.8},{-52,23.8}}, color={0,0,127}));
-  connect(lambdaHController_PID.y, mflowH2_FC) annotation (Line(points={{-85.4,-58},{-90,-58},{-90,-84},{-56,-84},{-56,-102}}, color={0,0,127}));
-  connect(SumPower.u1, AirCompressorSystem.P_airCompressor) annotation (Line(points={{10,68},{42,68},{42,-66},{36,-66}},                             color={0,0,127}));
-  connect(SumPower.u2, coolingModel.P_coolingPump) annotation (Line(points={{10,76},{82,76},{82,60},{72,60}}, color={0,0,127}));
-  connect(SumPower.u3, P_el_set) annotation (Line(points={{10,84},{10,94},{24,94},{24,108}}, color={0,0,127}));
-  connect(P_el_out_POS.y, P_FC_tot_POS) annotation (Line(points={{93,-2},{108,-2}}, color={0,0,127}));
-  connect(P_el_set, powerController.P) annotation (Line(points={{24,108},{24,94},{-20,94},{-20,62},{-29,62}}, color={0,127,127}));
+  connect(FC.heat, coolingModel.heatPortCooling) annotation (Line(points={{8.14,-5.03},{48,-5.03},{48,54.2},{54,54.2}},                  color={191,0,0}));
+  connect(FC.temperatureOut, coolingModel.T_op) annotation (Line(points={{-9.08,-4.9},{-6,-4.9},{-6,-4},{0,-4},{0,38},{-2,38},{-2,68},{54,68}},
+                                                                                                                                    color={0,0,127}));
+  connect(FC.lambda_H, lambdaHController_PID.u1) annotation (Line(points={{1.28,-14},{1.28,-60},{-68,-60},{-68,-54},{-66.6,-54}}, color={0,0,127}));
+  connect(lambdaHController_PID.y, SyngasSource.m_flow) annotation (Line(points={{-85.4,-58},{-98,-58},{-98,23.8},{-60,23.8}}, color={0,0,127}));
+  connect(lambdaHController_PID.y, mflowH2) annotation (Line(points={{-85.4,-58},{-90,-58},{-90,-84},{-56,-84},{-56,-100}}, color={0,0,127}));
+  connect(SumPower.u1, AirCompressorSystem.P_airCompressor) annotation (Line(points={{-12,48},{-12,36},{44,36},{44,-84},{26,-84}},                   color={0,0,127}));
+  connect(SumPower.u2, coolingModel.P_coolingPump) annotation (Line(points={{-12,56},{46,56},{46,52},{50,52},{50,48},{90,48},{90,66},{82,66}},
+                                                                                                              color={0,0,127}));
+  connect(SumPower.u3,P_FC_set)  annotation (Line(points={{-12,64},{-12,88},{0,88},{0,102}}, color={0,0,127}));
+  connect(P_el_out_POS.y, P_FC_net) annotation (Line(points={{89,-2},{100,-2}}, color={0,0,127}));
+  connect(SumPower.y, powerController.P) annotation (Line(points={{-35,56},{-32,56},{-32,46},{-63,46}}, color={0,0,127}));
   annotation (
     Diagram(coordinateSystem(preserveAspectRatio=false, extent={{-100,-100},{100,100}})),
     experiment(

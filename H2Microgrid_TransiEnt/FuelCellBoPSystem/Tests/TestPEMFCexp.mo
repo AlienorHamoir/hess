@@ -92,7 +92,7 @@ model TestPEMFCexp "Test and validation with experimental results of the PEMFC m
     offset=0.015,
     startTime=100)
                   annotation (Placement(transformation(extent={{-62,74},{-46,90}})));
-  FuelCell.PEMFC_KhanIqbal FC(
+  FuelCell.PEMFC FC(
     no_Cells=36,
     T_nom=345.15,
     T_stack_max=348.15,

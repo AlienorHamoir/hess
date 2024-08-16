@@ -10,6 +10,7 @@ model testLoad
   parameter Real sqft2sqm = 10.765 "Convert ft^2 surface to m^2";
   parameter String weather_file = Modelica.Utilities.Files.loadResource("modelica://H2Microgrid_TransiEnt/Resources/weather/USA_CA_Los.Angeles.Intl.AP.722950_TMY3.mos") "Path to weather file";
   parameter String load_file = ModelicaServices.ExternalReferences.loadResource("modelica://H2Microgrid_TransiEnt/Resources/loads/commercial_SmallOffice_LA.txt") "Path to load file";
+  parameter String disturbance_file = ModelicaServices.ExternalReferences.loadResource("modelica://H2Microgrid_TransiEnt/Resources/loads/LoadDisturbance_Year.txt") "Path to load disturbance file";
 
 
 
@@ -40,14 +41,28 @@ model testLoad
   Modelica.Blocks.Math.Gain kWtoW(k=1000) annotation (Placement(transformation(
         extent={{-4,-4},{4,4}},
         rotation=0,
-        origin={20,-28})));
+        origin={64,-52})));
+  Modelica.Blocks.Sources.CombiTimeTable Disturbance(
+    tableOnFile=true,
+    tableName="Load",
+    fileName=disturbance_file,
+    verboseRead=true,
+    columns={2},
+    smoothness=Modelica.Blocks.Types.Smoothness.LinearSegments,
+    timeScale=60) "Base on load file from Matthieu " annotation (Placement(transformation(
+        extent={{-10,-10},{10,10}},
+        rotation=0,
+        origin={-10,-62})));
+  Modelica.Blocks.Math.Add add annotation (Placement(transformation(extent={{24,-56},{44,-36}})));
 equation
   connect(pv.weaBus,weaDat. weaBus) annotation (Line(
       points={{-6,46.2},{-6,46},{-18,46}},
       color={255,204,51},
       thickness=0.5));
   connect(ctrl_PV.y, pv.scale) annotation (Line(points={{-27.6,26},{-8.8,26},{-8.8,35.8}}, color={0,0,127}));
-  connect(Load.y[1], kWtoW.u) annotation (Line(points={{1,-28},{15.2,-28}}, color={0,0,127}));
+  connect(Load.y[1], add.u1) annotation (Line(points={{1,-28},{14,-28},{14,-40},{22,-40}}, color={0,0,127}));
+  connect(Disturbance.y[1], add.u2) annotation (Line(points={{1,-62},{14,-62},{14,-52},{22,-52}}, color={0,0,127}));
+  connect(add.y, kWtoW.u) annotation (Line(points={{45,-46},{56,-46},{56,-52},{59.2,-52}}, color={0,0,127}));
   annotation (
     Icon(coordinateSystem(preserveAspectRatio=false)),
     Diagram(coordinateSystem(preserveAspectRatio=false)),

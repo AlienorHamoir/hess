@@ -66,8 +66,8 @@ end ElectrolyzerRecord;
   TransiEnt.Basics.Interfaces.Electrical.ElectricPowerOut P_electrolyzer_tot annotation (Placement(transformation(extent={{94,-50},{118,-26}}), iconTransformation(extent={{94,-50},{118,-26}})));
   TransiEnt.Producer.Gas.Electrolyzer.Controller.MinMaxController minMaxController(
     P_el_n=P_el_n,
-    P_el_max=P_el_max,
-    P_el_min=P_el_min)             annotation (Placement(transformation(
+    P_el_max=P_el_max + 415,
+    P_el_min=P_el_min + 205)       annotation (Placement(transformation(
         extent={{-10,-10},{10,10}},
         rotation=-90,
         origin={-54,46})));

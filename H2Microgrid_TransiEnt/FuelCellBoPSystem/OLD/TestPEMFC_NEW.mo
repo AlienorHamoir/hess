@@ -146,7 +146,7 @@ equation
   connect(lambdaController1.y, AirSource.m_flow) annotation (Line(points={{-36.8,-50},{-52,-50},{-52,-32.4},{-46,-32.4}}, color={0,0,127}));
   connect(airCompressorSystemModel.AirMassFlowRateSetpoint, lambdaController1.y) annotation (Line(points={{-32,-78},{-46,-78},{-46,-50},{-36.8,-50}}, color={0,0,127}));
   connect(powerController.V_stack, FC.V_stack) annotation (Line(points={{17,37.4},{70,37.4},{70,-11},{22,-11}}, color={0,127,127}));
-  connect(powerController.y, FC.I_load) annotation (Line(points={{-3,32},{-18,32},{-18,-11.9},{-7.12,-11.9}}, color={0,0,127}));
+  connect(powerController.I_load, FC.I_load) annotation (Line(points={{-3,32},{-18,32},{-18,-11.9},{-7.12,-11.9}}, color={0,0,127}));
   connect(powerController.P, Load1.y) annotation (Line(points={{17,26},{90,26},{90,58},{83,58}}, color={0,127,127}));
   annotation (
     Diagram(coordinateSystem(preserveAspectRatio=false, extent={{-100,-100},{100,100}})),

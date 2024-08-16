@@ -28,8 +28,7 @@ model TestPowerController "Testing of power controller used in FC system"
 equation
   connect(Load.y, powerController.P) annotation (Line(points={{-63,18},{27,18}},              color={0,0,127}));
   connect(Load.y, division.u1) annotation (Line(points={{-63,18},{-30,18},{-30,4},{-22,4}},          color={0,0,127}));
-  connect(powerController.y, division.u2) annotation (Line(points={{47,12},{52,12},{52,-16},{-30,-16},{-30,-8},{-22,-8}},
-                                                                                                                color={0,0,127}));
+  connect(powerController.I_load, division.u2) annotation (Line(points={{47,12},{52,12},{52,-16},{-30,-16},{-30,-8},{-22,-8}}, color={0,0,127}));
   connect(division.y, powerController.V_stack) annotation (Line(points={{1,-2},{20,-2},{20,6.6},{27,6.6}},      color={0,0,127}));
   annotation (
     Icon(coordinateSystem(preserveAspectRatio=false)),

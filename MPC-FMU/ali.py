@@ -332,3 +332,353 @@ plt.grid(True)
 
 plt.tight_layout()
 plt.show()
+
+
+
+# Discrete logical states 2
+
+def enforce_state_constraints(k, delta_ON, delta_OFF, delta_STB, z_min_pos, z_max_neg, z_stb_pos, z_stb_neg, z_off_pos, z_off_neg):
+    constraints = []
+
+    # 1. (1 - δ^ON_i(k)) + z^>=P^min_i(k) >= 1
+    constraints.append((1 - delta_ON) + z_min_pos >= 1)
+
+    # 2. (1 - δ^ON_i(k)) + z^<=P^max_i(k) >= 1
+    constraints.append((1 - delta_ON) + z_max_neg >= 1)
+
+    # 3. (1 - δ^STB_i(k)) + z^>=P^STB_i(k) >= 1
+    constraints.append((1 - delta_STB) + z_stb_pos >= 1)  
+
+    # 4. (1 - δ^STB_i(k)) + z^<=P^STB_i(k) >= 1
+    constraints.append((1 - delta_STB) + z_stb_neg >= 1)  
+
+    # 5. (1 - δ^OFF_i(k)) + z^>=0_i(k) >= 1
+    constraints.append((1 - delta_OFF) + z_off_pos >= 1)  
+
+    # 6. (1 - δ^OFF_i(k)) + z^<=0_i(k) >= 1
+    constraints.append((1 - delta_OFF) + z_off_neg >= 1) 
+
+    return constraints
+
+
+# Check/Write? constraints for EL
+states_constraints_EL = enforce_state_constraints(
+    delta_ON_EL[k], z_min_pos_EL[k], z_max_neg_EL[k], z_stb_pos_EL[k], z_stb_neg_EL[k], z_pos_EL[k], z_neg_EL[k]
+)
+
+# Check/Write? constraints for FC
+states_constraints_FC = enforce_state_constraints(
+    delta_ON_FC[k], z_min_pos_FC[k], z_max_neg_FC[k], z_stb_pos_FC[k], z_stb_neg_FC[k], z_pos_FC[k], z_neg_FC[k]
+)
+
+# Output results
+print("Constraints for EL:", states_constraints_EL)
+print("Constraints for FC:", states_constraints_FC)
+
+
+# States transitions 1
+
+# Binary decision variables for EL
+delta_ON_EL 
+delta_OFF_EL
+delta_STB_EL
+
+sigma_ON_OFF_EL
+sigma_OFF_ON_EL
+sigma_STB_ON_EL 
+sigma_ON_STB_EL 
+sigma_STB_OFF_EL 
+sigma_OFF_STB_EL 
+
+
+# Binary decision variables for FC
+delta_ON_FC 
+delta_OFF_FC
+delta_STB_FC
+
+sigma_ON_OFF_FC
+sigma_OFF_ON_FC
+sigma_STB_ON_FC 
+sigma_ON_STB_FC 
+sigma_STB_OFF_FC 
+sigma_OFF_STB_FC
+
+
+
+def enforce_transition_constraints(
+    delta_ON_prev, delta_ON, delta_OFF_prev, delta_OFF, delta_STB_prev, delta_STB,
+    sigma_ON_OFF, sigma_OFF_ON, sigma_STB_ON, sigma_ON_STB, sigma_STB_OFF, sigma_OFF_STB
+):
+    constraints = []
+
+    # Constraints ON to OFF
+    constraints.append(-delta_ON_prev + sigma_ON_OFF <= 0)
+    constraints.append(-delta_OFF + sigma_ON_OFF <= 0)
+    constraints.append(delta_ON_prev + delta_OFF - sigma_ON_OFF <= 1)
+
+    # Constraints OFF TO ON
+    constraints.append(-delta_OFF_prev + sigma_OFF_ON <= 0)
+    constraints.append(-delta_ON + sigma_OFF_ON <= 0)
+    constraints.append(delta_OFF_prev + delta_ON - sigma_OFF_ON <= 1)
+
+    # Constraints STB TO ON
+    constraints.append(-delta_STB_prev + sigma_STB_ON <= 0)
+    constraints.append(-delta_ON + sigma_STB_ON <= 0)
+    constraints.append(delta_STB_prev + delta_ON - sigma_STB_ON <= 1)
+    
+    # Constraints ON TO STB
+    constraints.append(-delta_ON_prev + sigma_ON_STB <= 0)
+    constraints.append(-delta_STB + sigma_ON_STB <= 0)
+    constraints.append(delta_ON_prev + delta_STB - sigma_ON_STB <= 1)
+    
+    # Constraints STB TO OFF
+    constraints.append(-delta_STB_prev + sigma_STB_OFF <= 0)
+    constraints.append(-delta_OFF + sigma_STB_OFF <= 0)
+    constraints.append(delta_STB_prev + delta_OFF - sigma_STB_OFF <= 1)
+
+    # Constraints OFF TO STB
+    constraints.append(-delta_OFF_prev + sigma_OFF_STB <= 0)
+    constraints.append(-delta_STB + sigma_OFF_STB <= 0)
+    constraints.append(delta_OFF_prev + delta_STB - sigma_OFF_STB <= 1)
+
+    return constraints
+
+
+# Check constraints for EL
+constraints_EL = enforce_transition_constraints(
+    delta_ON_EL[k-1], delta_ON_EL[k],  delta_OFF_EL[k-1],  delta_OFF_EL[k], delta_STB_EL[k-1], delta_STB_EL[k],
+    sigma_ON_OFF_EL[k], sigma_OFF_ON_EL[k] = 0, sigma_STB_ON_EL[k], sigma_ON_STB_EL[k], sigma_STB_OFF_EL[k], sigma_OFF_STB_EL[k]
+)
+
+# Check constraints for FC
+constraints_FC = enforce_transition_constraints(
+    delta_ON_FC[k-1], delta_ON_FC[k],  delta_OFF_FC[k-1],  delta_OFF_FC[k], delta_STB_FC[k-1], delta_STB_FC[k],
+    sigma_ON_OFF_FC[k], sigma_OFF_ON_FC[k] = 0, sigma_STB_ON_FC[k], sigma_ON_STB_FC[k], sigma_STB_OFF_FC[k], sigma_OFF_STB_FC[k]
+)
+
+sigma_OFF_ON_EL = np.zeros(T)
+sigma_OFF_ON_FC = np.zeros(T)
+
+# Output results
+print("Constraints for EL:", constraints_EL)
+print("Constraints for FC:", constraints_FC)
+
+# States transitions 2
+# Initialize parameters
+T_CLD_EL = 1
+T_CLD_FC = 1
+
+
+def enforce_startup_constraints(sigma_STB_OFF, T_CLD, k):
+    # Initialize a list to store constraint satisfaction statuses
+    constraints = []
+
+    # Generate tau_CLD as a vector of time steps: tau_CLD = (k+1, k+2, ..., k+T_CLD)
+    tau_CLD = np.arange(k + 1, k + T_CLD)
+
+    # First constraint: σ^STB_OFF_i(k) - σ^STB_OFF_i(k-1) <= σ^STB_OFF_i(τ_CLD)
+    for tau in tau_CLD:
+       # if tau < len(sigma_STB_OFF):
+        constraints.append(sigma_STB_OFF[k] - sigma_STB_OFF[k-1] <= sigma_STB_OFF[tau])
+    
+    # Second constraint: Sum of σ^STB_OFF_i(k-T_CLD) to σ^STB_OFF_i(k) <= T_CLD
+    if k >= T_CLD:
+        sigma_sum = sum(sigma_STB_OFF[k - T_CLD:k])  # Sum over the period
+        constraints.append(sigma_sum <= T_CLD)
+    else:
+        sigma_sum = sum(sigma_STB_OFF[0:k])  # Sum over the period
+        constraints.append(sigma_sum <= T_CLD)
+        
+    return constraints
+
+
+
+# Electrolyzer start-up time
+startup_constraints_EL = enforce_startup_constraints(sigma_STB_OFF_EL, T_CLD_EL, k)
+
+
+# Fuel cell start-up time
+startup_constraints_FC = enforce_startup_constraints(sigma_STB_OFF_FC, T_CLD_FC, k)
+
+
+# Electrolyzer dynamics
+
+# Initialize parameters
+GCV_H2 = 
+M_H2 =
+M_O2 =
+M_H2O =
+cp_H2 = 
+cp_O2 = 
+eta_EL = 0.6
+eta_F_EL = 
+R = 8.314
+F = 
+N_EL = 20
+V_tn = 1.482
+R_th = 
+T_H2_nom = 273.15 + 40
+T_EL_nom = 273.15 + 50
+T_amb = 273.15 + 23.5
+e_dry_spec = 1400 * 3600 * t_s? # Ws/kg
+COP_cw = 4
+K=1.4
+eta_comp = 0.72
+p_max = 350*10**5 # 350 bar = 350 * 10^5 Pa
+p_comp_in = 1.1325 *10**5 # 1 atm = 1.1325 bar = 1 * 10^5 Pa
+P_EL_STB = 
+h_H2 = cp_H2 * (T_H2_nom - T_amb)
+h_O2 = cp_O2 * (T_H2_nom - T_amb)
+P_pump_disch =
+P_pump_circ = 
+Q_loss_EL = (T_EL,nom - T_amb)/R_th
+
+
+
+# mass 
+dot_m_H2_EL[k] = eta_EL * P_EL[k] / GCV_H2
+dot_n_H2_EL[k] = dot_m_H2_EL[k] / M_H2
+dot_n_O2_EL[k] = 0.5 * dot_n_H2_EL[k] 
+
+# current
+I_EL[k] = 2 * F * dot_m_H2_EL[k] / (M_H2 * N_EL * eta_F_EL)
+
+# cooling & temperature
+Q_cooling_EL[k] = P_gen[k] + P_pump,disch - H_flow_prod[k] - Q_loss_EL[k]
+P_gen[k] = P_EL[k] - N_EL * V_tn * I_EL[k]
+H_flow_prod[k] = dot_n_H2_EL[k] * h_H2 + dot_n_O2_EL[k] * h_O2 
+
+# auxiliaries power
+P_EL_aux[k] = P_dry[k] + P_pump,circ + P_cooling_EL[k] + P_comp,H2[k]
+P_dry[k] = e_dry,spec * dot_m_H2_EL[k] 
+P_cooling_EL[k] = Q_cooling_EL[k]/COP_cw
+RECAST: P_comp,H2[k] = dot_n_H2_EL[k] / eta_comp * (K/K-1) * R * T_H2,nom * ( (p_max * SOC_hess[k]/p_comp_in)**(K-1/K) - 1 )
+
+
+# electrolyzer system power
+P_EL_sys[k] = z_EL_in[k] + z_EL_aux[k] + P_EL_STB * delta_STB_EL[k]
+
+
+# Fuel cell dynamics
+
+# Initialize parameters
+NCV_H2 = 
+M_H2 =
+M_O2 =
+M_H2O =
+cp_H2 = 
+cp_air =
+cp_H2O = 
+Delta_H0 =
+Delta_HT = cp_H2O * (T_FC_nom - T_amb)
+eta_FC = 0.4
+eta_F_FC = 
+R = 8.314
+F = 
+N_FC = 36
+V_tn = 1.482
+R_th_FC = 
+T_Air_in = 273.15 + 23.5
+T_H2_in = 273.15 + 40
+T_FC,nom = 273.15 + 72
+T_amb = 273.15 + 23.5
+lambda_H2 = 1.5
+lambda_O2 = 2.05
+COP_cw = 4
+K=1.4
+eta_comp_air = 0.72
+p_comp_in = 1.1325 *10**5 # 1 atm = 1.1325 bar = 1 * 10^5 Pa
+p_comp_out = 3 *10**5 # pressure at cathode = 3 bar
+P_FC_STB = 
+h_H2_in = cp_H2 * (T_H2,nom - T_amb) # Delta T or just T_in?
+h_H2_out = cp_H2 * (T_FC,nom - T_amb)
+h_air_in = cp_air * (T_amb - T_amb) 
+h_air_out = cp_air * (T_FC,nom - T_amb)
+Q_loss_FC = (T_FC,nom - T_amb)/R_th
+
+
+
+# mass 
+dot_m_H2_react[k] = eta_FC * P_FC[k] / NCV_H2
+dot_m_H2_in[k] = dot_m_H2_react[k] * lambda_H2
+dot_m_H2_out[k] = dot_m_H2_in[k] - dot_m_H2_react[k]
+dot_n_H2_react[k] = dot_m_H2_react[k] / M_H2
+
+dot_n_O2_react[k] = 0.5 * dot_n_H2_react[k] 
+dot_n_air_react[k] = dot_n_O2_react[k] / 0.21
+dot_m_O2_react[k] = dot_n_O2_react[k] * M_O2
+dot_m_O2_in[k] = dot_m_O2_react[k] * lambda_O2
+dot_m_air_in[k] = dot_m_O2_in[k] / 0.21
+dot_m_O2_out[k] = dot_m_O2_in[k] - dot_m_O2_react[k]
+dot_m_air_out[k] = dot_m_O2_out[k]/0.21
+
+dot_m_H2O_gen[k] = dot_n_H2_react[k] * M_H2O
+
+# current
+I_FC[k] = 2 * F * eta_F_FC * dot_m_H2_react[k] / (M_H2 * N_FC)
+
+# cooling & temperature
+Q_cooling_FC[k] = Q_tot[k] +  Q_sens[k] - P_FC[k] - Q_loss_FC
+Q_tot[k] = dot_m_H2_react[k] * Delta_H0
+Q_sens[k] = dot_m_H2_in[k] * h_H2_in -  dot_m_H2_out[k] * h_H2_out + dot_m_air_in[k] * h_air_in -  dot_m_air_out[k] * h_air_out 
+                - dot_m_H2O_gen[k] * Delta_HT/M_H2O
+
+# auxiliaries power
+P_FC_aux[k] = P_cooling_FC[k] + P_comp_air[k] 
+P_cooling[k] = Q_cooling_FC[k]/COP_cw
+P_comp_air[k] = dot_n_air_EL[k] / eta_comp_air * (K/K-1) * R * T_Air_in * ( (p_comp_out/p_comp_in)**(K-1/K) - 1 )
+
+
+# electrolyzer system power
+P_FC_sys[k] = z_FC_out[k] - z_FC_aux[k] - P_FC_STB * delta_STB_FC[k]
+
+
+# Electrolyzer and fuel cell operating constraints
+
+# Initialize parameters
+P_EL_min = 0.1 * P_EL_max
+P_EL_max = 5000
+P_FC_min = 300
+P_FC_max = 4300
+r_EL = 20 * t_s # 20 W/s 
+r_FC = 5 * t_s # 5 W/s 
+
+
+# Min and max power boundaries
+P_EL[k] >= P_EL_min
+P_EL[k] <= P_EL_max
+
+P_FC[k] >= P_FC_min
+P_FC[k] <= P_FC_max
+
+
+# Ramping constraints
+#np.abs((P_EL[k+1]-P_EL[k])*delta_ON_EL[k]) <= r_EL
+#np.abs((P_FC[k+1]-P_FC[k])*delta_ON_FC[k]) <= r_FC
+np.abs(z_EL_in[k+1]-z_EL_in[k]) <= r_EL
+np.abs(z_FC_out[k+1]-z_FC_out[k]) <= r_EL
+
+
+# Logical powers: recast P_EL(k) * delta_ON_EL(k) and P_FC(k) * delta_ON_FC(k) and replace in the code
+z_EL_in[k] >= m * delta_ON_EL[k]
+z_EL_in[k] <= M * delta_ON_EL[k]
+z_EL_in[k] >= P_EL[k] - M * (1 - delta_ON_EL[k])
+z_EL_in[k] <= P_EL[k] + m * (1 - delta_ON_EL[k])
+
+
+z_FC_out[k] >= m * delta_FC_EL[k]
+z_FC_out[k] <= M * delta_FC_EL[k]
+z_FC_out[k] >= P_FC[k] - M * (1 - delta_ON_FC[k])
+z_FC_out[k] <= P_FC[k] + m * (1 - delta_ON_FC[k])
+
+# Logical powers for auxiliaries: recast P_EL,aux(k) * delta_ON_EL(k) and P_FC,aux(k) * delta_ON_FC(k) and replace in the code
+z_EL_aux[k] >= m_aux * delta_ON_EL[k]
+z_EL_aux[k] <= M_aux * delta_ON_EL[k]
+z_EL_aux[k] >= P_EL[k] - M_aux * (1 - delta_ON_EL[k])
+z_EL_aux[k] <= P_EL[k] + m_aux * (1 - delta_ON_EL[k])
+
+
+z_FC_aux[k] >= m_aux * delta_FC_EL[k]
+z_FC_aux[k] <= M_aux * delta_FC_EL[k]
+z_FC_aux[k] >= P_FC[k] - M_aux * (1 - delta_ON_FC[k])
+z_FC_aux[k] <= P_FC[k] + m_aux * (1 - delta_ON_FC[k])

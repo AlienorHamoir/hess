@@ -50,9 +50,9 @@ model PowerController "Controller for power and current output in Fuel Cell appl
         extent={{10,-10},{-10,10}},
         rotation=180,
         origin={-90,60})));
-  Modelica.Blocks.Interfaces.RealOutput y annotation (Placement(transformation(
-          rotation=180,
-                      extent={{10,-10},{-10,10}},
+  Modelica.Blocks.Interfaces.RealOutput I_load annotation (Placement(transformation(
+        rotation=180,
+        extent={{10,-10},{-10,10}},
         origin={104,0}), iconTransformation(extent={{100,-10},{120,10}})));
   TransiEnt.Basics.Interfaces.Electrical.VoltageIn V_stack "Input for stack voltage" annotation (Placement(
         transformation(
@@ -68,11 +68,6 @@ model PowerController "Controller for power and current output in Fuel Cell appl
   //           Instances of other Classes
   // _____________________________________________
 
-  Modelica.Blocks.Math.Gain Gain(k=k) annotation (Placement(transformation(
-        extent={{6,-6.5},{-6,6.5}},
-        rotation=180,
-        origin={-42,24.5})));
-
   Modelica.Blocks.Math.Division PowerbyVoltage_divison annotation (Placement(transformation(
         extent={{10,10},{-10,-10}},
         rotation=180,
@@ -84,18 +79,15 @@ model PowerController "Controller for power and current output in Fuel Cell appl
   Modelica.Blocks.Nonlinear.Limiter preventDivisionByZero(uMax=150,  uMin=0.1)
     annotation (Placement(transformation(extent={{-50,-38},{-32,-20}})));
 
+  Modelica.Blocks.Nonlinear.Limiter PowerBoundaries(uMax=5000, uMin=0) annotation (Placement(transformation(extent={{-56,28},{-38,46}})));
 equation
   // _____________________________________________
   //
   //               Connect Statements
   // _____________________________________________
 
-  connect(constantSaturation.y, y) annotation (Line(
+  connect(constantSaturation.y, I_load) annotation (Line(
       points={{73.2,0},{104,0}},
-      color={0,0,127},
-      smooth=Smooth.None));
-  connect(Gain.y, PowerbyVoltage_divison.u1) annotation (Line(
-      points={{-35.4,24.5},{-32,24.5},{-32,6},{-7,6}},
       color={0,0,127},
       smooth=Smooth.None));
   connect(preventDivisionByZero.y, PowerbyVoltage_divison.u2) annotation (Line(
@@ -104,8 +96,9 @@ equation
       smooth=Smooth.None));
   connect(V_stack, preventDivisionByZero.u) annotation (Line(points={{-100,-66},{-64,-66},{-64,-29},{-51.8,-29}},
                                                                                               color={0,127,127}));
-  connect(P, Gain.u) annotation (Line(points={{-100,74},{-64,74},{-64,24.5},{-49.2,24.5}},   color={0,127,127}));
   connect(PowerbyVoltage_divison.y, constantSaturation.u) annotation (Line(points={{16,0},{45.6,0}}, color={0,0,127}));
+  connect(P, PowerBoundaries.u) annotation (Line(points={{-100,74},{-64,74},{-64,37},{-57.8,37}}, color={0,127,127}));
+  connect(PowerBoundaries.y, PowerbyVoltage_divison.u1) annotation (Line(points={{-37.1,37},{-14,37},{-14,6},{-7,6}}, color={0,0,127}));
   annotation (Diagram(coordinateSystem(preserveAspectRatio=false, extent={{-100,
             -100},{100,100}})),           Icon(coordinateSystem(
           preserveAspectRatio=false, extent={{-100,-100},{100,100}}), graphics={Text(

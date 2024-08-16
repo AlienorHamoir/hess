@@ -43,8 +43,8 @@ equation
       points={{-22.935,44.07},{-22,44.07},{-22,-2},{6,-2},{6,-9}},
       color={255,204,51},
       thickness=0.5));
-  connect(StateSet.y, hESS_Compressed.delta_FC) annotation (Line(points={{13,-80},{25.2,-80},{25.2,-36}}, color={0,0,127}));
-  connect(StateSet.y, hESS_Compressed.delta_EL) annotation (Line(points={{13,-80},{50,-80},{50,-58},{50.8,-58},{50.8,-36}}, color={0,0,127}));
+  connect(StateSet.y,hESS_Compressed.state_FC)  annotation (Line(points={{13,-80},{25.2,-80},{25.2,-36}}, color={0,0,127}));
+  connect(StateSet.y,hESS_Compressed.state_EL)  annotation (Line(points={{13,-80},{50,-80},{50,-58},{50.8,-58},{50.8,-36}}, color={0,0,127}));
   connect(PowerSet.y, hESS_Compressed.P_set_EL) annotation (Line(points={{-67,32},{-42,32},{-42,-27.9},{6.32,-27.9}}, color={0,0,127}));
   connect(PowerSet1.y, hESS_Compressed.P_set_FC) annotation (Line(points={{-67,64},{-58,64},{-58,86},{-6,86},{-6,9.9},{5.68,9.9}}, color={0,0,127}));
   annotation (Icon(coordinateSystem(preserveAspectRatio=false)), Diagram(coordinateSystem(preserveAspectRatio=false)),

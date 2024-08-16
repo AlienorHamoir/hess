@@ -407,7 +407,7 @@ equation
   elseif whichInput == 3 then
     //set electric power
     P_el_tot = getInputs.P_el_set; // eventually, P_el_setpoint should take into account consumption of whole electrolyzer system
-//     P_el = getInputs.P_el_set; // used for system calibration
+    //P_el = getInputs.P_el_set; // used for system calibration
   elseif whichInput == 4 then
     //set mass flow
     m_flow_H2 = getInputs.m_flow_H2_set;
@@ -429,7 +429,7 @@ equation
   V_el_stack = V_cell*n_cells;
   i_el_stack = i_dens_a*PEM_area;
   P_el = (V_el_stack)*i_el_stack;
-  E_dry = E_dry_spec*mass_H2; // drying energy = 0.5 kWh/kg H2
+  E_dry = E_dry_spec*mass_H2; // drying energy = 1.4 kWh/kg H2
   P_el_tot = P_el + der(E_dry) + coolingPumpPowerIn + storageCompressorPowerIn  + P_circ_pump;
   P_el_aux =  der(E_dry) + coolingPumpPowerIn + storageCompressorPowerIn  + P_circ_pump;
 

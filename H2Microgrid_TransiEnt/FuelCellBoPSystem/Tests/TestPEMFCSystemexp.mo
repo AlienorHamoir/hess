@@ -39,7 +39,7 @@ model TestPEMFCSystemexp "Example of a fuel cell system with its cooling and air
     height_2=-4700,
     duration_2=1000)
                   annotation (Placement(transformation(extent={{-88,-80},{-68,-60}})));
-  Modelica.Blocks.Sources.Constant PowerSet(k=-600)
+  Modelica.Blocks.Sources.Constant PowerSet(k=2650)
                                                    annotation (Placement(transformation(extent={{-88,34},{-68,54}})));
   Modelica.Blocks.Sources.CombiTimeTable StairSignal(table=[0,0; 499,0; 500,500; 999,500; 1000,1000; 1499,1000; 1500,1500; 1999,1500; 2000,2000; 2499,2000; 2500,2500; 2999,2500; 3000,3000; 3499,3000; 3500,3500; 3999,3500; 4000,4000; 4499,4000; 4500,4500; 4999,4500; 5000,5000; 5500,5000], tableOnFile=false) "create a stair-step signal for efficiency computation" annotation (Placement(transformation(
         extent={{-10,-10},{10,10}},
@@ -59,7 +59,7 @@ model TestPEMFCSystemexp "Example of a fuel cell system with its cooling and air
   FuelCell.SystemPEMFCexp systemPEMFCexp(
     coolingModel(k_p=0.5),
     powerController(i_max=300),
-    FC(T_stack(start=333.15))) annotation (Placement(transformation(extent={{-40,-20},{0,20}})));
+    FC(T_stack(start=328.15))) annotation (Placement(transformation(extent={{-40,-20},{0,20}})));
   Modelica.Blocks.Math.Gain A_cell(k=0.2) annotation (Placement(transformation(
         extent={{-6,-6},{6,6}},
         rotation=180,
@@ -87,7 +87,7 @@ equation
       points={{-20,82},{-3,82}},
       color={255,204,51},
       thickness=0.5));
-  connect(systemPEMFCexp.T_environment, weaBus.TDryBul) annotation (Line(points={{-2.4,21.6},{-2,21.6},{-2,82.07},{-2.935,82.07}}, color={0,0,127}), Text(
+  connect(systemPEMFCexp.T_env, weaBus.TDryBul) annotation (Line(points={{-2.4,21.6},{-2,21.6},{-2,82.07},{-2.935,82.07}}, color={0,0,127}), Text(
       string="%second",
       index=1,
       extent={{-3,6},{-3,6}},
@@ -96,7 +96,7 @@ equation
   connect(Pstat.y[1], add.u2) annotation (Line(points={{65,46},{50,46}}, color={0,0,127}));
   connect(const.y, add.u1) annotation (Line(points={{65,16},{50,16},{50,34}}, color={0,0,127}));
   connect(add.y, A_cell1.u) annotation (Line(points={{27,40},{15.2,40}}, color={0,0,127}));
-  connect(PowerRamp.y, systemPEMFCexp.P_el_set) annotation (Line(points={{-67,-34},{-44,-34},{-44,32},{-20,32},{-20,21.6}}, color={0,0,127}));
+  connect(PowerRamp.y,systemPEMFCexp.P_FC_set)  annotation (Line(points={{-67,-34},{-44,-34},{-44,32},{-20,32},{-20,21.6}}, color={0,0,127}));
   annotation (
     Diagram(coordinateSystem(preserveAspectRatio=false, extent={{-100,-100},{100,100}})),
     experiment(

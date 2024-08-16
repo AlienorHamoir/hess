@@ -48,7 +48,8 @@ model Test_PEMElectrolyzerL2_CompressedStorage "Test of PEM Electrolyzer L2 conn
     useFluidCoolantPort=false,
     T_out_coolant_target=323.15,
     externalMassFlowControl=false,
-    electrolyzer(voltage(humidity_const=21)),
+    electrolyzer(T_op_start=323.15,
+                 voltage(humidity_const=21)),
     electrolyzer(massFlow(eta_F=1)),
     electrolyzer(pressure(p_mem_grad=17.1e5))) annotation (Placement(transformation(extent={{-14,-14},{14,14}})));
 
@@ -106,6 +107,12 @@ model Test_PEMElectrolyzerL2_CompressedStorage "Test of PEM Electrolyzer L2 conn
       weaBus "Weather data bus" annotation (Placement(transformation(extent={{-66,36},{-40,64}}),
                                  iconTransformation(extent={{-112,56},{-88,82}})));
   inner TransiEnt.SimCenter simCenter annotation (Placement(transformation(extent={{40,78},{60,98}})));
+  Modelica.Blocks.Sources.Ramp PowerRamp(
+    height=4700,
+    duration=15,
+    offset=800,
+    startTime=1) "to compute efficiency curve"
+                  annotation (Placement(transformation(extent={{-30,66},{-10,86}})));
 equation
   connect(H2StorageSystem.H2PortOut, H2massSink.gasPort) annotation (Line(
       points={{33.8,-60},{48,-60}},
@@ -132,10 +139,10 @@ equation
       points={{-52.935,50.07},{11.62,50.07},{11.62,14.42}},
       color={255,204,51},
       thickness=0.5));
-  connect(PowerRampTest.y, ElectrolyzerSystem.P_el_set) annotation (Line(points={{31,56},{8,56},{8,18},{0,18},{0,14.56}}, color={0,0,127}));
+  connect(PowerRamp.y, ElectrolyzerSystem.P_el_set) annotation (Line(points={{-9,76},{-4,76},{-4,18},{0,18},{0,14.56}}, color={0,0,127}));
   annotation (Icon(coordinateSystem(preserveAspectRatio=false)), Diagram(coordinateSystem(preserveAspectRatio=false)),
     experiment(
-      StopTime=4600,
+      StopTime=17,
       Interval=1,
       __Dymola_Algorithm="Dassl"));
 end Test_PEMElectrolyzerL2_CompressedStorage;
