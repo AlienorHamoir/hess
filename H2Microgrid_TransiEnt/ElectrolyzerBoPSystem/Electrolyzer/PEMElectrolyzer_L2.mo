@@ -51,7 +51,7 @@ model PEMElectrolyzer_L2 "PEMElectrolyzer_L2 Proton exchange membrane electrolyz
 
   //Temperature parameters
 public
-  inner parameter Modelica.Units.SI.Temperature T_amb=23 + 273.15 "K, ambient temperature" annotation (Dialog(group="Fundamental Definitions"));
+  inner parameter Modelica.Units.SI.Temperature T_amb=296.65        "K, ambient temperature" annotation (Dialog(group="Fundamental Definitions"));
   parameter Modelica.Units.SI.Temperature T_op_start=273.15 + 23.5 "initial operating temperature of PEM Electrolyzer" annotation (Dialog(group="Initialization"));
   parameter Modelica.Units.SI.Temperature T_op_n=273.15 + 50 "nominal operating temperature of PEM Electrolyzer";
 
@@ -92,7 +92,7 @@ public
       choice=false "no"));
 //  parameter Real eta_inv_n=0.956 "nominal efficiency of the inverter" annotation (Dialog(group="Fundamental Definitions")); // we neglect all losses relative to grid constraints, including inverter efficiency
   parameter Real E_dry_spec=1400*3600
-                                    "specific energy consumption of dryer in Ws/kg H2";
+                                    "specific energy consumption of dryer in Ws/kg H2" annotation (Dialog(group="Fundamental Definitions"));
 
   // _____________________________________________
   //
@@ -100,7 +100,7 @@ public
   // _____________________________________________
 
 public
-  Modelica.Units.SI.Mass mass_H2(start=0, fixed=true) "Produced H2 mass";
+  Modelica.Units.SI.Mass mass_H2(start=0, fixed=false) "Produced H2 mass";
 
   //Temperature modeling
   //The following must all be calculated in the Temperature model or else provided externally.
@@ -118,14 +118,14 @@ public
   //   Modelica.Units.SI.Efficiency eta_cond "Neglected here as already included in drying energy - Variable for modeling the efficiency loss of the electrolyseur due to the needed power for the dryer and the water conditioning";
   Modelica.Units.SI.EnthalpyFlowRate H_flow_H2_GCV "H2 enthalpy flow rate out of electrolyzer, gross calorific value";
   Modelica.Units.SI.EnthalpyFlowRate H_flow_H2_NCV "H2 enthalpy flow rate out of electrolyzer, net calorific value";
-  Modelica.Units.SI.Efficiency eta_NCV_EL(min=0, max=1) "Efficiency of the electrolyzer based on NCV" annotation (Dialog(group="Initialization", showStartAttribute=true));
-  Modelica.Units.SI.Efficiency eta_GCV_EL(min=0, max=1) "Efficiency of the electrolyzer based on GCV" annotation (Dialog(group="Initialization", showStartAttribute=true));
-  Modelica.Units.SI.Efficiency eta_NCV_sys(min=0, max=1) "Efficiency of the electrolyzer + BoP system based on NCV" annotation (Dialog(group="Initialization", showStartAttribute=true));
-  Modelica.Units.SI.Efficiency eta_GCV_sys(min=0, max=1) "Efficiency of the electrolyzer + BoP system based on GCV" annotation (Dialog(group="Initialization", showStartAttribute=true));
+  Modelica.Units.SI.Efficiency eta_NCV_EL(max=1, min=0) "Efficiency of the electrolyzer based on NCV" annotation (Dialog(group="Initialization", showStartAttribute=true));
+  Modelica.Units.SI.Efficiency eta_GCV_EL(max=1, min=0) "Efficiency of the electrolyzer based on GCV" annotation (Dialog(group="Initialization", showStartAttribute=true));
+  Modelica.Units.SI.Efficiency eta_NCV_sys(max=1, min=0) "Efficiency of the electrolyzer + BoP system based on NCV" annotation (Dialog(group="Initialization", showStartAttribute=true));
+  Modelica.Units.SI.Efficiency eta_GCV_sys(max=1, min=0) "Efficiency of the electrolyzer + BoP system based on GCV" annotation (Dialog(group="Initialization", showStartAttribute=true));
 
   //Current
   inner Modelica.Units.SI.Current i_el_stack "Current across the electrolyzer stack";
-  inner Modelica.Units.SI.CurrentDensity i_dens_a "Operating current density at anode";
+  inner Modelica.Units.SI.CurrentDensity i_dens_a(start=0.01, fixed=false) "Operating current density at anode";
 
   //Voltage and Overpotential Variables
   //The following must all be calculated in the Voltage model.
@@ -235,15 +235,14 @@ public
     Dialog(tab="General", group="Specification"),
     choices(choicesAllMatching=true));
 
-  electrolyzerVoltage voltage(redeclare model PEMconductivity = TransiEnt.Producer.Gas.Electrolyzer.Base.Physics.Voltage.ConductivityModels.PEMconductivity3)
-                              annotation (Placement(transformation(extent={{20,12},{34,26}})));
+  electrolyzerVoltage voltage annotation (Placement(transformation(extent={{-22,-2},{-8,12}})));
 
   electrolyzerTemperature temperature(cooling_PID(controllerType=Modelica.Blocks.Types.SimpleController.PI,
-      y_max=Q_flow_cool_max))         annotation (Placement(transformation(extent={{22,-12},{36,2}})));
+      y_max=Q_flow_cool_max))         annotation (Placement(transformation(extent={{-20,-26},{-6,-12}})));
 
-  electrolyzerPressures pressure annotation (Placement(transformation(extent={{58,12},{44,26}})));
+  electrolyzerPressures pressure annotation (Placement(transformation(extent={{16,-2},{2,12}})));
 
-  electrolyzerMassFlow massFlow annotation (Placement(transformation(extent={{58,-12},{44,2}})));
+  electrolyzerMassFlow massFlow annotation (Placement(transformation(extent={{16,-26},{2,-12}})));
 
   // _____________________________________________
   //
@@ -252,39 +251,54 @@ public
 
   Modelica.Blocks.Interfaces.RealInput i_el_stack_set(displayUnit="A", final unit="A")
                 if whichInput==1 annotation (Placement(transformation(
-        extent={{-20,-20},{20,20}},
+        extent={{-14,-14},{14,14}},
         rotation=270,
-        origin={34,120})));
+        origin={22,94}), iconTransformation(
+        extent={{-14,-14},{14,14}},
+        rotation=270,
+        origin={22,94})));
 
   Modelica.Blocks.Interfaces.RealInput i_dens_set(displayUnit="A/m2", final unit="A/m2")
                        if whichInput==2 annotation (Placement(transformation(
-        extent={{-40,-20},{0,20}},
+        extent={{-28,-14},{-1.77636e-15,14}},
         rotation=270,
-        origin={10,100})));
+        origin={2,80}), iconTransformation(
+        extent={{-28,-14},{-1.77636e-15,14}},
+        rotation=270,
+        origin={2,80})));
 
   Modelica.Blocks.Interfaces.RealInput P_el_set(
     final quantity="Power",
     displayUnit="W",
     final unit="W") if whichInput==3 annotation (Placement(transformation(
-        extent={{-20,-20},{20,20}},
+        extent={{-14,-14},{14,14}},
         rotation=270,
-        origin={-38,120})));
+        origin={-46,94}), iconTransformation(
+        extent={{-14,-14},{14,14}},
+        rotation=270,
+        origin={-46,94})));
 
   Modelica.Blocks.Interfaces.RealInput m_flow_H2_set(
     final quantity="MassFlowRate",
     displayUnit="kg/s",
     final unit="kg/s") if whichInput==4 annotation (Placement(transformation(
-        extent={{-20,-20},{20,20}},
+        extent={{-14,-14},{14,14}},
         rotation=270,
-        origin={58,120})));
+        origin={46,94}), iconTransformation(
+        extent={{-14,-14},{14,14}},
+        rotation=270,
+        origin={46,94})));
 
   Modelica.Blocks.Interfaces.RealInput T_input(
     final quantity="Temperature",
     displayUnit="K",
     final unit="K") if userSetTemp annotation (Placement(transformation(
-        extent={{-20,-20},{20,20}},
+        extent={{-14,-14},{14,14}},
         rotation=270,
-        origin={-14,120})));
+        origin={-22,94}), iconTransformation(
+        extent={{-14,-14},{14,14}},
+        rotation=270,
+        origin={-22,94})));
 
   TransiEnt.Basics.Interfaces.Gas.RealGasPortOut gasPortOut(Medium=medium) annotation (Placement(transformation(extent={{90,-10},{110,10}})));
 
@@ -361,18 +375,18 @@ public
                                                                         annotation (Placement(transformation(extent={{-82,-58},{-62,-38}}), iconTransformation(extent={{-82,-58},{-62,-38}})));
   Modelica.Blocks.Sources.RealExpression Q_Flow_Cooling(y=temperature.Q_flow_cooling) "excess waste heat generated by electrolyzer system, actively cooled by default" annotation (Placement(transformation(extent={{-100,-52},{-80,-32}})));
 
-  TransiEnt.Basics.Interfaces.Electrical.ElectricPowerIn coolingPumpPowerIn "Electrical power from the cooling system pump"
+  TransiEnt.Basics.Interfaces.Electrical.ElectricPowerIn CoolingPumpPowerIn "Electrical power from the cooling system pump"
                                                                             annotation (Placement(transformation(
-        extent={{-20,-20},{20,20}},
+        extent={{-14,-16},{14,16}},
         rotation=180,
-        origin={120,20}), iconTransformation(
-        extent={{-20,-20},{20,20}},
+        origin={114,16}), iconTransformation(
+        extent={{-14,-16},{14,16}},
         rotation=180,
-        origin={120,20})));
-  TransiEnt.Basics.Interfaces.Electrical.ElectricPowerIn storageCompressorPowerIn "Electrical power from the storage compressor" annotation (Placement(transformation(
-        extent={{-20,-20},{20,20}},
+        origin={114,16})));
+  TransiEnt.Basics.Interfaces.Electrical.ElectricPowerIn CompressorPowerIn "Electrical power from the storage compressor" annotation (Placement(transformation(
+        extent={{-13,-15},{13,15}},
         rotation=180,
-        origin={120,48}), iconTransformation(
+        origin={113,43}), iconTransformation(
         extent={{-20,-20},{20,20}},
         rotation=0,
         origin={-120,-76})));
@@ -430,8 +444,8 @@ equation
   i_el_stack = i_dens_a*PEM_area;
   P_el = (V_el_stack)*i_el_stack;
   E_dry = E_dry_spec*mass_H2; // drying energy = 1.4 kWh/kg H2
-  P_el_tot = P_el + der(E_dry) + coolingPumpPowerIn + storageCompressorPowerIn  + P_circ_pump;
-  P_el_aux =  der(E_dry) + coolingPumpPowerIn + storageCompressorPowerIn  + P_circ_pump;
+  P_el_tot =P_el + der(E_dry) + CoolingPumpPowerIn + CompressorPowerIn + P_circ_pump;
+  P_el_aux =der(E_dry) + CoolingPumpPowerIn + CompressorPowerIn + P_circ_pump;
 
 
   if P_el>0 then
@@ -472,11 +486,11 @@ equation
 
   connect(T_input_.y, getInputs.T_input);
 
-  connect(i_el_stack_set, getInputs.i_el_stack_set) annotation (Line(points={{34,120},{34,80},{4,80},{4,70},{3.6,70}}, color={0,0,127}));
-  connect(i_dens_set, getInputs.i_dens_set) annotation (Line(points={{10,120},{10,82},{2,82},{2,70},{1,70}}, color={0,0,127}));
-  connect(m_flow_H2_set, getInputs.m_flow_H2_set) annotation (Line(points={{58,120},{58,76},{6,76},{6,70},{6.6,70}}, color={0,0,127}));
+  connect(i_el_stack_set, getInputs.i_el_stack_set) annotation (Line(points={{22,94},{22,74},{3.6,74},{3.6,70}},       color={0,0,127}));
+  connect(i_dens_set, getInputs.i_dens_set) annotation (Line(points={{2,94},{1,92},{1,70}},                  color={0,0,127}));
+  connect(m_flow_H2_set, getInputs.m_flow_H2_set) annotation (Line(points={{46,94},{46,70},{6.6,70}},                color={0,0,127}));
 
-  connect(T_input, getInputs.T_input) annotation (Line(points={{-14,120},{-14,82},{-1.4,82},{-1.4,70}}, color={0,0,127}));
+  connect(T_input, getInputs.T_input) annotation (Line(points={{-22,94},{-22,74},{-1.4,74},{-1.4,70}},  color={0,0,127}));
 
   connect(temperatureOut, T_op_out.y) annotation (Line(points={{-72,-28},{-76,-28},{-76,-24},{-79,-24}},
                                                                                     color={0,0,127}));
@@ -484,7 +498,7 @@ equation
       points={{-72,-48},{-68,-48},{-68,-42},{-79,-42}},
       color={162,29,33},
       pattern=LinePattern.Dash));
-  connect(P_el_set, getInputs.P_el_set) annotation (Line(points={{-38,120},{-38,80},{-4,80},{-4,70}}, color={0,0,127}));
+  connect(P_el_set, getInputs.P_el_set) annotation (Line(points={{-46,94},{-46,70},{-4,70}},          color={0,0,127}));
   connect(P_el_out.y, electrolyzerPowerOut) annotation (Line(points={{-79,-58},{-68,-58},{-68,-70},{-72,-70}},
                                                                                            color={0,0,127}));
   connect(excessHeatFlowOut, excessHeatFlowOut) annotation (Line(
@@ -492,8 +506,7 @@ equation
       color={175,0,0},
       pattern=LinePattern.Dash));
   connect(P_el_out_aux.y, electrolyzerPowerOutAux) annotation (Line(points={{-79,-74},{-68,-74},{-68,-90},{-72,-90}}, color={0,0,127}));
-  annotation(defaultComponentName="electrolyzer",
-  Documentation(info="<html>
+  annotation (defaultComponentName="electrolyzer", Documentation(info="<html>
 <h4><span style=\"color: #008000\">1. Purpose of model</span></h4>
 <p>This model electrolyzer uses modular physics classes and a Specification record to describe a real-life electrolyzer system. The default model uses physical relationships taken from (Espinosa-L&oacute;pez et al, 2018).</p>
 <h4><span style=\"color: #008000\">2. Level of detail, physical effects considered, and physical insight</span></h4>

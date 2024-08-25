@@ -92,7 +92,7 @@ public
   TransiEnt.Basics.Interfaces.General.PressureDifferenceIn dp_desired "Desired pressure difference" annotation (Placement(transformation(
         rotation=270,
         extent={{-10,-10},{10,10}},
-        origin={0,100})));
+        origin={0,90})));
   // _____________________________________________
   //
   //           Instances of other Classes
@@ -205,7 +205,7 @@ public
     use_Delta_p_input=true,
     P_el_n=60,
     eta_is=0.7) annotation (Placement(transformation(extent={{-8,-10},{12,10}})));
-  TransiEnt.Basics.Interfaces.General.MechanicalPowerPort mpp2 annotation (Placement(transformation(extent={{56,-106},{76,-86}})));
+  TransiEnt.Basics.Interfaces.General.MechanicalPowerPort mpp2 annotation (Placement(transformation(extent={{58,-102},{78,-82}})));
 protected
   TransiEnt.Components.Gas.VolumesValvesFittings.Fittings.RealGasJunction_L2 junction(
     medium=medium,
@@ -253,7 +253,7 @@ equation
       points={{-100,0},{-76,0}},
       color={255,255,0},
       thickness=1.5));
-  connect(dp_desired, controllerValveAndCompressor_dp.dp_desired) annotation (Line(points={{0,100},{0,62}}, color={0,0,127}));
+  connect(dp_desired, controllerValveAndCompressor_dp.dp_desired) annotation (Line(points={{0,90},{0,62}},  color={0,0,127}));
   connect(massFlowSensoreBefore.m_flow, controllerValveAndCompressor_dp.m_flow) annotation (Line(points={{-55,10},{-44,10},{-44,52},{-10,52}}, color={0,0,127}));
   connect(controllerValveAndCompressor_dp.m_flow_valve, valve.m_flowDes) annotation (Line(points={{-4,41},{-4,14},{-14,14},{-14,-42},{-6,-42},{-6,-47.7143}},   color={0,0,127}));
   connect(split.gasPort3, compressorRealGasIsentropicEff_L1_simple.gasPortIn) annotation (Line(
@@ -266,7 +266,7 @@ equation
       thickness=1.5));
   connect(compressorRealGasIsentropicEff_L1_simple.dp_in, controllerValveAndCompressor_dp.dp_comp) annotation (Line(points={{10,11},{10,32},{4,32},{4,41}},
                                                                                                                                                           color={0,0,127}));
-  connect(compressorRealGasIsentropicEff_L1_simple.mpp, mpp2) annotation (Line(points={{2,-10},{2,-16},{66,-16},{66,-96}}, color={95,95,95}));
+  connect(compressorRealGasIsentropicEff_L1_simple.mpp, mpp2) annotation (Line(points={{2,-10},{2,-16},{68,-16},{68,-92}}, color={95,95,95}));
   annotation (Diagram(coordinateSystem(extent={{-100,-100},{100,100}})), Icon(coordinateSystem(extent={{-100,-100},{100,100}}), graphics={
         Ellipse(extent={{-40,80},{40,0}}, lineColor={0,0,0}),
         Line(points={{-40,-20},{-40,-60},{40,-20},{40,-60},{-40,-20}}, color={0,0,0}),

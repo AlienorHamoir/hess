@@ -48,14 +48,14 @@ public
  // parameter Modelica.Units.SI.Power P_el_n_compressor=62.72 "W, compressor nominal electrical power" annotation (Dialog(tab="General", group="Compressor"));
   parameter Modelica.Units.SI.Efficiency eta_n(
     min=0,
-    max=1)=0.7 "Nominal electrolyzer efficency refering to the GCV (min = 0, max = 1)" annotation (Dialog(tab="General", group="Electrolyzer"));
+    max=1)=0.6 "Nominal electrolyzer efficency refering to the GCV (min = 0, max = 1)" annotation (Dialog(tab="General", group="Electrolyzer"));
 
   TransiEnt.Basics.Interfaces.Gas.RealGasPortIn H2PortIn(Medium=medium) "inlet flow" annotation (Placement(transformation(extent={{-10,-112},{8,-94}}),  iconTransformation(extent={{-10,-112},{8,-94}})));
   TransiEnt.Basics.Interfaces.Gas.RealGasPortOut H2PortOut(Medium=medium) "outlet flow" annotation (Placement(transformation(extent={{-10,92},{10,112}}), iconTransformation(extent={{-10,92},{10,112}})));
-  TransiEnt.Basics.Interfaces.General.PressureOut pressureTank annotation (Placement(transformation(extent={{86,30},{106,50}})));
+  TransiEnt.Basics.Interfaces.General.PressureOut pressureTank annotation (Placement(transformation(extent={{70,30},{90,50}})));
   StorageSystem.TankSOC tankSOC(maxPressure=p_maxHigh)
-                                annotation (Placement(transformation(extent={{42,68},{62,88}})));
-  Modelica.Blocks.Interfaces.RealOutput LOH annotation (Placement(transformation(extent={{90,68},{110,88}})));
+                                annotation (Placement(transformation(extent={{36,68},{56,88}})));
+  Modelica.Blocks.Interfaces.RealOutput LOH annotation (Placement(transformation(extent={{70,68},{90,88}})));
 
 // public
 //   inner Summary summary(
@@ -101,7 +101,7 @@ public
   TransiEnt.Components.Boundaries.Electrical.ComplexPower.SlackBoundary
                                                    slackBoundary annotation (Placement(transformation(extent={{32,-60},{52,-40}})));
   TransiEnt.Components.Sensors.ElectricPowerComplex electricPowerComplex annotation (Placement(transformation(extent={{-6,-60},{14,-40}})));
-  TransiEnt.Basics.Interfaces.Electrical.ElectricPowerOut P_comp "Compressor active Power" annotation (Placement(transformation(extent={{90,-46},{110,-26}})));
+  TransiEnt.Basics.Interfaces.Electrical.ElectricPowerOut P_comp "Compressor active Power" annotation (Placement(transformation(extent={{70,-46},{90,-26}})));
   ValveAndCompressor_dp ValveAndCompressor(
     medium=medium,
     p_startSplit=simCenter.p_amb_const,
@@ -113,10 +113,10 @@ public
   inner TransiEnt.ModelStatistics modelStatistics annotation (Placement(transformation(extent={{54,-96},{68,-84}})));
   inner TransiEnt.SimCenter simCenter annotation (Placement(transformation(extent={{74,-96},{88,-84}})));
 equation
-  connect(tankSOC.tankSOC, LOH) annotation (Line(points={{62.6,78},{100,78}}, color={0,0,127}));
+  connect(tankSOC.tankSOC, LOH) annotation (Line(points={{56.6,78},{80,78}},  color={0,0,127}));
   connect(H2storage.p_gas, controlCompressor.p_afterCompIn) annotation (Line(points={{0,7.5},{0,56},{-54,56}},   color={0,0,127}));
-  connect(H2storage.p_gas, tankSOC.currentTankPressure) annotation (Line(points={{0,7.5},{0,77.8},{41.8,77.8}},   color={0,0,127}));
-  connect(H2storage.p_gas, pressureTank) annotation (Line(points={{0,7.5},{0,78},{34,78},{34,40},{96,40}},
+  connect(H2storage.p_gas, tankSOC.currentTankPressure) annotation (Line(points={{0,7.5},{0,77.8},{35.8,77.8}},   color={0,0,127}));
+  connect(H2storage.p_gas, pressureTank) annotation (Line(points={{0,7.5},{0,78},{24,78},{24,40},{80,40}},
                                                                                               color={0,0,127}));
   connect(motorComplex.epp, electricPowerComplex.epp_IN) annotation (Line(
       points={{-25.9,-50.1},{-24,-50},{-5.2,-50}},
@@ -130,7 +130,7 @@ equation
       points={{10.08,1},{14,1},{14,88},{0,88},{0,102}},
       color={255,255,0},
       thickness=1.5));
-  connect(pressureTank, pressureTank) annotation (Line(points={{96,40},{96,40}},   color={0,0,127}));
+  connect(pressureTank, pressureTank) annotation (Line(points={{80,40},{80,40}},   color={0,0,127}));
   connect(ValveAndCompressor.gasPortIn, H2PortIn) annotation (Line(
       points={{-78,1},{-94,1},{-94,-84},{-1,-84},{-1,-103}},
       color={255,255,0},
@@ -142,7 +142,7 @@ equation
   connect(ValveAndCompressor.dp_desired, controlCompressor.Delta_p) annotation (Line(points={{-63,16},{-64,16},{-64,45}}, color={0,0,127}));
   connect(ValveAndCompressor.mpp2, motorComplex.mpp) annotation (Line(points={{-53.1,-13.4},{-53.1,-50},{-46,-50}}, color={95,95,95}));
   connect(electricPowerComplex.P, P_comp) annotation (Line(
-      points={{-1,-41.4},{-2,-41.4},{-2,-36},{100,-36}},
+      points={{-1,-41.4},{-2,-41.4},{-2,-36},{80,-36}},
       color={0,135,135},
       pattern=LinePattern.Dash));
   annotation (Icon(coordinateSystem(preserveAspectRatio=false), graphics={

@@ -22,7 +22,7 @@ record GinerELX5kW "DESL Giner Electrolyzer 5.5kW system specific parameters"
 // XRG Simulation GmbH (Hamburg, Germany).                                        //
 //________________________________________________________________________________//
 
-  //Record containing the data of the Areva Energy Storage Giner Electrolyzer system described in Espinosa-López et al 2018
+  //Record containing the data of the DESL 5kW Giner Inc. PEMEL stack
 
   // _____________________________________________
   //
@@ -31,26 +31,23 @@ record GinerELX5kW "DESL Giner Electrolyzer 5.5kW system specific parameters"
 
   extends H2Microgrid_TransiEnt.ElectrolyzerBoPSystem.Electrolyzer.Specifications.Base5kWElectrolyzerL2Specification(
     n_cells=20,
-    alpha_an=2,
-    E_exc=52994,
-    E_pro=10542,
-    i_dens_0_an_std=4.3e-3,
-    mem_conductivity_ref=10.47,
-    t_mem=254e-6,
-    R_el=0.016,
-    t_el= 8e-6,
-    el_resistivity=10.6e-8,
+    alpha_an=0.75818,
+    E_exc=47290.321,
+    E_pro=14202.4525,
+    i_dens_0_an_std=2.1014e-5,
+    mem_conductivity_ref=7.3485,
+    t_mem=183e-6,
     PEM_area=50e-4,
     i_el_n=150,
     P_el_n=5e3,
     R_th=0.529056,
-    C_th=54038.66667,
+    C_th=54038.66667/6,
     P_el_max=1*P_el_n,
     P_el_pump = 285.7,
     eta_pumpmotor=0.51,
     V_flow_water=0.00005,
     Delta_p_pump=9.2*100000,
-    T_op_max=273.15 + 55,
+    T_op_max=273.15 + 50.5,
     T_cool_set=273.15 + 50,
     Q_flow_cool_max=1600);
   annotation (Documentation(info="<html>

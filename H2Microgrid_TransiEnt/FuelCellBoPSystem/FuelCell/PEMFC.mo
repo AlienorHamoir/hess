@@ -43,7 +43,7 @@ model PEMFC "Model of PEM Fuel Cell stack experimentally validated with Laurncel
 
   parameter Integer no_Cells = 36 "Number of cells connected in series";
 
-  parameter Real lambda=11.1074 "constant humidity";
+  parameter Real lambda=14 "constant humidity";
 
   parameter Modelica.Units.SI.Thickness t_mem = 125e-6 "PE membrane thickness - ref. Dow's membrane in microm";
 
@@ -75,9 +75,9 @@ model PEMFC "Model of PEM Fuel Cell stack experimentally validated with Laurncel
 
   parameter Modelica.Units.SI.Temperature T_std = 25 + 273.15 "Standard temperature";
 
-  parameter Modelica.Units.SI.Temperature T_stack_max = 75 + 273.15 "Maximum stack temperature";
+  parameter Modelica.Units.SI.Temperature T_stack_max = 73 + 273.15 "Maximum stack temperature";
 
-  parameter Modelica.Units.SI.Temperature T_cool_set = 73 + 273.15 "Cooling trigger point";
+  parameter Modelica.Units.SI.Temperature T_cool_set = 72 + 273.15 "Cooling trigger point";
 
   parameter Modelica.Units.SI.ThermalConductance ka=22 "Thermal conductance of the stack ";
 
@@ -89,7 +89,7 @@ model PEMFC "Model of PEM Fuel Cell stack experimentally validated with Laurncel
 
   parameter Modelica.Units.SI.Voltage OCV=0.99 "Open circuit voltage of a cell";
 
-  parameter Modelica.Units.SI.Voltage E_0=0.89195 "Open circuit voltage of a cell used in voltage equation";
+  parameter Modelica.Units.SI.Voltage E_0=0.8837 "Open circuit voltage of a cell used in voltage equation";
 
   parameter Modelica.Units.SI.Capacitance C_dl = 4  "Stack double layer capacitance for dynamic activation overvoltage";
 

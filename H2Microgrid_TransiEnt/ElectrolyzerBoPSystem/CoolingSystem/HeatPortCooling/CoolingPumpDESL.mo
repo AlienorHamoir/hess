@@ -7,7 +7,7 @@ record CoolingPumpDESL "Pump data for a Tuthill D-series pump"
     etaMot_max=0.63,
     speed_nominal=1,
     power(V_flow={2.76e-05},
-         P={    180}),
+         P={    500}),
     pressure(V_flow={2.76e-05, 0.000167865707434, 0.000700939248601,
                        0.0012450039968,  0.00177258193445,  0.00227268185452,
                       0.00272332134293,  0.00312450039968,  0.00345423661071},

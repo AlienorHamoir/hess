@@ -12,7 +12,7 @@ model CoolingModel_Pump
   Buildings.Fluid.FixedResistances.PressureDrop pipe(
     redeclare package Medium = Buildings.Media.Water,
     m_flow_nominal=5e-2,
-    dp_nominal(displayUnit="bar") = 400000)
+    dp_nominal(displayUnit="bar") = 500000)
     annotation (Placement(transformation(extent={{-18,-10},{2,10}})));
   Buildings.Fluid.MixingVolumes.MixingVolume heatexchanger(
     redeclare package Medium = Buildings.Media.Water,
@@ -22,9 +22,9 @@ model CoolingModel_Pump
   Buildings.Fluid.Sources.Boundary_pT sink(redeclare package Medium = Buildings.Media.Water, nPorts=1)
     annotation (Placement(transformation(extent={{86,-10},{66,10}})));
   Buildings.Controls.Continuous.LimPID controller(
-    controllerType=Modelica.Blocks.Types.SimpleController.PID,
-    k=22,
-    Ti=10,
+    controllerType=Modelica.Blocks.Types.SimpleController.PI,
+    k=1000,
+    Ti=0.01,
     Td=3,
     yMax=1,
     yMin=0,
@@ -37,13 +37,13 @@ model CoolingModel_Pump
     annotation (Placement(transformation(extent={{-10,-10},{10,10}},
         rotation=90,
         origin={-68,-32})));
-  Modelica.Blocks.Interfaces.RealOutput P_coolingPump "Electrical power consumed" annotation (Placement(transformation(extent={{80,10},{120,50}}), iconTransformation(extent={{80,10},{120,50}})));
-  Modelica.Thermal.HeatTransfer.Interfaces.HeatPort_a heatPortCooling "Heat port for heat exchange with the control volume" annotation (Placement(transformation(extent={{-118,-90},{-78,-50}}),  iconTransformation(extent={{-118,-90},{-78,-50}})));
+  Modelica.Blocks.Interfaces.RealOutput P_CoolPump "Electrical power consumed" annotation (Placement(transformation(extent={{86,26},{112,52}}), iconTransformation(extent={{86,26},{112,52}})));
+  Modelica.Thermal.HeatTransfer.Interfaces.HeatPort_a heatPortCooling "Heat port for heat exchange with the control volume" annotation (Placement(transformation(extent={{-116,-88},{-82,-54}}),  iconTransformation(extent={{-116,-88},{-82,-54}})));
   Modelica.Thermal.HeatTransfer.Components.HeatCapacitor cellBuffer(
-    C=100,
-    T(start=296.65, fixed=true),
+    C=10,
+    T(fixed=true, start=296.65),
     der_T(start=0))             annotation (Placement(transformation(extent={{-28,-56},{-8,-36}})));
-  Modelica.Blocks.Interfaces.RealInput T_environment "Prescribed boundary temperature from weather file" annotation (Placement(transformation(extent={{-120,-20},{-80,20}})));
+  Modelica.Blocks.Interfaces.RealInput T_env "Prescribed boundary temperature from weather file" annotation (Placement(transformation(extent={{-120,-20},{-80,20}})));
 equation
   connect(watertowater.ports[1], pipe.port_a) annotation (Line(points={{-30,0},{-18,0}},   color={0,127,255}));
   connect(controller.y,pump. y)
@@ -54,12 +54,12 @@ equation
   connect(pipe.port_b, pump.port_a) annotation (Line(points={{2,0},{22,0}},     color={0,127,255}));
   connect(sink.ports[1], heatexchanger.ports[2]) annotation (Line(points={{66,0},{57,0},{57,-54}},   color={0,127,255}));
   connect(T_op, controller.u_s) annotation (Line(points={{-100,70},{-62,70}}, color={0,0,127}));
-  connect(pump.P, P_coolingPump) annotation (Line(points={{47.2,10.8},{64,10.8},{64,30},{100,30}},     color={0,0,127}));
-  connect(heatPortCooling, cellBuffer.port) annotation (Line(points={{-98,-70},{-18,-70},{-18,-56}},  color={191,0,0}));
+  connect(pump.P, P_CoolPump) annotation (Line(points={{47.2,10.8},{62,10.8},{62,39},{99,39}}, color={0,0,127}));
+  connect(heatPortCooling, cellBuffer.port) annotation (Line(points={{-99,-71},{-18,-71},{-18,-56}},  color={191,0,0}));
   connect(cellBuffer.port, heatexchanger.heatPort) annotation (Line(points={{-18,-56},{-18,-64},{46,-64}}, color={191,0,0}));
   connect(fuelcellTemperature.T, controller.u_m) annotation (Line(points={{-68,-21},{-68,48},{-50,48},{-50,58}},                               color={0,0,127}));
   connect(fuelcellTemperature.port, cellBuffer.port) annotation (Line(points={{-68,-42},{-68,-62},{-18,-62},{-18,-56}},           color={191,0,0}));
-  connect(T_environment, watertowater.T_in) annotation (Line(points={{-100,0},{-62,0},{-62,4},{-52,4}}, color={0,0,127}));
+  connect(T_env, watertowater.T_in) annotation (Line(points={{-100,0},{-62,0},{-62,4},{-52,4}}, color={0,0,127}));
   annotation (
     Icon(coordinateSystem(preserveAspectRatio=false)),
     Diagram(coordinateSystem(preserveAspectRatio=false), graphics={
@@ -68,7 +68,7 @@ equation
           textColor={0,0,0},
           textStyle={TextStyle.Bold},
           textString="Fuelcell/Electrolyzer
-HeatPort")}),
+HeatPort",fontSize=8)}),
     experiment(
       StartTime=12960000,
       StopTime=13470000,

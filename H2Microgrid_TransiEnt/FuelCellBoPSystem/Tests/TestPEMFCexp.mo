@@ -93,13 +93,9 @@ model TestPEMFCexp "Test and validation with experimental results of the PEMFC m
     startTime=100)
                   annotation (Placement(transformation(extent={{-62,74},{-46,90}})));
   FuelCell.PEMFC FC(
-    no_Cells=36,
-    T_nom=345.15,
-    T_stack_max=348.15,
-    T_cool_set=346.15,
     usePowerPort=false,
-    useHeatPort=true,
-    T_stack(displayUnit="degC", start=333.15)) annotation (Placement(transformation(extent={{-6,-16},{14,4}})));
+    useHeatPort=false,
+    T_stack(displayUnit="degC", start=345.15)) annotation (Placement(transformation(extent={{-6,-16},{14,4}})));
   inner TransiEnt.SimCenter simCenter annotation (Placement(transformation(extent={{72,-94},{88,-78}})));
   Modelica.Blocks.Math.Gain A_cell(k=232) annotation (Placement(transformation(
         extent={{-5,-5},{5,5}},
@@ -110,7 +106,7 @@ model TestPEMFCexp "Test and validation with experimental results of the PEMFC m
         rotation=180,
         origin={83,89})));
   Controller.LambdaController_PID lambdaController_PID(lambda_target=1.5, m_flow_rampup=1e-8) annotation (Placement(transformation(extent={{-90,-10},{-70,10}})));
-  Controller.LambdaController_PID lambdaController_PID1(lambda_target=2.05, m_flow_rampup=1e-8) annotation (Placement(transformation(
+  Controller.LambdaController_PID lambdaController_PID1(lambda_target=2,    m_flow_rampup=1e-8) annotation (Placement(transformation(
         extent={{-10,-10},{10,10}},
         rotation=180,
         origin={-26,-54})));
@@ -187,10 +183,11 @@ equation
   connect(FC.lambda_O, lambdaController_PID1.u1) annotation (Line(points={{-0.8,-16},{-0.8,-50},{-16.6,-50}}, color={0,0,127}));
   connect(lambdaController_PID1.y, AirSource.m_flow) annotation (Line(points={{-35.4,-54},{-52,-54},{-52,-32.4},{-46,-32.4}}, color={0,0,127}));
   connect(TempSet.y, coolingModel.T_environment) annotation (Line(points={{8.4,32},{20,32}}, color={0,0,127}));
-  connect(FC.temperatureOut, coolingModel.T_op) annotation (Line(points={{-0.4,-9},{-0.4,-10},{-12,-10},{-12,40},{10,40},{10,38},{20,38}}, color={0,0,127}));
+  connect(FC.temperatureOut, coolingModel.T_op) annotation (Line(points={{1.8,-9},{1.8,-10},{-12,-10},{-12,40},{10,40},{10,38},{20,38}},   color={0,0,127}));
   connect(FC.heat, coolingModel.heatPortCooling) annotation (Line(points={{14.1,-9.1},{22,-9.1},{22,18},{16,18},{16,24.2},{20,24.2}}, color={191,0,0}));
   connect(lambdaController_PID1.y, AirCompressorSystem.AirMassFlowRateSetpoint) annotation (Line(points={{-35.4,-54},{-40,-54},{-40,-72},{18,-72},{18,-56},{24,-56}}, color={0,0,127}));
   connect(CurrentDensityStep.y, A_cell.u) annotation (Line(points={{-45.2,82},{-40,82},{-40,62},{-29,62},{-29,55}}, color={0,0,127}));
+  connect(PolarizationCurrentRamp.y, FC.I_load) annotation (Line(points={{-49.2,30},{-46,30},{-46,12},{-22,12},{-22,-6.6},{-4.2,-6.6}}, color={0,0,127}));
   annotation (experiment(
       StopTime=4.2,
       Interval=1,
