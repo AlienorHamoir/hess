@@ -1,0 +1,4 @@
+replaceable model Ground_Temperature =
+     TransiEnt.Basics.Tables.Ambient.UndergroundTemperature_Duesseldorf_1m_3600s_TMY  constrainedby TransiEnt.Components.Boundaries.Ambient.Base.PartialTemperature
+                                               "Profile for the ground temperature" annotation (choicesAllMatching=true,Dialog(tab="Ambience",group="Ambience parameters"));
+  Ground_Temperature Variable_Ground_Temperature;
